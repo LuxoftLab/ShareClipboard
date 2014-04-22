@@ -3,30 +3,39 @@ package com.luxoft.clipboard;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 
-import android.os.Handler;
 import android.util.Log;
 
 public class Receiver extends Thread {
 	
-	Main m;
-	DatagramSocket socket;
+	private ClipboardService service;
+	private DatagramSocket socket;
+	private InetAddress local;
+	private boolean enabled;
 	
-	public Receiver(Main main, DatagramSocket s) {
-		m = main;
-		socket = s;
+	public Receiver(ClipboardService service, DatagramSocket socket, InetAddress local) {
+		this.service = service;
+		this.socket = socket;
+		this.local = local;
 	}
 	
 	public void run() {
 		Log.d("udp", "run");
 		try {
-			socket.setBroadcast(false);
-			byte buf[] = new byte[64];
+			enabled = true;
+			byte buf[] = new byte[1024];
 			DatagramPacket packet = new DatagramPacket(buf, buf.length);
-			//m.send("wait");
-			socket.receive(packet);
-			//m.send("received");
+			while(enabled) {
+				socket.setBroadcast(false);
+				Log.d("udp", "wait...");
+				socket.receive(packet);
+				Log.d("udp", "receive");
+				if(!packet.getAddress().equals(local)) {
+					service.onReceiveUDP(packet);
+				}
+			} 
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -35,5 +44,9 @@ public class Receiver extends Thread {
 			e.printStackTrace();
 		}
 		Log.d("udp", "stop");
+	}
+	
+	public void disable() {
+		enabled = false;
 	}
 }

@@ -20,9 +20,9 @@ public class Packet {
 	private String content;
 	private byte[] data;
 	
-	public Packet(byte[] data) {
+	public Packet(byte[] data, int offset, int len) {
 		this.data = data;
-		ByteBuffer wrapped = ByteBuffer.wrap(data);
+		ByteBuffer wrapped = ByteBuffer.wrap(data, offset, len);
 		type = wrapped.getInt();
 		int length = wrapped.getInt();
 		try {
