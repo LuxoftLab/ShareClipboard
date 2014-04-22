@@ -17,13 +17,15 @@ SOURCES += main.cpp \
     clientlist.cpp \
     listener.cpp \
     common.cpp \
-    logger.cpp
+    logger.cpp \
+    clipboardmanager.cpp
 
 HEADERS += \
     clientlist.h \
     common.h \
     listener.h \
-    logger.h
+    logger.h \
+    clipboardmanager.h
 
 RESOURCES += \
     rsrc.qrc

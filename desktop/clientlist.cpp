@@ -34,6 +34,14 @@ void ClientList::helloReceived(QHostAddress host, QString name)
     m_marked_for_delete.removeAll(name);
 }
 
+void ClientList::onSendClipboard(QString text)
+{
+    QMutexLocker lock(&m_guard);
+    foreach (QHostAddress addr, m_clients.values()) {
+        emit sendClipboard(addr,text);
+    }
+}
+
 void ClientList::onTimerTriggered()
 {
     QMutexLocker lock(&m_guard);

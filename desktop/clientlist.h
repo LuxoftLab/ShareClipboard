@@ -22,9 +22,11 @@ public:
 signals:
     void sendHello(QHostAddress host);
     void sendAreYouHere(QHostAddress host);
+    void sendClipboard(QHostAddress peer,QString text);
 public slots:
     void clientFound(QHostAddress host, QString name);
     void helloReceived(QHostAddress host, QString name);
+    void onSendClipboard(QString text);
     void onTimerTriggered();
 private:
 

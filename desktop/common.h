@@ -16,7 +16,6 @@ namespace PacketType
 struct DatagramPacket
 {
     qint32 type;
-    qint32 length;
     QString content;
 };
 

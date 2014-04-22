@@ -24,9 +24,11 @@ signals:
     void peerFound(QHostAddress peer, QString nick);
     void helloReceived(QHostAddress peer, QString nick);
     void areYouHereReceived(QHostAddress peer, QString nick);
+    void clipboardContentArrived(QString text);
 public slots:
     void sendHello(QHostAddress peer);
     void sendAreYouHere(QHostAddress peer);
+    void sendClipboard(QHostAddress peer, QString text);
     void listen();
     void peerLookupUDP();
     void processPendingDatagrams();

@@ -37,7 +37,6 @@ void Listener::peerLookupUDP()
 
     packet.type=PacketType::Lookup;
     packet.content=QHostInfo::localHostName();
-    packet.length=packet.content.length();
     stream<<packet;
 
     QUdpSocket socket;
@@ -52,7 +51,6 @@ void Listener::sendHello(QHostAddress peer)
     DatagramPacket packet;
     packet.type=PacketType::Hello;
     packet.content=QHostInfo::localHostName();
-    packet.length=packet.content.length();
     send(peer,packet);
 }
 
@@ -61,7 +59,14 @@ void Listener::sendAreYouHere(QHostAddress peer)
     DatagramPacket packet;
     packet.type=PacketType::AreYouHere;
     packet.content=QHostInfo::localHostName();
-    packet.length=packet.content.length();
+    send(peer,packet);
+}
+
+void Listener::sendClipboard(QHostAddress peer, QString text)
+{
+    DatagramPacket packet;
+    packet.type=PacketType::Clipboard;
+    packet.content=text;
     send(peer,packet);
 }
 
@@ -76,8 +81,7 @@ void Listener::processPendingDatagrams()
         DatagramPacket p;
         QDataStream stream(&data,QIODevice::ReadOnly);
         stream>>p;
-        QString nick(p.content);
-        if(nick==QHostInfo::localHostName())
+        if(p.type==PacketType::Lookup && p.content==QHostInfo::localHostName())
         {
             Logger::instance()<<TimeStamp()<<"Self test - OK!\n";
             return;
@@ -85,12 +89,16 @@ void Listener::processPendingDatagrams()
         switch(p.type)
         {
         case PacketType::Lookup:
-            emit peerFound(sender_adr,nick);
+            emit peerFound(sender_adr,p.content);
             break;
         case PacketType::Hello:
-            emit helloReceived(sender_adr,nick);
+            emit helloReceived(sender_adr,p.content);
             break;
         case PacketType::Clipboard:
+            emit clipboardContentArrived(p.content);
+            break;
+        case PacketType::AreYouHere:
+            emit areYouHereReceived(sender_adr,p.content);
             break;
         default:
             break;
