@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     QCoreApplication::connect(listener,&Listener::helloReceived,peer_list,&ClientList::clientFound);
     QCoreApplication::connect(peer_list,&ClientList::sendHello,listener,&Listener::sendHello);
 
-    QSystemTrayIcon tray_icon(QIcon(":/img/clipboard.png"));
+    QSystemTrayIcon tray_icon(QIcon(":/img/clipboard-big.png"));
     tray_icon.setContextMenu(peer_list->contextMenu());
     tray_icon.show();
 
