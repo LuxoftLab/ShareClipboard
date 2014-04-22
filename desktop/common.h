@@ -5,6 +5,7 @@
 #include <QString>
 
 #define UDP_PORT 1234
+#define PEER_LIST_TIMEOUT 60000
 #define REPEAT 5
 
 namespace PacketType

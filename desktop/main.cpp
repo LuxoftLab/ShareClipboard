@@ -1,4 +1,6 @@
-#include <QCoreApplication>
+#include <QApplication>
+#include <QSystemTrayIcon>
+#include <QIcon>
 #include <QThread>
 
 #include "listener.h"
@@ -7,7 +9,8 @@
 int main(int argc, char *argv[])
 {
     qRegisterMetaType<QHostAddress>("QHostAddress");
-    QCoreApplication a(argc, argv);
+    QApplication a(argc, argv);
+
     QThread * listener_thread=new QThread();
     Listener * listener=new Listener();
     ClientList * peer_list=new ClientList();
@@ -18,6 +21,10 @@ int main(int argc, char *argv[])
     QCoreApplication::connect(listener,&Listener::peerFound,peer_list,&ClientList::clientFound);
     QCoreApplication::connect(listener,&Listener::helloReceived,peer_list,&ClientList::clientFound);
     QCoreApplication::connect(peer_list,&ClientList::sendHello,listener,&Listener::sendHello);
+
+    QSystemTrayIcon tray_icon(QIcon(":/img/clipboard.png"));
+    tray_icon.setContextMenu(peer_list->contextMenu());
+    tray_icon.show();
 
     listener_thread->start();
     return a.exec();

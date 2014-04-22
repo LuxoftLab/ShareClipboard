@@ -4,13 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core network
-
-QT       -= gui
+QT       += core gui widgets network
 
 TARGET = broadcast
-CONFIG   += console
-CONFIG   -= app_bundle
+#CONFIG   += console
+#CONFIG   -= app_bundle
 
 TEMPLATE = app
 
@@ -26,3 +24,6 @@ HEADERS += \
     common.h \
     listener.h \
     logger.h
+
+RESOURCES += \
+    rsrc.qrc
