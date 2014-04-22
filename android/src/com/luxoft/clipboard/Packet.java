@@ -8,7 +8,7 @@ import android.util.Log;
 public class Packet {
 	
 	private final String LOG_NAME = "packet";
-	private final String CHARSET = "UTF-16";
+	private final String CHARSET = "UTF-16BE";
 	
 	public static final int INVALID = 0;
 	public static final int LOOKUP = 1;
