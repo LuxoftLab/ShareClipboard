@@ -24,9 +24,9 @@ public class Receiver extends Thread {
 			socket.setBroadcast(false);
 			byte buf[] = new byte[64];
 			DatagramPacket packet = new DatagramPacket(buf, buf.length);
-			m.send("wait");
+			//m.send("wait");
 			socket.receive(packet);
-			m.send("received");
+			//m.send("received");
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

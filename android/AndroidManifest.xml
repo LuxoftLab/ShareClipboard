@@ -21,7 +21,7 @@
         </activity>
         <service 
             android:name="ClipboardService"
-            android:label="Clipboard">
+            android:process=":remote">
         </service>
     </application>
 

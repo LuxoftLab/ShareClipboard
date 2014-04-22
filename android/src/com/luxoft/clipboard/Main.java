@@ -6,146 +6,157 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import javax.net.ssl.HandshakeCompletedListener;
-
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class Main extends Activity implements Handler.Callback {
-	DatagramSocket socket;
-	Context mContext;
-	byte buf[];
-	TextView text;
-	Handler handler;
-	Main instance;
-	Intent intent;
-	/** Called when the activity is first created. */
+	/**
+	 * Messenger used for receiving responses from service.
+	 */
+	
+	private static String LOG_NAME = "activity";
+	
+	final Messenger mMessenger = new Messenger(new IncomingHandler());
+	/**
+	 * Messenger used for communicating with service.
+	 */
+	Messenger mService = null;
+
+	boolean mServiceConnected = false;
+	Intent serviceIntent;
+	
+	
+	class IncomingHandler extends Handler {
+		@Override
+		public void handleMessage(Message msg) {
+			if (msg.what == ClipboardService.MESSAGE_TYPE_TEXT) {
+				Bundle b = msg.getData();
+				CharSequence text = null;
+				if (b != null) {
+					text = b.getCharSequence("data");
+				} else {
+					text = "Service responded with empty message";
+				}
+				Log.d(LOG_NAME, "Response: " + text);
+				//final TextView responseFromService = (TextView) findViewById(R.id.responseFromService);
+				//responseFromService.setText(text);
+			} else {
+				super.handleMessage(msg);
+			}
+		}
+	}
+
+	/**
+	 * Class for interacting with the main interface of the service.
+	 */
+	private ServiceConnection mConn = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			Log.d("MessengerActivity", "Connected to service. Registering our Messenger in the Service...");
+			mService = new Messenger(service);
+			mServiceConnected = true;
+
+			// Register our messenger also on Service side:
+			Message msg = Message.obtain(null, ClipboardService.MESSAGE_TYPE_REGISTER);
+			msg.replyTo = mMessenger;
+			try {
+				mService.send(msg);
+			} catch (RemoteException e) {
+				// We always have to trap RemoteException (DeadObjectException
+				// is thrown if the target Handler no longer exists)
+				e.printStackTrace();
+			}
+		}
+
+		/**
+		 * Connection dropped.
+		 */
+		@Override
+		public void onServiceDisconnected(ComponentName className) {
+			Log.d("MessengerActivity", "Disconnected from service.");
+			mService = null;
+			mServiceConnected = false;
+		}
+	};
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.main);
-	    intent = new Intent(this, ClipboardService.class);
-	    startService(intent);
-	    
-	    mContext = this;
-	    buf = new byte[1024];
-	    Button s = ((Button)findViewById(R.id.send));
-	    Button r = ((Button)findViewById(R.id.receive));
-	    Button o = ((Button)findViewById(R.id.off));
-	    text = ((TextView)findViewById(R.id.text));
-	    handler = new Handler(getMainLooper(), this);
-	    instance = this;
-	    try {
-			socket = new DatagramSocket(1235);
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    o.setOnClickListener(new View.OnClickListener() {
-			
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		serviceIntent = new Intent(this, ClipboardService.class);
+		startService(serviceIntent);
+		Button send = (Button) findViewById(R.id.send);
+		// Message handling - to service:
+		//final EditText textToService = (EditText) findViewById(R.id.textToService);
+		//final Button sendTextToService = (Button) findViewById(R.id.sendTextToService);
+		send.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				instance.stop();
-			}
-		});
-	    s.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				try {
-					new Sender(socket, getBroadcastAddress(), "test").start();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-
-
-			}
-		});
-	    r.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-					new Receiver(instance, socket).start();
+				sendToService("testData");
 			}
 		});
 	}
-	
-	public void stop() {
-		stopService(intent);
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		bindService(serviceIntent, mConn, Context.BIND_AUTO_CREATE);
 	}
-	
-	public void send(final String msg) {
-		handler.post(new Runnable() {
-			
-			@Override
-			public void run() {
-				text.setText(msg);
-				
-			}
-		});
-	}
-	
-	public boolean handleMessage(android.os.Message arg0) {
-		if(arg0.what == 7) {
-			text.setText((String)arg0.obj);
-			return true;
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if (mServiceConnected) {
+			unbindService(mConn);
+			//stopService(new Intent(this, ClipboardService.class));
+			mServiceConnected = false;
 		}
-		return false;
-	};
-	
-	InetAddress getBroadcastAddress() throws IOException {
-	    WifiManager wifi = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-	    DhcpInfo dhcp = wifi.getDhcpInfo();
-	    // handle null somehow
-
-	    int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
-	    byte[] quads = new byte[4];
-	    for (int k = 0; k < 4; k++)
-	      quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
-	    Log.d("udp", InetAddress.getByAddress(quads).getHostAddress());
-	    return InetAddress.getByAddress(quads);
 	}
-	
-	class Sender extends Thread {
-		DatagramSocket socket;
-		InetAddress address;
-		String data;
-		
-		public Sender(DatagramSocket socket, InetAddress adr, String msg) {
-			this.socket = socket;
-			address = adr;
-			data = msg;
-		}
-		
-		public void run() {
+
+	/**
+	 * Sends message with text stored in bundle extra data ("data" key).
+	 * 
+	 * @param text
+	 *            text to send
+	 */
+	void sendToService(CharSequence text) {
+		if (mServiceConnected) {
+			Log.d(LOG_NAME, "Sending message to service: " + text);
+			Message msg = Message.obtain(null, ClipboardService.MESSAGE_TYPE_TEXT);
+			Bundle b = new Bundle();
+			b.putCharSequence("data", text);
+			msg.setData(b);
 			try {
-				socket.setBroadcast(true);
-				byte buf[] = data.getBytes("UTF-8");
-				DatagramPacket packet = new DatagramPacket(buf,
-					buf.length, address, 1235);
-
-					socket.send(packet);
-
-
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				mService.send(msg);
+			} catch (RemoteException e) {
+				// We always have to trap RemoteException (DeadObjectException
+				// is thrown if the target Handler no longer exists)
 				e.printStackTrace();
 			}
+		} else {
+			Log.d(LOG_NAME, "Cannot send - not connected to service.");
 		}
+	}
+
+	@Override
+	public boolean handleMessage(Message arg0) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
