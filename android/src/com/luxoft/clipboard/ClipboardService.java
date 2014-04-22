@@ -7,10 +7,12 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 import android.app.Service;
+import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.DhcpInfo;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +34,7 @@ public class ClipboardService extends Service {
 	private DatagramSocket socket;
 	private ClipboardManager clipboard;
 	private ClientsManager clients;
+	private boolean owner;
 
 	class IncomingHandler extends Handler {
 		@Override
@@ -51,9 +54,33 @@ public class ClipboardService extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(LOG_NAME, "Service started");
 		clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+		clipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
+			
+			@Override
+			public void onPrimaryClipChanged() {
+				if(!getOwner()) {
+					ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+					CharSequence result = item.getText();
+					if(result == null) {
+						Uri resultUri = item.getUri();
+						if(resultUri == null) {
+							Intent resultIntent = item.getIntent();
+							Log.d(LOG_NAME, "clipboard intent");
+						} else {
+							Log.d(LOG_NAME, "clipboard uri");
+						}
+					} else {
+						String data = result.toString();
+						Log.d(LOG_NAME, "clipboard text: "+data);
+						clients.sendToAll(data);
+					}
+				}
+				setOwner(false);
+			}
+		});
 		try {
 			socket = new DatagramSocket(1234);
-			clients = new ClientsManager();
+			clients = new ClientsManager(socket);
 			Packet p = new Packet(Packet.LOOKUP, "android");
 			new Sender(socket, getBroadcastAddress(), p, true).start();
 			new Receiver(this, socket, getLocalAddress()).start();
@@ -91,6 +118,7 @@ public class ClipboardService extends Service {
 			break;
 		case Packet.CLIPBOARD:
 			Log.d(LOG_NAME, "clipboard: "+input.getContent());
+			setOwner(true);
 			clipboard.setText(input.getContent());
 			break;
 		}
@@ -142,6 +170,14 @@ public class ClipboardService extends Service {
 		for (int k = 0; k < 4; k++)
 			quads[k] = (byte) ((ip >> k * 8) & 0xFF);
 		return InetAddress.getByAddress(quads);
+	}
+	
+	synchronized private void setOwner(boolean f) {
+		owner = f;
+	}
+	
+	synchronized private boolean getOwner() {
+		return owner;
 	}
 
 }
