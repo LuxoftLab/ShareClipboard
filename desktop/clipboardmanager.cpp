@@ -15,6 +15,16 @@ void ClipboardManager::clipboardContentArrived(QString text)
     Logger::instance()<<TimeStamp()<<"Clipboard content arrived.\n";
 }
 
+void ClipboardManager::onDisable()
+{
+    disconnect(m_clipboard,&QClipboard::changed,this,&ClipboardManager::onClipboardChanged);
+}
+
+void ClipboardManager::onEnable()
+{
+    connect(m_clipboard,&QClipboard::changed,this,&ClipboardManager::onClipboardChanged);
+}
+
 void ClipboardManager::onClipboardChanged(QClipboard::Mode mode)
 {
     if(mode!=QClipboard::Clipboard)

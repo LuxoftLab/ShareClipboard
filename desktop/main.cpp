@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
     QCoreApplication::connect(listener,&Listener::clipboardContentArrived,clip_manager,&ClipboardManager::clipboardContentArrived);
     QCoreApplication::connect(clip_manager,&ClipboardManager::sendClipboard,peer_list,&ClientList::onSendClipboard);
     QCoreApplication::connect(peer_list,&ClientList::sendClipboard,listener,&Listener::sendClipboard);
+    QCoreApplication::connect(peer_list,&ClientList::sendAreYouHere,listener,&Listener::sendAreYouHere);
 
     QSystemTrayIcon tray_icon(QIcon(":/img/clipboard-big.png"));
     tray_icon.setContextMenu(peer_list->contextMenu());

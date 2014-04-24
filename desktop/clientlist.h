@@ -8,6 +8,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QMenu>
+#include <QElapsedTimer>
 #include <QDebug>
 
 #include "common.h"
@@ -28,12 +29,14 @@ public slots:
     void helloReceived(QHostAddress host, QString name);
     void onSendClipboard(QString text);
     void onTimerTriggered();
+    void onEnable();
+    void onDisable();
 private:
 
     void updatePeerMenu();
 
     QMap<QString,QHostAddress> m_clients;
-    QList<QString> m_marked_for_delete;
+    QMap<QString,QElapsedTimer *> m_elapsed_timers;
     QTimer m_timer;
     QMutex m_guard;
     QMenu m_menu;

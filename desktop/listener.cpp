@@ -106,6 +106,20 @@ void Listener::processPendingDatagrams()
     }
 }
 
+void Listener::onDisable()
+{
+     disconnect(m_udp_socket,&QUdpSocket::readyRead,this,&Listener::processPendingDatagrams);
+     m_udp_socket->close();
+}
+
+void Listener::onEnable()
+{
+    if (!m_udp_socket->bind(UDP_PORT,QUdpSocket::ShareAddress))
+        qFatal("Can't bind UDP socket.");
+    connect(m_udp_socket,&QUdpSocket::readyRead,this,&Listener::processPendingDatagrams);
+    peerLookupUDP();
+}
+
 void Listener::onPeerFound(QHostAddress peer, QString nick)
 {
     Logger::instance()<<TimeStamp()<<nick<<": lookup\n";

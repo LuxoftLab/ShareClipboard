@@ -3,8 +3,9 @@
 ClientList::ClientList(QObject *parent) :
     QObject(parent)
 {
-    m_timer.setInterval(PEER_LIST_TIMEOUT);
+    m_timer.setInterval(PEER_TIMER_TIMEOUT);
     connect(&m_timer,&QTimer::timeout,this,&ClientList::onTimerTriggered);
+    m_timer.start();
     m_peers_list.setTitle("Peer list");
     m_menu.addMenu(&m_peers_list);
 }
@@ -23,7 +24,9 @@ void ClientList::clientFound(QHostAddress host, QString name)
     }
     QMutexLocker lock(&m_guard);
     m_clients.insert(name,host);
-    m_timer.start();
+    QElapsedTimer * elapsed=new QElapsedTimer();
+    elapsed->start();
+    m_elapsed_timers.insert(name,elapsed);
     Logger::instance()<<TimeStamp()<<"Peer found: "<<host<<" "<<name<<"\n";
     updatePeerMenu();
 }
@@ -31,7 +34,8 @@ void ClientList::clientFound(QHostAddress host, QString name)
 void ClientList::helloReceived(QHostAddress host, QString name)
 {
     QMutexLocker lock(&m_guard);
-    m_marked_for_delete.removeAll(name);
+    if(m_elapsed_timers.contains(name))
+        m_elapsed_timers[name]->restart();
 }
 
 void ClientList::onSendClipboard(QString text)
@@ -45,16 +49,29 @@ void ClientList::onSendClipboard(QString text)
 void ClientList::onTimerTriggered()
 {
     QMutexLocker lock(&m_guard);
-    while(!m_marked_for_delete.isEmpty())
-    {
-        m_clients.remove(m_marked_for_delete.first());
-        m_marked_for_delete.pop_front();
-    }
-    foreach (QString name, m_clients.keys()) {
-        m_marked_for_delete.push_back(name);
-        emit sendAreYouHere(m_clients[name]);
+    foreach (QString key, m_elapsed_timers.keys()) {
+        QElapsedTimer * timer=m_elapsed_timers[key];
+        if(timer->hasExpired(PEER_OFFLINE_TIMEOUT))
+        {
+            timer->invalidate();
+            delete timer;
+            m_elapsed_timers.remove(key);
+            m_clients.remove(key);
+        }
+        if(timer->hasExpired(PEER_CHECK_TIMEOUT))
+            emit sendAreYouHere(m_clients[key]);
     }
     updatePeerMenu();
+}
+
+void ClientList::onEnable()
+{
+
+}
+
+void ClientList::onDisable()
+{
+
 }
 
 void ClientList::updatePeerMenu()

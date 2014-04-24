@@ -32,6 +32,8 @@ public slots:
     void listen();
     void peerLookupUDP();
     void processPendingDatagrams();
+    void onDisable();
+    void onEnable();
 private slots:
     void onPeerFound(QHostAddress peer, QString nick);
     void onHelloReceived(QHostAddress peer, QString nick);

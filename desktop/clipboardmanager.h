@@ -16,6 +16,8 @@ public:
 
 public slots:
     void clipboardContentArrived(QString text);
+    void onDisable();
+    void onEnable();
 signals:
     void sendClipboard(QString text);
 private slots:
