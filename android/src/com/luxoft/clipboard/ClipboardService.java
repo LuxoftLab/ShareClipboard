@@ -7,29 +7,83 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 import android.app.Service;
+import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.DhcpInfo;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 
 public class ClipboardService extends Service {
 
 	private static String LOG_NAME = "service";
+
+	public static final int REGISTER_MESSAGE = 1;
+
+	private final Messenger mMessenger = new Messenger(new IncomingHandler());
+	private Messenger mResponseMessenger = null;
 	
 	private DatagramSocket socket;
-	private InetAddress address;
-	private InetAddress local;
-	private boolean own = false;
-	
+	private ClipboardManager clipboard;
+	private ClientsManager clients;
+	private boolean owner;
+
+	class IncomingHandler extends Handler {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case REGISTER_MESSAGE:
+				Log.d(LOG_NAME, "Registered Activity's Messenger.");
+				mResponseMessenger = msg.replyTo;
+				break;
+			default:
+				super.handleMessage(msg);
+			}
+		}
+	}
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.d(LOG_NAME, "startCommand");
+		Log.d(LOG_NAME, "Service started");
+		clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+		clipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
+			
+			@Override
+			public void onPrimaryClipChanged() {
+				if(!getOwner()) {
+					ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+					CharSequence result = item.getText();
+					if(result == null) {
+						Uri resultUri = item.getUri();
+						if(resultUri == null) {
+							Intent resultIntent = item.getIntent();
+							Log.d(LOG_NAME, "clipboard intent");
+						} else {
+							Log.d(LOG_NAME, "clipboard uri");
+						}
+					} else {
+						String data = result.toString();
+						Log.d(LOG_NAME, "clipboard text: "+data);
+						clients.sendToAll(data);
+					}
+				}
+				setOwner(false);
+			}
+		});
 		try {
 			socket = new DatagramSocket(1234);
-			address = getBroadcastAddress();
+			clients = new ClientsManager(socket);
+			Packet p = new Packet(Packet.LOOKUP, "android");
+			new Sender(socket, getBroadcastAddress(), p, true).start();
+			new Receiver(this, socket, getLocalAddress()).start();
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -37,130 +91,93 @@ public class ClipboardService extends Service {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
-		final ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-		new Receiver(socket, clipboard).start();
-		clipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
-			
-			@Override
-			public void onPrimaryClipChanged() {
-				Log.d(LOG_NAME, "cliboard changed");
-				if(getOwn()) {
-					setOwn(false);
-					return;
-				}
-				Log.d(LOG_NAME, "cliboard: "+((String)clipboard.getText()));
-				Log.d(LOG_NAME, "label: "+clipboard.getPrimaryClipDescription().getLabel());
-				Log.d(LOG_NAME, "mime: "+clipboard.getPrimaryClipDescription().getMimeType(0));
-				new Sender(socket, address, (String)clipboard.getText()).start();
-				setOwn(false);
-			}
-		});
 		return super.onStartCommand(intent, flags, startId);
 	}
-	
-	class Sender extends Thread {
-		DatagramSocket socket;
-		InetAddress address;
-		String data;
-		
-		public Sender(DatagramSocket socket, InetAddress adr, String msg) {
-			this.socket = socket;
-			address = adr;
-			data = msg;
-		}
-		
-		public void run() {
-			try {
-				socket.setBroadcast(true);
-				byte buf[] = data.getBytes("UTF-8");
-				DatagramPacket packet = new DatagramPacket(buf,
-					buf.length, address, 1234);
-				//for(int i=0; i<5; i++) {
-					socket.send(packet);
-				//	Thread.sleep(200);
-				//}
 
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} //catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-			//	e.printStackTrace();
-			//}
-		}
+	@Override
+	public IBinder onBind(Intent intent) {
+		Log.d(LOG_NAME, "Binding messenger...");
+		return mMessenger.getBinder();
 	}
 	
-	class Receiver extends Thread {
-		DatagramSocket socket;
-		ClipboardManager clipboard;
-		
-		public Receiver(DatagramSocket socket, ClipboardManager clipboard) {
-			this.socket = socket;
-			this.clipboard = clipboard;
+	public void onReceiveUDP(DatagramPacket datagram) {
+		Packet input = new Packet(datagram.getData(), datagram.getOffset(), datagram.getLength());
+		switch(input.getType()) {
+		case Packet.LOOKUP:
+			Log.d(LOG_NAME, "lookup by "+input.getContent());
+			sendHello(datagram.getAddress());
+			addClient(input.getContent(), datagram.getAddress());
+			break;
+		case Packet.ARE_YOU_HERE:
+			Log.d(LOG_NAME, "are you here? by "+input.getContent());
+			sendHello(datagram.getAddress());
+			break;
+		case Packet.HELLO: 
+			Log.d(LOG_NAME, "hello by "+input.getContent());
+			addClient(input.getContent(), datagram.getAddress());
+			break;
+		case Packet.CLIPBOARD:
+			Log.d(LOG_NAME, "clipboard: "+input.getContent());
+			setOwner(true);
+			clipboard.setText(input.getContent());
+			break;
 		}
-		
-		public void run() {
-			byte buf[] = new byte[1024];
-			DatagramPacket packet = new DatagramPacket(buf, buf.length);
+ 	}
+	
+	private void sendHello(InetAddress address) {
+		Packet output = new Packet(Packet.HELLO, "android");
+		new Sender(socket, address, output, false).start();
+	}
+	
+	private void addClient(String client, InetAddress address) {
+		if(clients.add(client, address)) {
+			Bundle bundle = new Bundle();
+			bundle.putString("name", client + ": " + address.getHostAddress());
+			sendToActivity(Main.NEW_DEVICE_MESSAGE, bundle);
+		}
+	}
+
+	private void sendToActivity(int type, Bundle data) {
+		if (mResponseMessenger == null) {
+			Log.d(LOG_NAME, "Cannot send message to activity");
+		} else {
+			Log.d(LOG_NAME, "Sending message to activity");
+			Message msg = Message.obtain(null, type);
+			msg.setData(data);
 			try {
-				while(true) {
-					Log.d(LOG_NAME, "wait");
-					socket.receive(packet);
-					Log.d(LOG_NAME, "received from "+packet.getAddress().getHostAddress());
-					String str = new String(packet.getData(), 0, packet.getLength(), "UTF-8");
-					Log.d(LOG_NAME, str);
-					setOwn(true);
-					clipboard.setText(str);
-				}
-			} catch (SocketException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				mResponseMessenger.send(msg);
+			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	@Override
-	public IBinder onBind(Intent intent) {
-		Log.d(LOG_NAME, "bind");
-		return null;
+
+	private InetAddress getBroadcastAddress() throws IOException {
+		WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		DhcpInfo dhcp = wifi.getDhcpInfo();
+		byte[] quads = new byte[4];
+		int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
+		for (int k = 0; k < 4; k++)
+			quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
+		return InetAddress.getByAddress(quads);
 	}
 	
-	@Override
-	public void onDestroy() {
-		Log.d(LOG_NAME, "destroy");
-		super.onDestroy();
+	private InetAddress getLocalAddress() throws IOException {
+		WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		DhcpInfo dhcp = wifi.getDhcpInfo();
+		byte[] quads = new byte[4];
+		int ip = dhcp.ipAddress;
+		for (int k = 0; k < 4; k++)
+			quads[k] = (byte) ((ip >> k * 8) & 0xFF);
+		return InetAddress.getByAddress(quads);
 	}
 	
-	public void setOwn(boolean f) {
-		own = f;
+	synchronized private void setOwner(boolean f) {
+		owner = f;
 	}
 	
-	public boolean getOwn() {
-		return own;
-	}
-	
-	InetAddress getBroadcastAddress() throws IOException {
-	    WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-	    DhcpInfo dhcp = wifi.getDhcpInfo();
-	    // handle null somehow
-	    int ip = dhcp.ipAddress; 
-	    byte[] quads = new byte[4];
-	    for (int k = 0; k < 4; k++)
-	      quads[k] = (byte) ((ip >> k * 8) & 0xFF);
-	    local = InetAddress.getByAddress(quads);
-	    Log.d("local", InetAddress.getByAddress(quads).getHostAddress());
-	    int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
-	    for (int k = 0; k < 4; k++)
-	      quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
-	    Log.d("udp", InetAddress.getByAddress(quads).getHostAddress());
-	    return InetAddress.getByAddress(quads);
+	synchronized private boolean getOwner() {
+		return owner;
 	}
 
 }
