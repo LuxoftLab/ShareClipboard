@@ -57,6 +57,7 @@ void ClientList::onTimerTriggered()
             delete timer;
             m_elapsed_timers.remove(key);
             m_clients.remove(key);
+            Logger::instance()<<TimeStamp()<<QString("Peer timeout: %1").arg(key);
         }
         if(timer->hasExpired(PEER_CHECK_TIMEOUT))
             emit sendAreYouHere(m_clients[key]);
