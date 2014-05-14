@@ -5,7 +5,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Set;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -14,12 +19,15 @@ import android.content.Intent;
 import android.net.DhcpInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 public class ClipboardService extends Service {
@@ -27,6 +35,10 @@ public class ClipboardService extends Service {
 	private static String LOG_NAME = "service";
 
 	public static final int REGISTER_MESSAGE = 1;
+	public static final int CLOSE_MESSAGE = 2;
+	public static final int GET_DEVICES = 3;
+	
+	public static ClipboardService _this = null;
 
 	private final Messenger mMessenger = new Messenger(new IncomingHandler());
 	private Messenger mResponseMessenger = null;
@@ -35,6 +47,7 @@ public class ClipboardService extends Service {
 	private ClipboardManager clipboard;
 	private ClientsManager clients;
 	private boolean owner;
+	private Packet lastPacket = null;
 
 	class IncomingHandler extends Handler {
 		@Override
@@ -43,6 +56,20 @@ public class ClipboardService extends Service {
 			case REGISTER_MESSAGE:
 				Log.d(LOG_NAME, "Registered Activity's Messenger.");
 				mResponseMessenger = msg.replyTo;
+				Set<HashMap.Entry<InetAddress, String>> devices = clients.getDevices();
+				Log.d(LOG_NAME, "devices size:"+devices.size());
+				for(HashMap.Entry<InetAddress, String> device : devices) {
+					Bundle bundle = new Bundle();
+					bundle.putString("name", device.getValue() + ": " + device.getKey().getHostAddress());
+					sendToActivity(Main.NEW_DEVICE_MESSAGE, bundle);
+				}
+				break;
+			case GET_DEVICES:
+				Log.d(LOG_NAME, "get diveces");
+				break;
+			case CLOSE_MESSAGE:
+				stopForeground(true);
+				stopSelf();
 				break;
 			default:
 				super.handleMessage(msg);
@@ -52,6 +79,11 @@ public class ClipboardService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		Log.d(LOG_NAME, "id:"+startId);
+		if(_this != null) {
+			return START_NOT_STICKY;
+		}
+		_this = this;
 		Log.d(LOG_NAME, "Service started");
 		clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 		clipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
@@ -81,7 +113,7 @@ public class ClipboardService extends Service {
 		try {
 			socket = new DatagramSocket(1234);
 			clients = new ClientsManager(socket);
-			Packet p = new Packet(Packet.LOOKUP, "android");
+			Packet p = new Packet(Packet.LOOKUP, Build.DEVICE);
 			new Sender(socket, getBroadcastAddress(), p, true).start();
 			new Receiver(this, socket, getLocalAddress()).start();
 		} catch (SocketException e) {
@@ -91,7 +123,20 @@ public class ClipboardService extends Service {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return super.onStartCommand(intent, flags, startId);
+		Intent resultIntent = new Intent(this, Main.class);
+		PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, 0);
+		NotificationCompat.Builder n = 
+				new NotificationCompat.Builder(this)
+		.setSmallIcon(R.drawable.ic_launcher)
+		.setContentTitle("My title")
+		.setContentText("My test")
+		.setContentIntent(resultPendingIntent);
+		Notification nf = n.build();
+
+		nf.flags |= Notification.FLAG_NO_CLEAR;
+
+		startForeground(100, nf);
+		return START_NOT_STICKY;
 	}
 
 	@Override
@@ -100,8 +145,25 @@ public class ClipboardService extends Service {
 		return mMessenger.getBinder();
 	}
 	
+	@Override
+	public boolean onUnbind(Intent intent) {
+		Log.d(LOG_NAME, "Unbinding...");
+		return super.onUnbind(intent);
+	}
+	
+	@Override
+	public void onDestroy() {
+		_this = null;
+		Log.d(LOG_NAME, "Destroy");
+		super.onDestroy();
+	}
+	
 	public void onReceiveUDP(DatagramPacket datagram) {
 		Packet input = new Packet(datagram.getData(), datagram.getOffset(), datagram.getLength());
+		if(input.equals(lastPacket)) {
+			return;
+		}
+		lastPacket = input;
 		switch(input.getType()) {
 		case Packet.LOOKUP:
 			Log.d(LOG_NAME, "lookup by "+input.getContent());
@@ -125,7 +187,7 @@ public class ClipboardService extends Service {
  	}
 	
 	private void sendHello(InetAddress address) {
-		Packet output = new Packet(Packet.HELLO, "android");
+		Packet output = new Packet(Packet.HELLO, Build.DEVICE);
 		new Sender(socket, address, output, false).start();
 	}
 	

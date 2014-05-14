@@ -16,7 +16,10 @@ public class Packet {
 	public static final int CLIPBOARD = 4;
 	public static final int ARE_YOU_HERE = 8;
 	
+	private static final int DATA_OFFSET = 12;
+	
 	private int type;
+	private int id;
 	private String content;
 	private byte[] data;
 	
@@ -24,9 +27,10 @@ public class Packet {
 		this.data = data;
 		ByteBuffer wrapped = ByteBuffer.wrap(data, offset, len);
 		type = wrapped.getInt();
+		id = wrapped.getInt();
 		int length = wrapped.getInt();
 		try {
-			content = new String(data, 8, length, CHARSET);
+			content = new String(data, DATA_OFFSET, length, CHARSET);
 		} catch (UnsupportedEncodingException e) {
 			Log.d(LOG_NAME, "connot convert to UTF-16");
 			e.printStackTrace();
@@ -34,18 +38,19 @@ public class Packet {
 	}
 	
 	public Packet(int type, String msg) {
+		Log.d(LOG_NAME, "msg: "+msg);
+		this.type = type;
+		this.content = msg;
+		this.id = (int)Math.floor(Math.random()*0xffffff);
 		try {
 			byte[] temp = msg.getBytes(CHARSET);
-			Log.d(LOG_NAME, "string length: "+temp.length);
-			ByteBuffer buffer = ByteBuffer.allocate(temp.length + 8);
+			ByteBuffer buffer = ByteBuffer.allocate(temp.length + DATA_OFFSET);
 			buffer.putInt(type);
+			buffer.putInt(this.id);
 			buffer.putInt(temp.length);
 			buffer.put(temp);
-			data = new byte[temp.length + 8];
-			Log.d(LOG_NAME, "remaining: "+buffer.remaining());
-			Log.d(LOG_NAME, "position: "+buffer.position());
+			data = new byte[temp.length + DATA_OFFSET];
 			buffer.position(0);
-			Log.d(LOG_NAME, "position: "+buffer.position());
 			buffer.get(data);
 		} catch (UnsupportedEncodingException e) {
 			Log.d(LOG_NAME, "connot convert to UTF-16");
@@ -56,9 +61,21 @@ public class Packet {
 	public int getType() {
 		return type;
 	}
+	
+	public int getId() {
+		return id;
+	}
 
 	public String getContent() {
 		return content;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == null) {
+			return false;
+		}
+		return ((Packet)o).id == id;
 	}
 	
 	public byte[] getData() {

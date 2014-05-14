@@ -53,6 +53,7 @@ public class Main extends Activity {
 		
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
+			adapter.clear();
 			Log.d("MessengerActivity", "Connected to service...");
 			mService = new Messenger(service);
 			mServiceConnected = true;
@@ -99,6 +100,29 @@ public class Main extends Activity {
 			unbindService(mConn);
 			// stopService(new Intent(this, ClipboardService.class));
 			mServiceConnected = false;
+		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		sendToService(ClipboardService.CLOSE_MESSAGE, new Bundle());
+		super.onBackPressed();
+	}
+	
+	void sendToService(int type, Bundle data) {
+		if (mServiceConnected) {
+			Log.d(LOG_NAME, "Sending message to service: ");
+			Message msg = Message.obtain(null, type);
+			msg.setData(data);
+			try {
+				mService.send(msg);
+			} catch (RemoteException e) {
+				// We always have to trap RemoteException (DeadObjectException
+				// is thrown if the target Handler no longer exists)
+				e.printStackTrace();
+			}
+		} else {
+			Log.d(LOG_NAME, "Cannot send - not connected to service.");
 		}
 	}
 
