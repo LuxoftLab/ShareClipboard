@@ -103,6 +103,7 @@ void Listener::processPendingDatagrams()
             break;
         case PacketType::AreYouHere:
             emit areYouHereReceived(sender_adr,p.content);
+            emit resetTimerForPeer(sender_adr);
             break;
         default:
             break;

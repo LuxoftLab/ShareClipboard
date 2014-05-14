@@ -37,6 +37,7 @@ private:
 
     QMap<QHostAddress,QString> m_clients;
     QMap<QHostAddress,QElapsedTimer *> m_elapsed_timers;
+    QList<QHostAddress> m_possible_timeout;
     QTimer m_timer;
     QMutex m_guard;
     QMenu m_menu;

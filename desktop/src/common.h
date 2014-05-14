@@ -8,7 +8,7 @@
 #define UDP_PORT 1234
 #define PEER_CHECK_TIMEOUT 45000
 #define PEER_OFFLINE_TIMEOUT 60000
-#define PEER_TIMER_TIMEOUT  20000
+#define PEER_TIMER_TIMEOUT  1000
 #define REPEAT 5
 
 namespace PacketType

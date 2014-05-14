@@ -35,6 +35,7 @@ void ClientList::resetTimerForPeer(QHostAddress peer)
     {
         Logger::instance()<<TimeStamp()<<"Reset timer for "<<peer.toString()<<Flush();
         m_elapsed_timers[peer]->restart();
+        m_possible_timeout.removeAll(peer);
     }
 }
 
@@ -51,18 +52,21 @@ void ClientList::onTimerTriggered()
     QMutexLocker lock(&m_guard);
     foreach (QHostAddress key, m_elapsed_timers.keys()) {
         QElapsedTimer * timer=m_elapsed_timers[key];
-        if(timer->hasExpired(PEER_OFFLINE_TIMEOUT))
-        {
-            timer->invalidate();
-            delete timer;
-            m_elapsed_timers.remove(key);
-            m_clients.remove(key);
-            Logger::instance()<<TimeStamp()<<QString("Peer timeout: %1").arg(key.toString())<<Flush();
-            continue;
-        }
         if(timer->hasExpired(PEER_CHECK_TIMEOUT))
         {
+            if(m_possible_timeout.contains(key))
+            {
+                timer->invalidate();
+                delete timer;
+                m_elapsed_timers.remove(key);
+                m_clients.remove(key);
+                m_possible_timeout.removeAll(key);
+                Logger::instance()<<TimeStamp()<<QString("Peer timeout: %1").arg(key.toString())<<Flush();
+                continue;
+            }
             Logger::instance()<<TimeStamp()<<"Are you here? for "<<key.toString()<<Flush();
+            m_possible_timeout.push_back(key);
+            timer->restart();
             emit sendAreYouHere(key);
         }
     }
