@@ -7,6 +7,7 @@ Listener::Listener(QObject *parent) :
 {
     connect(this,&Listener::peerFound,this,&Listener::onPeerFound);
     connect(this,&Listener::helloReceived,this,&Listener::onHelloReceived);
+    connect(this,&Listener::areYouHereReceived,this,&Listener::onAreYouHereReceived);
 }
 
 void Listener::listen()
