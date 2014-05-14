@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -56,11 +57,11 @@ public class ClipboardService extends Service {
 			case REGISTER_MESSAGE:
 				Log.d(LOG_NAME, "Registered Activity's Messenger.");
 				mResponseMessenger = msg.replyTo;
-				Set<HashMap.Entry<InetAddress, String>> devices = clients.getDevices();
+				Collection<Device> devices = clients.getDevices();
 				Log.d(LOG_NAME, "devices size:"+devices.size());
-				for(HashMap.Entry<InetAddress, String> device : devices) {
+				for(Device device : devices) {
 					Bundle bundle = new Bundle();
-					bundle.putString("name", device.getValue() + ": " + device.getKey().getHostAddress());
+					bundle.putString("name", device.toString());
 					sendToActivity(Main.NEW_DEVICE_MESSAGE, bundle);
 				}
 				break;
@@ -68,22 +69,23 @@ public class ClipboardService extends Service {
 				Log.d(LOG_NAME, "get diveces");
 				break;
 			case CLOSE_MESSAGE:
+				socket.close();
 				stopForeground(true);
 				stopSelf();
+				Log.d(LOG_NAME, "close");
 				break;
 			default:
 				super.handleMessage(msg);
 			}
 		}
 	}
-
+	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(LOG_NAME, "id:"+startId);
-		if(_this != null) {
-			return START_NOT_STICKY;
+		if(startId != 1) {
+			return START_STICKY;
 		}
-		_this = this;
 		Log.d(LOG_NAME, "Service started");
 		clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 		clipboard.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
@@ -112,7 +114,8 @@ public class ClipboardService extends Service {
 		});
 		try {
 			socket = new DatagramSocket(1234);
-			clients = new ClientsManager(socket);
+			Log.d(LOG_NAME, "init clients");
+			clients = new ClientsManager(socket, this);
 			Packet p = new Packet(Packet.LOOKUP, Build.DEVICE);
 			new Sender(socket, getBroadcastAddress(), p, true).start();
 			new Receiver(this, socket, getLocalAddress()).start();
@@ -136,7 +139,7 @@ public class ClipboardService extends Service {
 		nf.flags |= Notification.FLAG_NO_CLEAR;
 
 		startForeground(100, nf);
-		return START_NOT_STICKY;
+		return START_STICKY;
 	}
 
 	@Override
@@ -153,7 +156,6 @@ public class ClipboardService extends Service {
 	
 	@Override
 	public void onDestroy() {
-		_this = null;
 		Log.d(LOG_NAME, "Destroy");
 		super.onDestroy();
 	}
@@ -173,15 +175,18 @@ public class ClipboardService extends Service {
 		case Packet.ARE_YOU_HERE:
 			Log.d(LOG_NAME, "are you here? by "+input.getContent());
 			sendHello(datagram.getAddress());
+			clients.updateDevice(datagram.getAddress());
 			break;
 		case Packet.HELLO: 
 			Log.d(LOG_NAME, "hello by "+input.getContent());
 			addClient(input.getContent(), datagram.getAddress());
+			clients.updateDevice(datagram.getAddress());
 			break;
 		case Packet.CLIPBOARD:
 			Log.d(LOG_NAME, "clipboard: "+input.getContent());
 			setOwner(true);
 			clipboard.setText(input.getContent());
+			clients.updateDevice(datagram.getAddress());
 			break;
 		}
  	}
@@ -192,11 +197,18 @@ public class ClipboardService extends Service {
 	}
 	
 	private void addClient(String client, InetAddress address) {
-		if(clients.add(client, address)) {
+		Device device = clients.add(client, address);
+		if(device != null) {
 			Bundle bundle = new Bundle();
-			bundle.putString("name", client + ": " + address.getHostAddress());
+			bundle.putString("name", device.toString());
 			sendToActivity(Main.NEW_DEVICE_MESSAGE, bundle);
 		}
+	}
+	
+	public void removeDevice(Device device) {
+		Bundle bundle = new Bundle();
+		bundle.putString("name", device.toString());
+		sendToActivity(Main.REMOVE_DEVICE, bundle);
 	}
 
 	private void sendToActivity(int type, Bundle data) {

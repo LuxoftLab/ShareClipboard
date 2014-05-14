@@ -22,6 +22,7 @@ public class Main extends Activity {
 	private static String LOG_NAME = "activity";
 	
 	public static final int NEW_DEVICE_MESSAGE = 1;
+	public static final int REMOVE_DEVICE = 2;
 
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 
@@ -43,6 +44,10 @@ public class Main extends Activity {
 				Main.this.adapter.notifyDataSetChanged();
 				Log.d(LOG_NAME, msg.getData().getString("name"));
 				break;
+			case REMOVE_DEVICE:
+				Main.this.devices.remove(msg.getData().getString("name"));
+				Main.this.adapter.notifyDataSetChanged();
+				Log.d(LOG_NAME, "remove: "  + msg.getData().getString("name"));
 			default:
 				super.handleMessage(msg);	
 			}
