@@ -64,7 +64,7 @@ void ClientList::onTimerTriggered()
                 Logger::instance()<<TimeStamp()<<QString("Peer timeout: %1").arg(key.toString())<<Flush();
                 continue;
             }
-            Logger::instance()<<TimeStamp()<<"Are you here? for "<<key.toString()<<Flush();
+            //Logger::instance()<<TimeStamp()<<"Are you here? for "<<key.toString()<<Flush();
             m_possible_timeout.push_back(key);
             timer->restart();
             emit sendAreYouHere(key);

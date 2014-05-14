@@ -40,6 +40,7 @@ void Listener::peerLookupUDP()
     foreach (QHostAddress addr, m_broadcasts) {
         send(addr,packet);
     }
+    Logger::instance()<<TimeStamp()<<"Me: lookup"<<Flush();
 }
 
 void Listener::sendHello(QHostAddress peer)
@@ -49,6 +50,7 @@ void Listener::sendHello(QHostAddress peer)
     packet.id=qrand();
     packet.content=QHostInfo::localHostName();
     send(peer,packet);
+    Logger::instance()<<TimeStamp()<<"Me: Hello, "<<peer<<Flush();
 }
 
 void Listener::sendAreYouHere(QHostAddress peer)
@@ -58,6 +60,7 @@ void Listener::sendAreYouHere(QHostAddress peer)
     packet.id=qrand();
     packet.content=QHostInfo::localHostName();
     send(peer,packet);
+    Logger::instance()<<TimeStamp()<<"Me: Are you here, "<<peer<<"?"<<Flush();
 }
 
 void Listener::sendClipboard(QHostAddress peer, QString text)
@@ -67,6 +70,7 @@ void Listener::sendClipboard(QHostAddress peer, QString text)
     packet.content=text;
     packet.id=qrand();
     send(peer,packet);
+    Logger::instance()<<TimeStamp()<<"Me: Send clipboard to "<<peer<<Flush();
 }
 
 void Listener::processPendingDatagrams()
@@ -85,7 +89,7 @@ void Listener::processPendingDatagrams()
         m_last_id=p.id;
         if(p.type==PacketType::Lookup && p.content==QHostInfo::localHostName())
         {
-            Logger::instance()<<TimeStamp()<<"Self test - OK!"<<Flush();
+            Logger::instance()<<TimeStamp()<<"Me: Self test - OK!"<<Flush();
             return;
         }
         switch(p.type)

@@ -30,5 +30,4 @@ void ClipboardManager::onClipboardChanged(QClipboard::Mode mode)
     if(mode!=QClipboard::Clipboard)
         return;
     emit sendClipboard(m_clipboard->text());
-    Logger::instance()<<TimeStamp()<<"Will send clipboard."<<Flush();
 }
