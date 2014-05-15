@@ -14,7 +14,7 @@ import java.util.Set;
 import android.util.Log;
 
 public class ClientsManager {
-	private static final int DELAY = 10*1000; //45sec
+	private static final int DELAY = 45*1000; //45sec
 	
 	private static final String LOG_NAME = "devices";
 	

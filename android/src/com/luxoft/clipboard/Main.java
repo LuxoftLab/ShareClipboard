@@ -7,14 +7,28 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.os.SystemClock;
+import android.text.Editable;
+import android.text.method.KeyListener;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 public class Main extends Activity {
@@ -34,6 +48,8 @@ public class Main extends Activity {
 	private ListView clientsList;
 	private ArrayAdapter<String> adapter;
 	private ArrayList<String> devices = new ArrayList<String>();
+	private Menu menu;
+	private String name;
 
 	class IncomingHandler extends Handler {
 		@Override
@@ -83,13 +99,58 @@ public class Main extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getActionBar().setTitle("");
 		setContentView(R.layout.main);
+		
 		serviceIntent = new Intent(this, ClipboardService.class);
 		startService(serviceIntent);
+		
+		name = Build.DEVICE;
 		
 		clientsList = (ListView) findViewById(R.id.clients);
 		adapter = new ArrayAdapter<String>(this, R.layout.line, devices);
 		clientsList.setAdapter(adapter);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		this.menu = menu;
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.bar, menu);
+		menu.findItem(R.id.name).setTitle(name);
+		EditText edit = (EditText)menu.findItem(R.id.editName).getActionView();
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch(id) {
+		case R.id.on:
+			menu.findItem(R.id.off).setVisible(true);
+			item.setVisible(false);
+			break;
+		case R.id.off:
+			menu.findItem(R.id.on).setVisible(true);
+			item.setVisible(false);
+			break;
+		case R.id.edit:
+			EditText edit = (EditText)menu.findItem(R.id.editName).getActionView();
+			menu.findItem(R.id.close).setVisible(true);
+			menu.findItem(R.id.name).setVisible(false);
+			edit.setText(name);
+			edit.requestFocus();
+			menu.findItem(R.id.editName).setVisible(true);
+			item.setVisible(false);
+			break;
+		case R.id.close:
+			menu.findItem(R.id.edit).setVisible(true);
+			menu.findItem(R.id.editName).setVisible(false);
+			menu.findItem(R.id.name).setVisible(true);
+			item.setVisible(false);
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

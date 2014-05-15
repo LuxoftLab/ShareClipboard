@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="130dp"
+    android:maxWidth="130dp"
+    android:singleLine="true"
+    android:lines="1"
+    android:scrollHorizontally="true"
+    android:hint="Devcie name" >
+    
+
+</EditText>
