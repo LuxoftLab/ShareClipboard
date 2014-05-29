@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     ClientList * peer_list=new ClientList();
     ClipboardManager * clip_manager=new ClipboardManager();
     listener->moveToThread(listener_thread);
+
     QCoreApplication::connect(listener_thread,&QThread::started,listener,&Listener::listen);
     QCoreApplication::connect(listener_thread,&QThread::finished,listener,&Listener::deleteLater);
     QCoreApplication::connect(listener_thread,&QThread::finished,listener_thread,&QThread::deleteLater);
@@ -29,10 +30,6 @@ int main(int argc, char *argv[])
     QCoreApplication::connect(peer_list,&ClientList::sendClipboard,listener,&Listener::sendClipboard);
     QCoreApplication::connect(peer_list,&ClientList::sendAreYouHere,listener,&Listener::sendAreYouHere);
     QCoreApplication::connect(listener,&Listener::resetTimerForPeer,peer_list,&ClientList::resetTimerForPeer);
-
-    //LogView logView(0);
-    /*QAction * showLogAction=context_menu->addAction(QObject::tr("Show log..."));
-    QApplication::connect(showLogAction,&QAction::triggered,&logView,&LogView::show);*/
     
     listener_thread->start();
     UserInterface ui(peer_list);

@@ -11,6 +11,8 @@ LogView::LogView(QWidget *parent) :
     layout->addWidget(m_log);
     this->setLayout(layout);
     m_timer.setInterval(500);
+    layout->setMargin(0);
+    layout->setSpacing(0);
     m_timer.start();
     connect(&m_timer,&QTimer::timeout,this,&LogView::onTimerTimeout);
 }
@@ -24,5 +26,5 @@ void LogView::onTimerTimeout()
 {
     QByteArray buf=Logger::instance().readBuffer();
     if(buf.length())
-        m_log->append(QString(buf));
+        m_log->append(QString(buf).toLocal8Bit());
 }

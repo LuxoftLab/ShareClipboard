@@ -8,6 +8,7 @@
 #include <QStringList>
 
 #include "clientlist.h"
+#include "logview.h"
 
 class UserInterface : public QObject
 {
@@ -31,7 +32,9 @@ private:
     QMenu * m_peers_menu;
     QAction * m_enable_action;
     QAction * m_disable_action;
+    QAction * m_show_log_action;
     ClientList * m_peer_list;
+    LogView * m_log_view;
 };
 
 #endif // USERINTERFACE_H

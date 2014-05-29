@@ -18,19 +18,20 @@ SOURCES += clientlist.cpp \
     common.cpp \
     logger.cpp \
     clipboardmanager.cpp \
-    logview.cpp \
     main.cpp \
     userinterface.cpp \
-    launcher.cpp
+    launcher.cpp \
+    logview.cpp
 
 HEADERS += \
+    clipboardmanager.h \
     clientlist.h \
     common.h \
     listener.h \
     logger.h \
-    logview.h \
     userinterface.h \
-    launcher.h
+    launcher.h \
+    logview.h
 
 RESOURCES += \
     rsrc.qrc

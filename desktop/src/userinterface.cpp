@@ -8,7 +8,9 @@ UserInterface::UserInterface(ClientList *peer_list, QObject *parent) :
     m_peers_menu(0),
     m_enable_action(0),
     m_disable_action(0),
-    m_peer_list(peer_list)
+    m_show_log_action(0),
+    m_peer_list(peer_list),
+    m_log_view(0)
 {
     connect(m_peer_list,&ClientList::peerListChanged,this,&UserInterface::onPeerListChanged);
 
@@ -30,6 +32,10 @@ UserInterface::UserInterface(ClientList *peer_list, QObject *parent) :
     m_disable_action->setActionGroup(group);
     connect(m_disable_action,&QAction::triggered,this,&UserInterface::onDisabledTriggered);
 
+    m_log_view = new LogView(0);
+    m_show_log_action = m_main_menu->addAction(tr("Show log..."));
+    connect(m_show_log_action,&QAction::triggered,m_log_view,&LogView::show);
+
     m_peers_menu = m_main_menu->addMenu(tr("Peer list"));
 
     m_tray->show();
@@ -38,6 +44,7 @@ UserInterface::UserInterface(ClientList *peer_list, QObject *parent) :
 UserInterface::~UserInterface()
 {
     delete m_tray;
+    delete m_log_view;
 }
 
 void UserInterface::onEnabledTriggered(bool checked)
