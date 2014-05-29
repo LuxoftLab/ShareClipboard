@@ -33,12 +33,12 @@ int main(int argc, char *argv[])
     
     listener_thread->start();
     UserInterface ui(peer_list);
-    QCoreApplication::connect(&ui,&UserInterface::enable,listener,&Listener::onEnable);
-    QCoreApplication::connect(&ui,&UserInterface::enable,peer_list,&ClientList::onEnable);
-    QCoreApplication::connect(&ui,&UserInterface::enable,clip_manager,&ClipboardManager::onEnable);
+    QCoreApplication::connect(&ui,&UserInterface::enableSignal,listener,&Listener::onEnable);
+    QCoreApplication::connect(&ui,&UserInterface::enableSignal,peer_list,&ClientList::onEnable);
+    QCoreApplication::connect(&ui,&UserInterface::enableSignal,clip_manager,&ClipboardManager::onEnable);
 
-    QCoreApplication::connect(&ui,&UserInterface::disable,listener,&Listener::onDisable);
-    QCoreApplication::connect(&ui,&UserInterface::disable,peer_list,&ClientList::onDisable);
-    QCoreApplication::connect(&ui,&UserInterface::disable,clip_manager,&ClipboardManager::onDisable);
+    QCoreApplication::connect(&ui,&UserInterface::disableSignal,listener,&Listener::onDisable);
+    QCoreApplication::connect(&ui,&UserInterface::disableSignal,peer_list,&ClientList::onDisable);
+    QCoreApplication::connect(&ui,&UserInterface::disableSignal,clip_manager,&ClipboardManager::onDisable);
     return a.exec();
 }

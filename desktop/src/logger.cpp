@@ -92,5 +92,5 @@ TimeStamp::TimeStamp()
 
 TimeStamp::operator QString()
 {
-    return QString("[%1] ").arg(QDateTime::currentDateTime().toString());
+    return QString("[%1] ").arg(QDateTime::currentDateTime().toString("dd.MM.yy hh:mm:ss"));
 }

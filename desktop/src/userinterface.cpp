@@ -38,6 +38,9 @@ UserInterface::UserInterface(ClientList *peer_list, QObject *parent) :
 
     m_peers_menu = m_main_menu->addMenu(tr("Peer list"));
 
+    m_exit_action = m_main_menu->addAction(tr("Exit"));
+    connect(m_exit_action,&QAction::triggered,this,&UserInterface::onExit);
+
     m_tray->show();
 }
 
@@ -51,7 +54,7 @@ void UserInterface::onEnabledTriggered(bool checked)
 {
     if(checked)
     {
-        emit enable();
+        emit enableSignal();
         Logger::instance()<<TimeStamp()<<"Me: enable service"<<Flush();
     }
 }
@@ -60,7 +63,7 @@ void UserInterface::onDisabledTriggered(bool checked)
 {
     if(checked)
     {
-        emit disable();
+        emit disableSignal();
         Logger::instance()<<TimeStamp()<<"Me: disable service"<<Flush();
     }
 }
@@ -71,4 +74,11 @@ void UserInterface::onPeerListChanged(QStringList peers)
     foreach (QString peer, peers) {
         m_peers_menu->addAction(peer);
     }
+}
+
+void UserInterface::onExit(bool checked)
+{
+    Logger::instance()<<TimeStamp()<<"Me: goodbye!"<<Flush();
+    emit exitSignal();
+    qApp->quit();
 }

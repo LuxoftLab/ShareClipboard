@@ -14,6 +14,7 @@ LogView::LogView(QWidget *parent) :
     layout->setMargin(0);
     layout->setSpacing(0);
     m_timer.start();
+    setWindowTitle(tr("Log viewer"));
     connect(&m_timer,&QTimer::timeout,this,&LogView::onTimerTimeout);
 }
 
