@@ -19,10 +19,10 @@ class ClientList : public QObject
     Q_OBJECT
 public:
     explicit ClientList(QObject *parent = 0);
-    QMenu * contextMenu();
 signals:
     void sendAreYouHere(QHostAddress host);
     void sendClipboard(QHostAddress peer,QString text);
+    void peerListChanged(QStringList peers);
 public slots:
     void clientFound(QHostAddress host, QString name);
     void onSendClipboard(QString text);
@@ -33,15 +33,13 @@ public slots:
 private slots:
     void onTimerTriggered();
 private:
-    void updatePeerMenu();
+    void updatePeerList();
 
     QMap<QHostAddress,QString> m_clients;
     QMap<QHostAddress,QElapsedTimer *> m_elapsed_timers;
     QList<QHostAddress> m_possible_timeout;
     QTimer m_timer;
     QMutex m_guard;
-    QMenu m_menu;
-    QMenu m_peers_list;
 };
 
 #endif // CLIENTLIST_H
