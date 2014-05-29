@@ -6,11 +6,13 @@
 #include "listener.h"
 #include "clientlist.h"
 #include "clipboardmanager.h"
+#include "logview.h"
 
 int main(int argc, char *argv[])
 {
     qRegisterMetaType<QHostAddress>("QHostAddress");
     QApplication a(argc, argv);
+    a.setQuitOnLastWindowClosed(false);
 
     QThread * listener_thread=new QThread();
     Listener * listener=new Listener();
@@ -29,8 +31,12 @@ int main(int argc, char *argv[])
     QCoreApplication::connect(peer_list,&ClientList::sendAreYouHere,listener,&Listener::sendAreYouHere);
     QCoreApplication::connect(listener,&Listener::resetTimerForPeer,peer_list,&ClientList::resetTimerForPeer);
 
+    LogView logView(0);
     QSystemTrayIcon tray_icon(QIcon(":/img/clipboard-big.png"));
-    tray_icon.setContextMenu(peer_list->contextMenu());
+    QMenu * context_menu=peer_list->contextMenu();
+    QAction * showLogAction=context_menu->addAction(QObject::tr("Show log..."));
+    QApplication::connect(showLogAction,&QAction::triggered,&logView,&LogView::show);
+    tray_icon.setContextMenu(context_menu);
     tray_icon.show();
 
     listener_thread->start();

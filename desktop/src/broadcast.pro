@@ -13,19 +13,24 @@ TARGET = clipboard
 TEMPLATE = app
 
 
-SOURCES += main.cpp \
-    clientlist.cpp \
+SOURCES += clientlist.cpp \
     listener.cpp \
     common.cpp \
     logger.cpp \
-    clipboardmanager.cpp
+    clipboardmanager.cpp \
+    logview.cpp \
+    main.cpp
 
 HEADERS += \
     clientlist.h \
     common.h \
     listener.h \
     logger.h \
-    clipboardmanager.h
+    clipboardmanager.h \
+    logview.h
 
 RESOURCES += \
     rsrc.qrc
+
+FORMS += \
+    logview.ui

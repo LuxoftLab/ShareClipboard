@@ -14,6 +14,7 @@
 #include <QQueue>
 #include <QThread>
 #include <QTimer>
+#include <QBuffer>
 
 typedef QQueue<QString> StringQueue;
 typedef QThread* ThreadPtr;
@@ -41,8 +42,10 @@ private:
     static QMutex m_guard;
 
     QFile m_log_file;
-    QTextStream m_stream;
+    QTextStream m_stream, m_buffer_stream;
     QMap<ThreadPtr,StringQueue> m_feeds;
+    QBuffer m_buffer;
+
 public:
 
     class LoggerIOException{};
@@ -53,6 +56,7 @@ public:
     Logger & operator <<(const QHostAddress & addr);
     Logger & operator <<(const int & num);
     Logger & operator <<(const Flush & f);
+    QByteArray readBuffer();
 };
 
 #endif // LOGGER_H
