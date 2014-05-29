@@ -6,13 +6,6 @@ ClientList::ClientList(QObject *parent) :
     m_timer.setInterval(PEER_TIMER_TIMEOUT);
     connect(&m_timer,&QTimer::timeout,this,&ClientList::onTimerTriggered);
     m_timer.start();
-    m_peers_list.setTitle("Peer list");
-    m_menu.addMenu(&m_peers_list);
-}
-
-QMenu *ClientList::contextMenu()
-{
-    return &m_menu;
 }
 
 void ClientList::clientFound(QHostAddress host, QString name)
@@ -25,7 +18,7 @@ void ClientList::clientFound(QHostAddress host, QString name)
     elapsed->start();
     m_elapsed_timers.insert(host,elapsed);
     Logger::instance()<<TimeStamp()<<"Peer found: "<<host<<" "<<name<<Flush();
-    updatePeerMenu();
+    updatePeerList();
 }
 
 void ClientList::resetTimerForPeer(QHostAddress peer)
@@ -50,6 +43,7 @@ void ClientList::onSendClipboard(QString text)
 void ClientList::onTimerTriggered()
 {
     QMutexLocker lock(&m_guard);
+    bool isPeerListChanged=false;
     foreach (QHostAddress key, m_elapsed_timers.keys()) {
         QElapsedTimer * timer=m_elapsed_timers[key];
         if(timer->hasExpired(PEER_CHECK_TIMEOUT))
@@ -62,6 +56,7 @@ void ClientList::onTimerTriggered()
                 m_clients.remove(key);
                 m_possible_timeout.removeAll(key);
                 Logger::instance()<<TimeStamp()<<QString("Peer timeout: %1").arg(key.toString())<<Flush();
+                isPeerListChanged=true;
                 continue;
             }
             //Logger::instance()<<TimeStamp()<<"Are you here? for "<<key.toString()<<Flush();
@@ -70,23 +65,25 @@ void ClientList::onTimerTriggered()
             emit sendAreYouHere(key);
         }
     }
-    updatePeerMenu();
+    if(isPeerListChanged)
+        updatePeerList();
 }
 
 void ClientList::onEnable()
 {
-
+    m_timer.start();
 }
 
 void ClientList::onDisable()
 {
-
+    m_timer.stop();
 }
 
-void ClientList::updatePeerMenu()
+void ClientList::updatePeerList()
 {
-    m_peers_list.clear();
+    QStringList peers;
     foreach (QHostAddress key, m_clients.keys()) {
-        m_peers_list.addAction(QString("%1 (%2)").arg(key.toString(),m_clients[key]));
+        peers<<QString("%1 (%2)").arg(key.toString(),m_clients[key]);
     }
+    emit peerListChanged(peers);
 }

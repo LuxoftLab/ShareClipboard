@@ -1,12 +1,11 @@
 #include <QApplication>
-#include <QSystemTrayIcon>
-#include <QIcon>
 #include <QThread>
 
 #include "listener.h"
 #include "clientlist.h"
 #include "clipboardmanager.h"
 #include "logview.h"
+#include "userinterface.h"
 
 int main(int argc, char *argv[])
 {
@@ -31,14 +30,18 @@ int main(int argc, char *argv[])
     QCoreApplication::connect(peer_list,&ClientList::sendAreYouHere,listener,&Listener::sendAreYouHere);
     QCoreApplication::connect(listener,&Listener::resetTimerForPeer,peer_list,&ClientList::resetTimerForPeer);
 
-    LogView logView(0);
-    QSystemTrayIcon tray_icon(QIcon(":/img/clipboard-big.png"));
-    QMenu * context_menu=peer_list->contextMenu();
-    QAction * showLogAction=context_menu->addAction(QObject::tr("Show log..."));
-    QApplication::connect(showLogAction,&QAction::triggered,&logView,&LogView::show);
-    tray_icon.setContextMenu(context_menu);
-    tray_icon.show();
-
+    //LogView logView(0);
+    /*QAction * showLogAction=context_menu->addAction(QObject::tr("Show log..."));
+    QApplication::connect(showLogAction,&QAction::triggered,&logView,&LogView::show);*/
+    
     listener_thread->start();
+    UserInterface ui(peer_list);
+    QCoreApplication::connect(&ui,&UserInterface::enable,listener,&Listener::onEnable);
+    QCoreApplication::connect(&ui,&UserInterface::enable,peer_list,&ClientList::onEnable);
+    QCoreApplication::connect(&ui,&UserInterface::enable,clip_manager,&ClipboardManager::onEnable);
+
+    QCoreApplication::connect(&ui,&UserInterface::disable,listener,&Listener::onDisable);
+    QCoreApplication::connect(&ui,&UserInterface::disable,peer_list,&ClientList::onDisable);
+    QCoreApplication::connect(&ui,&UserInterface::disable,clip_manager,&ClipboardManager::onDisable);
     return a.exec();
 }
