@@ -2,14 +2,15 @@
 #define SERVER_CONNECTION_H
 
 #include "connection.h"
-#include "client_room.h"
 
 class ServerConnection : public Connection
 {
-    ClientRoom * room;
+
 public:
-    ServerConnection(ClientRoom * room);
+    ServerConnection();
     void sendPassAndLogin(QString password, QString login);
+signals:
+    void addMember(QString login, QHostAddress addr);
 };
 
 #endif // SERVER_CONNECTION_H

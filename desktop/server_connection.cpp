@@ -1,8 +1,8 @@
 #include "server_connection.h"
 
-ServerConnection::ServerConnection(ClientRoom * room) : Connection(NULL)
+ServerConnection::ServerConnection() : Connection(NULL)
 {
-    this->room = room;
+
 }
 
 void ServerConnection::sendPassAndLogin(QString password, QString login)

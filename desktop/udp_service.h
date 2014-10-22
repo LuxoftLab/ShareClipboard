@@ -1,17 +1,21 @@
 #ifndef UDP_SERVICE_H
 #define UDP_SERVICE_H
 
-#include "controller.h"
-class Controller;
-class UDPService
+#include <QObject>
+#include <QHostAddress>
+
+class UDPService : public QObject
 {
-    Controller * controller;
+    Q_OBJECT
+
 public:
-    UDPService(Controller * controller);
+    UDPService();
     bool initListener();
     void getRooms();
     void sendRoom(QString name);
     void notifyAboutRoom(QString name);
+signals:
+    void addRoom(QString name, QHostAddress host);
 };
 
 #endif // UDP_SERVICE_H

@@ -1,22 +1,23 @@
 #ifndef SERVER_ROOM_H
 #define SERVER_ROOM_H
 
-#include <QUdpSocket>
+#include <QTcpSocket>
 #include <QVector>
 
 #include "room.h"
 #include "tcp_server.h"
 #include "client_connection.h"
 
-class ClientConnection;
 class ServerRoom : public Room
 {
+    TCPServer * server;
     QVector<ClientConnection*> notVerified;
     QVector<ClientConnection*> verified;
 public:
     ServerRoom(QString name, QString pass);
     ~ServerRoom();
-    void addMember(QUdpSocket socket);
+public slots:
+    void addMember(QTcpSocket * socket);
     bool verifyPass(QString pass, ClientConnection& conn);
 };
 

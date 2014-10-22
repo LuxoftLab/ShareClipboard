@@ -1,13 +1,17 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include <QUdpSocket>
+#include <QObject>
+#include <QTcpSocket>
+#include <QHostAddress>
 
-class Connection
+class Connection : public QObject
 {
-    QUdpSocket* socket;
+    Q_OBJECT
+private:
+    QTcpSocket* socket;
 public:
-    Connection(QUdpSocket * socket);
+    Connection(QTcpSocket * socket);
     qint32 getIpc4();
 };
 

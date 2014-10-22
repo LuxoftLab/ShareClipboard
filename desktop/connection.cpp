@@ -1,6 +1,6 @@
 #include "connection.h"
 
-Connection::Connection(QUdpSocket * socket)
+Connection::Connection(QTcpSocket * socket)
 {
     this->socket = socket;
 }

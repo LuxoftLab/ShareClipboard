@@ -1,8 +1,9 @@
 #include "controller.h"
 
-Controller::Controller()
+Controller::Controller() : QObject(0)
 {
-    udpService = new UDPService(this);
+    udpService = new UDPService();
+    connect(udpService, SIGNAL(UDPService::addRoom()), this, SLOT(addRoom()));
 }
 
 Controller::~Controller()

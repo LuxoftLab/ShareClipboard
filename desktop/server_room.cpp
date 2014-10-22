@@ -9,7 +9,7 @@ ServerRoom::~ServerRoom()
 
 }
 
-void ServerRoom::addMember(QUdpSocket socket)
+void ServerRoom::addMember(QTcpSocket * socket)
 {
 
 }

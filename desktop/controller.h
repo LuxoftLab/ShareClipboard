@@ -1,6 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
+#include <QObject>
 #include <QHostAddress>
 #include <QVector>
 
@@ -8,9 +9,10 @@
 #include "server_room.h"
 #include "client_room.h"
 
-class UDPService;
-class Controller
+class Controller : public QObject
 {
+    Q_OBJECT
+private:
     UDPService* udpService;
     ServerRoom* serverRoom;
     ClientRoom* clientRoom;
@@ -18,9 +20,10 @@ class Controller
 public:
     Controller();
     ~Controller();
-    void addRoom(QString name, QHostAddress host);
     bool createRoom(QString name, QString pass);
     bool joinRoom(int index);
+public slots:
+    void addRoom(QString name, QHostAddress host);
 };
 
 #endif // CONTROLLER_H

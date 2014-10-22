@@ -3,17 +3,18 @@
 
 
 #include "connection.h"
-#include "server_room.h"
-class ServerRoom;
+
 class ClientConnection : public Connection
 {
     QString login;
-    ServerRoom * room;
 public:
-    ClientConnection(ServerRoom * room, QUdpSocket * socket);
+    ClientConnection(QTcpSocket * socket);
     void sendFail();
     void sendMember(QString login, quint32 ipv4);
     QString getLogin();
+signals:
+    void addMember(QTcpSocket socket);
+    bool verifyPass(QString pass, ClientConnection& conn);
 };
 
 #endif // CLIENT_CONNECTION_H

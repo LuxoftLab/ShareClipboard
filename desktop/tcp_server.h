@@ -1,13 +1,18 @@
 #ifndef TCP_SERVER_H
 #define TCP_SERVER_H
 
-#include "server_room.h"
-class ServerRoom;
-class TCPServer
+#include <QObject>
+#include <QTcpSocket>
+
+class TCPServer : public QObject
 {
-    ServerRoom * room;
+    Q_OBJECT
+
 public:
-    TCPServer(ServerRoom * room);
+    TCPServer();
+
+signals:
+    void addMember(QTcpSocket * socket);
 };
 
 #endif // TCP_SERVER_H

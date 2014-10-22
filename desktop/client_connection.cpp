@@ -1,8 +1,8 @@
 #include "client_connection.h"
 
-ClientConnection::ClientConnection(ServerRoom * room, QUdpSocket * socket) : Connection(socket)
+ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
-    this->room = room;
+
 }
 
 void ClientConnection::sendFail()

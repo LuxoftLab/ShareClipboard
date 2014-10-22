@@ -1,6 +1,5 @@
 #include "tcp_server.h"
 
-TCPServer::TCPServer(ServerRoom * room)
+TCPServer::TCPServer()
 {
-    this->room = room;
 }

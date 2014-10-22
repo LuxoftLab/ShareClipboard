@@ -1,8 +1,8 @@
 #include "udp_service.h"
 
-UDPService::UDPService(Controller * controller)
+UDPService::UDPService() : QObject(0)
 {
-    this->controller = controller;
+
 }
 
 bool UDPService::initListener()

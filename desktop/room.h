@@ -1,10 +1,13 @@
 #ifndef ROOM_H
 #define ROOM_H
 
+#include <QObject>
 #include <QString>
 
-class Room
+class Room : public QObject
 {
+    Q_OBJECT
+private:
     QString name;
     QString pass;
 public:

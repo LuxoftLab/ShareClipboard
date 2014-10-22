@@ -19,6 +19,7 @@ public:
     ClientRoom(QString name, QHostAddress host);
     ~ClientRoom();
     void connectToHost();
+public slots:
     void addMember(QString login, QHostAddress addr);
 };
 
