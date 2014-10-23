@@ -7,10 +7,11 @@ class ServerConnection : public Connection
 {
 
 public:
-    ServerConnection();
+    ServerConnection(QHostAddress host);
     void sendPassAndLogin(QString password, QString login);
 signals:
     void addMember(QString login, QHostAddress addr);
+    void deleteMember(QHostAddress addr);
 };
 
 #endif // SERVER_CONNECTION_H

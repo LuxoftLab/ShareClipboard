@@ -2,7 +2,7 @@
 #define SERVER_ROOM_H
 
 #include <QTcpSocket>
-#include <QVector>
+#include <QMap>
 
 #include "room.h"
 #include "tcp_server.h"
@@ -11,14 +11,16 @@
 class ServerRoom : public Room
 {
     TCPServer * server;
-    QVector<ClientConnection*> notVerified;
-    QVector<ClientConnection*> verified;
+    QMap<qint32, ClientConnection*> notVerified;
+    QMap<qint32, ClientConnection*> verified;
 public:
     ServerRoom(QString name, QString pass);
     ~ServerRoom();
+    QHostAddress getAddr();
 public slots:
     void addMember(QTcpSocket * socket);
-    bool verifyPass(QString pass, ClientConnection& conn);
+    void deleteMember(QHostAddress addr);
+    bool verifyPass(QString pass, ClientConnection * conn);
 };
 
 #endif // SERVER_ROOM_H
