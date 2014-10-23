@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QHostAddress>
 
 class TCPServer : public QObject
 {
@@ -10,9 +11,10 @@ class TCPServer : public QObject
 
 public:
     TCPServer();
-
+    QHostAddress getLocalAddress();
 signals:
     void addMember(QTcpSocket * socket);
+    void deleteMember(QHostAddress addr);
 };
 
 #endif // TCP_SERVER_H

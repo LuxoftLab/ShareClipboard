@@ -12,7 +12,7 @@ private:
     QTcpSocket* socket;
 public:
     Connection(QTcpSocket * socket);
-    qint32 getIpc4();
+    QHostAddress getIpv4();
 };
 
 #endif // CONNECTION_H

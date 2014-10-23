@@ -7,11 +7,12 @@
 class Room : public QObject
 {
     Q_OBJECT
-private:
+protected:
     QString name;
     QString pass;
 public:
     Room(QString name, QString pass);
+    QString getName();
 };
 
 #endif // ROOM_H

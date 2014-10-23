@@ -1,6 +1,6 @@
 #include "server_connection.h"
 
-ServerConnection::ServerConnection() : Connection(NULL)
+ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
 
 }

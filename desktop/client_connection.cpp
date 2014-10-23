@@ -10,7 +10,12 @@ void ClientConnection::sendFail()
 
 }
 
-void ClientConnection::sendMember(QString login, quint32 ipv4)
+void ClientConnection::sendMember(QString login, QHostAddress addr)
+{
+
+}
+
+void ClientConnection::removeMember(QHostAddress addr)
 {
 
 }

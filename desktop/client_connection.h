@@ -10,11 +10,11 @@ class ClientConnection : public Connection
 public:
     ClientConnection(QTcpSocket * socket);
     void sendFail();
-    void sendMember(QString login, quint32 ipv4);
+    void sendMember(QString login, QHostAddress addr);
+    void removeMember(QHostAddress addr);
     QString getLogin();
 signals:
-    void addMember(QTcpSocket socket);
-    bool verifyPass(QString pass, ClientConnection& conn);
+    bool verifyPass(QString pass, ClientConnection * conn);
 };
 
 #endif // CLIENT_CONNECTION_H

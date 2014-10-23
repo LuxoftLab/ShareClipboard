@@ -2,25 +2,29 @@
 #define CLIENT_ROOM_H
 
 #include <QHostAddress>
-#include <QVector>
+#include <QMap>
 
 #include "room.h"
+#include "server_connection.h"
 
 struct Member {
     QString login;
     QHostAddress addr;
+    Member(QString login, QHostAddress addr);
 };
 
 class ClientRoom : public Room
 {
+    ServerConnection * connection;
     QHostAddress host;
-    QVector<Member*> members;
+    QMap<qint32, Member*> members;
 public:
     ClientRoom(QString name, QHostAddress host);
     ~ClientRoom();
-    void connectToHost();
+    void connectToHost(QString login, QString pass);
 public slots:
     void addMember(QString login, QHostAddress addr);
+    void deleteMember(QHostAddress addr);
 };
 
 #endif // CLIENT_ROOM_H
