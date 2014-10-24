@@ -6,8 +6,8 @@ UDPService::UDPService() : QObject(0),
 {
 }
 
-bool UDPService::initListener()
-{
+bool UDPService::initListener(){
+
     QTime now = QTime::currentTime();
     qsrand(now.msec());
 
@@ -34,15 +34,34 @@ bool UDPService::initListener()
 }
 
 void UDPService::getRooms(){   
-    sendBroadcastPackadge(GET_ROOM,"0");
-}
-
-void UDPService::sendBroadcastPackadge(int type, QString room_name){
     DatagramPacket packet;
 
-    packet.type=type;
+    packet.type=GET_ROOM;
     packet.id=qrand();
-    packet.name=room_name;
+
+    sendBroadcastPackadge(packet);
+}
+
+void UDPService::notifyAboutRoom(QString name){
+    DatagramPacket packet;
+
+    packet.type=ROOM;
+    packet.id=qrand();
+    packet.name=name;
+
+    sendBroadcastPackadge(packet);
+}
+
+void UDPService::notifyAboutRoomDeleting(){
+    DatagramPacket packet;
+
+    packet.type=DELETE_ROOM;
+    packet.id=qrand();
+
+    sendBroadcastPackadge(packet);
+}
+
+void UDPService::sendBroadcastPackadge(const DatagramPacket &packet){
 
     foreach(QHostAddress addr, broadcasts)
         sendPackage(addr,packet);
@@ -77,10 +96,6 @@ void UDPService::sendRoom(QString name){
     senders.clear();
 }
 
-void UDPService::notifyAboutRoom(QString name){
-    sendBroadcastPackadge(ROOM,name);
-}
-
 void UDPService::listener(){
 
     while (udp_socket->hasPendingDatagrams()){
@@ -89,31 +104,36 @@ void UDPService::listener(){
         QHostAddress sender_adr;
         udp_socket->readDatagram(data.data(),data.size(),&sender_adr);
 
-        DatagramPacket p;
+        DatagramPacket packet;
         QDataStream stream(&data,QIODevice::ReadOnly);
 
-        stream>>p.type;
-        stream>>p.id;
-        if(packet.type==ROOM||packet.type==DELETE_ROOM)
-            stream>>p.name;
+        stream>>packet.type;
+        stream>>packet.id;
+        if(packet.type==ROOM) //||packet.type==DELETE_ROOM?
+            stream>>packet.name;
 
-        if(p.id==last_packadge_id)
+        if(packet.id==last_packadge_id)
             continue;
-        last_packadge_id=p.id;
+        last_packadge_id=packet.id;
 
-        switch(p.type){
+        switch(packet.type){
 
             case ROOM:
-            //Отображение списка комнат
+                //emit roomReceived(packet.name,sender_adr);
             break;
 
             case GET_ROOM:
 
                 if(sender_adr!=localhost_ip){
-                    //emit onGetRoom;
+                    //emit roomRequested();
                     senders.push_back(sender_adr);
                 }
 
+            break;
+
+            case DELETE_ROOM:
+                //emit roomDeleted(sender_adr);
+                //sendBroadcastPackadge(DELETE_ROOM);
             break;
         }
     }

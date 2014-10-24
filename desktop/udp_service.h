@@ -28,7 +28,7 @@ signals:
     void roomRequested();
 private:
     void sendPackage(const QHostAddress &peer, const DatagramPacket &packet);
-    void sendBroadcastPackadge(int type, QString room_name);
+    void sendBroadcastPackadge(const DatagramPacket &packet);
     void listener();
 
     QHostAddress localhost_ip;
