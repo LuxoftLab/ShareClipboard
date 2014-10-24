@@ -5,12 +5,12 @@
 #include <QHostAddress>
 #include <QUdpSocket>
 #include <QBuffer>
-#include <QList>
+#include <QQueue>
 #include <QDataStream>
 #include <QNetworkInterface>
 #include <QTime>
 
-#include "UDP_packet.h"
+#include "udp_packet.h"
 
 class UDPService : public QObject {
     Q_OBJECT
@@ -34,7 +34,7 @@ private:
     QHostAddress localhost_ip;
     QUdpSocket * udp_socket;
     QList<QHostAddress> broadcasts;
-    QList<QHostAddress> senders;
+    QQueue<QHostAddress> senders;
     qint32 last_packadge_id;
 };
 

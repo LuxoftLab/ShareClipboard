@@ -34,16 +34,15 @@ bool UDPService::initListener()
 }
 
 void UDPService::getRooms(){   
-    sendBroadcastPackadge(GET_ROOM,"\0");
+    sendBroadcastPackadge(GET_ROOM,"0");
 }
 
 void UDPService::sendBroadcastPackadge(int type, QString room_name){
     DatagramPacket packet;
-    QByteArray qb = room_name.toLocal8Bit(); //способа получше нет?
 
     packet.type=type;
     packet.id=qrand();
-    packet.name=qb.data(); //проверить на наличие \0
+    packet.name=room_name;
 
     foreach(QHostAddress addr, broadcasts)
         sendPackage(addr,packet);
@@ -60,9 +59,6 @@ void UDPService::sendPackage(const QHostAddress &peer, const DatagramPacket &pac
     if(packet.type==ROOM)
         stream<<packet.name;
 
-    //else
-        //stream<<'\0';
-
     QUdpSocket socket;
 
     for(int i=0;i<REPEAT;++i)
@@ -71,12 +67,10 @@ void UDPService::sendPackage(const QHostAddress &peer, const DatagramPacket &pac
 
 void UDPService::sendRoom(QString name){
     DatagramPacket packet;
-    QByteArray qb = name.toLocal8Bit();
 
     packet.type=ROOM;
     packet.id=qrand();
-    packet.name=qb.data();
-
+    packet.name=name;
     foreach(QHostAddress addr, senders)
         sendPackage(addr,packet);
 
@@ -97,9 +91,11 @@ void UDPService::listener(){
 
         DatagramPacket p;
         QDataStream stream(&data,QIODevice::ReadOnly);
+
         stream>>p.type;
         stream>>p.id;
-        stream>>p.name;
+        if(packet.type==ROOM||packet.type==DELETE_ROOM)
+            stream>>p.name;
 
         if(p.id==last_packadge_id)
             continue;
@@ -116,7 +112,6 @@ void UDPService::listener(){
                 if(sender_adr!=localhost_ip){
                     //emit onGetRoom;
                     senders.push_back(sender_adr);
-                    sendRoom(p.name);
                 }
 
             break;
