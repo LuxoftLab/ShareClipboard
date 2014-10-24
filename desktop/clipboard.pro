@@ -32,4 +32,5 @@ HEADERS  += \
     client_room.h \
     connection.h \
     server_connection.h \
-    client_connection.h
+    client_connection.h \
+    udp_packet.h

@@ -3,7 +3,12 @@
 Controller::Controller() : QObject(0)
 {
     udpService = new UDPService();
-    connect(udpService, SIGNAL(UDPService::addRoom()), this, SLOT(addRoom()));
+    connect(udpService, SIGNAL(roomReceived(QString,QHostAddress)),
+            this, SLOT(addRoom(QString,QHostAddress)));
+    connect(udpService, SIGNAL(roomRequested()),
+            this, SLOT(getRoom()));
+    connect(udpService, SIGNAL(roomDeleted(QHostAddress)),
+            this, SLOT(deleteRoom(QHostAddress)));
     udpService->initListener();
     udpService->getRooms();
 }
@@ -30,7 +35,7 @@ void Controller::deleteRoom(QHostAddress host)
     rooms.remove(host.toIPv4Address());
 }
 
-bool Controller::createRoom(QString name, QString pass)
+bool Controller::createRoom(QString name, QString login, QString pass)
 {
     if(serverRoom != NULL) {
         return false;
@@ -38,6 +43,7 @@ bool Controller::createRoom(QString name, QString pass)
     serverRoom = new ServerRoom(name, pass);
     udpService->notifyAboutRoom(name);
     addRoom(name, serverRoom->getAddr());
+    joinRoom(serverRoom->getAddr(), login, pass);
     return true;
 }
 

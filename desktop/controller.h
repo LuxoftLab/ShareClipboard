@@ -21,7 +21,7 @@ private:
 public:
     Controller();
     ~Controller();
-    bool createRoom(QString name, QString pass);
+    bool createRoom(QString name, QString login, QString pass);
     bool joinRoom(QHostAddress host, QString login, QString pass);
 public slots:
     void getRoom();

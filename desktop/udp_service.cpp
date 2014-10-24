@@ -30,8 +30,6 @@ bool UDPService::initListener()
 
     connect(udp_socket,&QUdpSocket::readyRead,this,&UDPService::listener);
 
-    if(!broadcasts.empty())  //возможно стоит это удалить
-        getRooms();
     return 0;
 }
 
