@@ -12,12 +12,12 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 void ServerConnection::sendPassAndLogin(QString password, QString login)
 {
     //how to ensure socket is ready to write?
-    QByteArray block;
+    /*QByteArray block;
     QDataStream out(block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_2);
     out << login;
     TcpPackage loginPckg = TcpPackage(TcpPackageHeader(LOGIN, block.size()), block);
     socket->write(loginPckg);
     out << password;
-    TcpPackage passwordPckg = TcpPackage(TcpPackageHeader(PASS, block.size()), block);
+    TcpPackage passwordPckg = TcpPackage(TcpPackageHeader(PASS, block.size()), block);*/
 }
