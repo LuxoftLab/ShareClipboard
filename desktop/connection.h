@@ -8,7 +8,7 @@
 class Connection : public QObject
 {
     Q_OBJECT
-private:
+protected:
     QTcpSocket* socket;
 public:
     Connection(QTcpSocket * socket);
