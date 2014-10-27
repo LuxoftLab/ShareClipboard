@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     client_room.cpp \
     connection.cpp \
     server_connection.cpp \
-    client_connection.cpp
+    client_connection.cpp \
+    tcp_package.cpp
 
 HEADERS  += \
     controller.h \
@@ -33,4 +34,6 @@ HEADERS  += \
     connection.h \
     server_connection.h \
     client_connection.h \
-    udp_packet.h
+    udp_packet.h \
+    fails.h \
+    tcp_package.h

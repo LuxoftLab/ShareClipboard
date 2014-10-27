@@ -10,7 +10,7 @@
 #include <QNetworkInterface>
 #include <QTime>
 
-#include "UDP_packet.h"
+#include "udp_packet.h"
 
 class UDPService : public QObject {
     Q_OBJECT
