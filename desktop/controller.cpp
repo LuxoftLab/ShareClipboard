@@ -44,8 +44,8 @@ bool Controller::createRoom(QString name, QString login, QString pass)
     }
     serverRoom = new ServerRoom(name, pass);
     udpService->notifyAboutRoom(name);
-    addRoom(name, serverRoom->getAddr());
-    joinRoom(serverRoom->getAddr(), login, pass);
+    //addRoom(name, serverRoom->getAddr());
+    //joinRoom(serverRoom->getAddr(), login, pass);
     return true;
 }
 
