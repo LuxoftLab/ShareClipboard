@@ -1,5 +1,5 @@
 #include "controller.h"
-
+#include <QDebug>
 Controller::Controller() : QObject(0)
 {
     udpService = new UDPService();
@@ -20,11 +20,13 @@ Controller::~Controller()
 
 void Controller::addRoom(QString name, QHostAddress host)
 {
+    qDebug() << "new room: " << name << ' ' << host.toString();
     rooms.insert(host.toIPv4Address(), new ClientRoom(name, host));
 }
 
 void Controller::getRoom()
 {
+    qDebug() << "room requested";
     if(serverRoom != NULL) {
         udpService->sendRoom(serverRoom->getName());
     }

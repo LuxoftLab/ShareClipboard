@@ -119,20 +119,20 @@ void UDPService::listener(){
         switch(packet.type){
 
             case ROOM:
-                //emit roomReceived(packet.name,sender_adr);
+                emit roomReceived(packet.name,sender_adr);
             break;
 
             case GET_ROOM:
 
                 if(sender_adr!=localhost_ip){
-                    //emit roomRequested();
+                    emit roomRequested();
                     senders.push_back(sender_adr);
                 }
 
             break;
 
             case DELETE_ROOM:
-                //emit roomDeleted(sender_adr);
+                emit roomDeleted(sender_adr);
                 //sendBroadcastPackadge(DELETE_ROOM);
             break;
         }
