@@ -33,7 +33,7 @@ bool UDPService::initListener(){
     return 0;
 }
 
-void UDPService::getRooms(){   
+void UDPService::getRooms(){
     DatagramPacket packet;
 
     packet.type=GET_ROOM;
@@ -109,7 +109,7 @@ void UDPService::listener(){
 
         stream>>packet.type;
         stream>>packet.id;
-        if(packet.type==ROOM) //||packet.type==DELETE_ROOM?
+        if(packet.type==ROOM)
             stream>>packet.name;
 
         if(packet.id==last_packadge_id)
@@ -119,21 +119,21 @@ void UDPService::listener(){
         switch(packet.type){
 
             case ROOM:
-                //emit roomReceived(packet.name,sender_adr);
+                emit roomReceived(packet.name,sender_adr);
             break;
 
             case GET_ROOM:
 
                 if(sender_adr!=localhost_ip){
-                    //emit roomRequested();
+                    emit roomRequested();
                     senders.push_back(sender_adr);
                 }
 
             break;
 
             case DELETE_ROOM:
-                //emit roomDeleted(sender_adr);
-                //sendBroadcastPackadge(DELETE_ROOM);
+                emit roomDeleted(sender_adr);
+                notifyAboutRoomDeleting();
             break;
         }
     }
