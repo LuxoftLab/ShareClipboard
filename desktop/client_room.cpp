@@ -33,3 +33,4 @@ Member::Member(QString login, QHostAddress addr) {
     this->login = login;
     this->addr = addr;
 }
+
