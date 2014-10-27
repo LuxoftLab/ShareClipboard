@@ -14,6 +14,7 @@ void ClientRoom::connectToHost(QString login, QString pass)
     connect(connection, SIGNAL(ServerConnection::deleteMember()),
             this, SLOT(deleteMember()));
     connection->sendPassAndLogin(pass, login);
+    //init listener
 }
 
 void ClientRoom::addMember(QString login, QHostAddress addr) {

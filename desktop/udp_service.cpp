@@ -33,7 +33,7 @@ bool UDPService::initListener(){
     return 0;
 }
 
-void UDPService::getRooms(){   
+void UDPService::getRooms(){
     DatagramPacket packet;
 
     packet.type=GET_ROOM;
@@ -109,7 +109,7 @@ void UDPService::listener(){
 
         stream>>packet.type;
         stream>>packet.id;
-        if(packet.type==ROOM) //||packet.type==DELETE_ROOM?
+        if(packet.type==ROOM)
             stream>>packet.name;
 
         if(packet.id==last_packadge_id)
@@ -133,7 +133,6 @@ void UDPService::listener(){
 
             case DELETE_ROOM:
                 emit roomDeleted(sender_adr);
-                //sendBroadcastPackadge(DELETE_ROOM);
             break;
         }
     }
