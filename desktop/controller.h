@@ -1,6 +1,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
+#include <QDebug>
+
 #include <QObject>
 #include <QHostAddress>
 #include <QVector>

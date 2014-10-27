@@ -2,6 +2,9 @@
 #define SERVER_CONNECTION_H
 
 #include "connection.h"
+#include "tcp_package.h"
+#include <unistd.h>
+
 
 class ServerConnection : public Connection
 {

@@ -2,11 +2,11 @@
 
 ServerRoom::ServerRoom(QString name, QString pass) : Room(name, pass)
 {
-    server = new TCPServer();
-    connect(server, SIGNAL(TCPServer::addMember()),
-            this, SLOT(addMember()));
-    connect(server, SIGNAL(TCPServer::deleteMember()),
-            this, SLOT(deleteMember()));
+    //server = new TCPServer();
+    //connect(server, SIGNAL(addMember(QTcpSocket*)),
+    //        this, SLOT(addMember(QTcpSocket*)));
+    //connect(server, SIGNAL(deleteMember(QHostAddress)),
+    //        this, SLOT(deleteMember(QHostAddress)));
 }
 
 ServerRoom::~ServerRoom()
