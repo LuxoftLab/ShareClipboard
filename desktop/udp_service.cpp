@@ -109,6 +109,7 @@ void UDPService::listener(){
 
         stream>>packet.type;
         stream>>packet.id;
+
         if(packet.type==ROOM)
             stream>>packet.name;
 
@@ -124,8 +125,8 @@ void UDPService::listener(){
             break;
 
             case GET_ROOM:
-                emit roomRequested();
                 senders.push_back(sender_adr);
+                emit roomRequested();
             break;
 
             case DELETE_ROOM:
