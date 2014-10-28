@@ -15,7 +15,6 @@ public:
     QHostAddress getLocalAddress();
 signals:
     void addMember(QTcpSocket * socket);
-    void deleteMember(QHostAddress addr);
 private:
     QTcpServer* server;
 

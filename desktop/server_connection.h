@@ -1,6 +1,7 @@
 #ifndef SERVER_CONNECTION_H
 #define SERVER_CONNECTION_H
 
+#include "constants.h"
 #include "connection.h"
 #include "tcp_package.h"
 #include <unistd.h>
@@ -15,6 +16,8 @@ public:
 public slots:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
+private:
+
 };
 
 #endif // SERVER_CONNECTION_H

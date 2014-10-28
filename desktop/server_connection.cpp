@@ -2,7 +2,7 @@
 
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
-    socket->connectToHost(host, (qint16)getpid()); // I don't know what else to do here
+    socket->connectToHost(host, PORT_NUMBER);
     //connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
               //SLOT(throwSocketError(QAbstractSocket::SocketError)));
     //#todo error handlers
@@ -11,9 +11,7 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 
 void ServerConnection::sendPassAndLogin(QString password, QString login)
 {
-    //#how to ensure socket is ready to write?
-    //if(socket->ConnectedState)??
-    QByteArray block;
+    /*QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_2);
     Data dat;
@@ -26,6 +24,6 @@ void ServerConnection::sendPassAndLogin(QString password, QString login)
     TcpPackage passwordPckg = TcpPackage(TcpPackageHeader(PASS, login.size()), dat);
     out << passwordPckg;
     socket->write(block);
+    */
 
-    //#socket->disconnectFromHost(); should I?
 }

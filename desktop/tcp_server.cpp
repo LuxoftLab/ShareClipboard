@@ -6,6 +6,7 @@ TCPServer::TCPServer()
     if(!server->listen())
         qDebug() << "Server is not listening";
     connect(server, SIGNAL(newConnection()), this, SLOT(newMember()));
+
 }
 
 QHostAddress TCPServer::getLocalAddress()

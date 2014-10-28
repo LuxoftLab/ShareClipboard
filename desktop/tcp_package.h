@@ -3,11 +3,10 @@
 
 #include <QDataStream>
 
-enum pckg_t{TEXT, PASS, LOGIN, RAW};
+enum pckg_t{TEXT, PASS, MEMBER, RAW, INVALID_PASS, ADRESS, REMOVE};
 
 union Data{
     QString* strData;
-    QString* pass;
     char* rawData;
 };
 
