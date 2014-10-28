@@ -22,14 +22,18 @@ public:
 
 signals:
     void downloadFile();
+    void roomCreated(QString name, QString pass, QString login);
+    void roomSelected(quint32 addr, QString password);
 
 protected:
     void closeEvent(QCloseEvent * event);
 
 private slots:
+    void addRoom(QString name, qint32 address);
     void chooseRoomClicked();
     void cleapboardChanged(QMimeData * mimeData);
     void connectedToRoom(QString roomName);
+    void deleteRoom(qint32 address);
     void newDevicePluged(QString deviceName);
     void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
     void trayMessageClicked();

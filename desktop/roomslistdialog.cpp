@@ -11,6 +11,8 @@ RoomsListDialog::RoomsListDialog(QList<QString> rooms, QWidget *parent) :
         ui->listWidget->addItem(*i);
     }
 
+
+
     connect(ui->listWidget, SIGNAL(doubleClicked(QModelIndex)),
                                    this, SLOT(listItemDoubleClicked(QModelIndex)));
 }

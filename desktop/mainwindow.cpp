@@ -70,10 +70,20 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
+void MainWindow::addRoom(QString name, qint32 address)
+{
+
+}
+
 void MainWindow::connectedToRoom(QString roomName)
 {
     ui->roomLabel->setText(tr("&Your room: ") + roomName);
     trayIcon->showMessage(tr("&You connected to room") + roomName, "Shared cleapboard");
+}
+
+void MainWindow::deleteRoom(qint32 address)
+{
+
 }
 
 void MainWindow::createTrayIcon()
