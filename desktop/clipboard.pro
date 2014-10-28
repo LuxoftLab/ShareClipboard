@@ -22,7 +22,10 @@ SOURCES += main.cpp \
     connection.cpp \
     server_connection.cpp \
     client_connection.cpp \
-    tcp_package.cpp
+    tcp_package.cpp \
+    gui/mainwindow.cpp \
+    gui/passworddialog.cpp \
+    gui/roomslistdialog.cpp
 
 HEADERS  += \
     controller.h \
@@ -36,4 +39,15 @@ HEADERS  += \
     client_connection.h \
     udp_packet.h \
     fails.h \
-    tcp_package.h
+    tcp_package.h \
+    gui/mainwindow.h \
+    gui/passworddialog.h \
+    gui/roomslistdialog.h
+
+RESOURCES += \
+    gui/images.qrc
+
+FORMS += \
+    gui/mainwindow.ui \
+    gui/passworddialog.ui \
+    gui/roomslistdialog.ui
