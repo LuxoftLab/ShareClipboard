@@ -1,9 +1,6 @@
 #ifndef TCP_PACKAGE_H
 #define TCP_PACKAGE_H
 
-#ifndef TCPPACKAGE_H
-#define TCPPACKAGE_H
-
 #include <QDataStream>
 
 enum pckg_t{TEXT, PASS, LOGIN, RAW};
@@ -28,8 +25,6 @@ class TcpPackage{
 public:
     TcpPackage(TcpPackageHeader, Data);
     TcpPackage();
-
-
     const TcpPackageHeader* getHeader() const;
     const Data* getData() const;
 
@@ -38,9 +33,6 @@ private:
     Data interior;
 
 };
-
-
-#endif // TCPPACKAGE_H
 
 
 #endif // TCP_PACKAGE_H
