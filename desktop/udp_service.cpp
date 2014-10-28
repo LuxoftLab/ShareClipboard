@@ -112,8 +112,9 @@ void UDPService::listener(){
         if(packet.type==ROOM)
             stream>>packet.name;
 
-        if(packet.id==last_packadge_id)
+        if(packet.id==last_packadge_id||sender_adr==localhost_ip)
             continue;
+
         last_packadge_id=packet.id;
 
         switch(packet.type){
@@ -123,12 +124,8 @@ void UDPService::listener(){
             break;
 
             case GET_ROOM:
-
-                if(sender_adr!=localhost_ip){
-                    emit roomRequested();
-                    senders.push_back(sender_adr);
-                }
-
+                emit roomRequested();
+                senders.push_back(sender_adr);
             break;
 
             case DELETE_ROOM:
