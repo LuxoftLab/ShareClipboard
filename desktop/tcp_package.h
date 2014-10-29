@@ -10,6 +10,15 @@ union Data{
     char* rawData;
 };
 
+
+//template<typename T>
+//const QDataStream& operator>>(const QDataStream& in, T& t){
+//    int i;
+//    in >> i;
+//    t = (pckg_t)i;
+//    return in;
+//}
+
 struct TcpPackageHeader{
 
     pckg_t type;
@@ -20,12 +29,15 @@ struct TcpPackageHeader{
 
 class TcpPackage{
     friend QDataStream& operator <<(QDataStream&, const TcpPackage&);
-    friend const QDataStream& operator >>(const QDataStream&, TcpPackage&);
+    friend const QDataStream& operator >>(QDataStream&, TcpPackage&);
 public:
     TcpPackage(TcpPackageHeader, Data);
     TcpPackage();
     const TcpPackageHeader* getHeader() const;
     const Data* getData() const;
+
+    void setHeader(TcpPackageHeader);
+    void setData(Data);
 
 private:
     TcpPackageHeader header;

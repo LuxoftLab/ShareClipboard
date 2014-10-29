@@ -17,7 +17,7 @@ public slots:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
 private:
-
+    QByteArray makeBinaryPack(pckg_t, char*, int);
 };
 
 #endif // SERVER_CONNECTION_H

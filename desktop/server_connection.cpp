@@ -1,5 +1,16 @@
 #include "server_connection.h"
 
+QByteArray ServerConnection::makeBinaryPack(pckg_t type, char* dat, int datsize){
+    Data d;
+    d.rawData = dat;
+    TcpPackageHeader head = TcpPackageHeader(type, datsize);
+    TcpPackage pack = TcpPackage(head, d);
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out << pack;
+    return block;
+}
+
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
     socket->connectToHost(host, PORT_NUMBER);
@@ -11,19 +22,8 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 
 void ServerConnection::sendPassAndLogin(QString password, QString login)
 {
-    /*QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_2);
-    Data dat;
-    dat.pass = &password;
-    TcpPackage loginPckg = TcpPackage(TcpPackageHeader(LOGIN, password.size()), dat);
-    out << loginPckg;
-    socket->write(block);
-
-    dat.strData = &login;
-    TcpPackage passwordPckg = TcpPackage(TcpPackageHeader(PASS, login.size()), dat);
-    out << passwordPckg;
-    socket->write(block);
-    */
-
+   QByteArray dat;
+   QDataStream out(&dat, QIODevice::WriteOnly);
+   out << login.size() << login << password.size() << password;
+   socket->write(makeBinaryPack(PASS, dat.data(), dat.size()));
 }
