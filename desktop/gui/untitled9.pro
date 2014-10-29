@@ -15,15 +15,18 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     roomslistdialog.cpp \
-    passworddialog.cpp
+    passworddialog.cpp \
+    createroomdialog.cpp
 
 HEADERS  += mainwindow.h \
     roomslistdialog.h \
-    passworddialog.h
+    passworddialog.h \
+    createroomdialog.h
 
 FORMS    += mainwindow.ui \
     roomslistdialog.ui \
-    passworddialog.ui
+    passworddialog.ui \
+    createroomdialog.ui
 
 RESOURCES += \
     images.qrc

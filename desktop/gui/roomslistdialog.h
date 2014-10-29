@@ -17,13 +17,14 @@ public:
     ~RoomsListDialog();
 
 signals:
-    void roomChoosed();
+    void roomChoosed(QString roomName, QString password);
 
 public slots:
    void accept();
 
 private slots:
     void listItemDoubleClicked();
+    void onPasswordTyped(QString password);
 
 private:
     Ui::RoomsListDialog *ui;

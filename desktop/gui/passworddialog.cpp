@@ -12,3 +12,8 @@ PasswordDialog::~PasswordDialog()
 {
     delete ui;
 }
+
+void PasswordDialog::accept()
+{
+    emit passwordTyped(ui->lineEdit->text());
+}

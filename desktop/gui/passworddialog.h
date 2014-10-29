@@ -15,6 +15,12 @@ public:
     explicit PasswordDialog(QWidget *parent = 0);
     ~PasswordDialog();
 
+signals:
+   void passwordTyped(QString password);
+
+public slots:
+   void accept();
+
 private:
     Ui::PasswordDialog *ui;
 };
