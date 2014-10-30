@@ -5,6 +5,7 @@
 #include <QSystemTrayIcon>
 #include <QCloseEvent>
 #include <QMimeData>
+#include <QHash>
 
 namespace Ui {
 class MainWindow;
@@ -19,9 +20,11 @@ public:
     ~MainWindow();
 
     void fillDevicesList(QList<QString> list);
+    void setRoomsHash(QHash<QString, int> rooms);
 
 signals:
     void downloadFile();
+    void querryRoomsList();
     void roomCreated(QString name, QString pass, QString login);
     void roomSelected(quint32 addr, QString password, QString login);
 
@@ -30,17 +33,23 @@ protected:
 
 private slots:
     void addRoom(QString name, qint32 address);
-    void chooseRoomClicked();
-    void cleapboardChanged(QMimeData * mimeData);
-    void connectedToRoom(QString roomName);
     void deleteRoom(qint32 address);
+    void connectedToRoom(qint32 address);
+    void onRoomChoosed(QString roomName, QString password);
+
+    void chooseRoomClicked();
+    void createRoomClicked();
+
+    void cleapboardChanged(QMimeData * mimeData);
     void newDevicePluged(QString deviceName);
+
     void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
     void trayMessageClicked();
 
 private:
     Ui::MainWindow * ui;
     QSystemTrayIcon * trayIcon;
+    QHash<QString, int> rooms;
 
     void createTrayIcon();
     bool askForFileDownload(QString fileName);

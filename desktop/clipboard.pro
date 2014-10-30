@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     tcp_package.cpp \
     gui/mainwindow.cpp \
     gui/passworddialog.cpp \
-    gui/roomslistdialog.cpp
+    gui/roomslistdialog.cpp \
+    gui/createroomdialog.cpp
 
 HEADERS  += \
     controller.h \
@@ -42,7 +43,8 @@ HEADERS  += \
     tcp_package.h \
     gui/mainwindow.h \
     gui/passworddialog.h \
-    gui/roomslistdialog.h
+    gui/roomslistdialog.h \
+    gui/createroomdialog.h
 
 RESOURCES += \
     gui/images.qrc
@@ -50,4 +52,5 @@ RESOURCES += \
 FORMS += \
     gui/mainwindow.ui \
     gui/passworddialog.ui \
-    gui/roomslistdialog.ui
+    gui/roomslistdialog.ui \
+    gui/createroomdialog.ui

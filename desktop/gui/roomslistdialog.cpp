@@ -1,5 +1,6 @@
 #include "roomslistdialog.h"
 #include "ui_roomslistdialog.h"
+#include "passworddialog.h"
 
 RoomsListDialog::RoomsListDialog(QList<QString> rooms, QWidget *parent) :
     QDialog(parent),
@@ -26,6 +27,18 @@ void RoomsListDialog::listItemDoubleClicked() {
     emit accept();
 }
 
+void RoomsListDialog::onPasswordTyped(QString password)
+{
+    emit roomChoosed(ui->listWidget->selectedItems()[0]->text(),
+            password);
+}
+
 void RoomsListDialog::accept() {
-    ui->listWidget->selectedItems()[0]->text();
+    if(ui->listWidget->selectedItems() == NULL) return;
+
+    PasswordDialog dialog(this);
+    connect(&dialog, SIGNAL(passwordTyped(QString)), this, SLOT(onPasswordTyped(QString));
+    dialog.exec();
+
+
 }

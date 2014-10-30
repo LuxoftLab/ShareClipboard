@@ -1,6 +1,7 @@
 #include <QMessageBox>
 #include "mainwindow.h"
 #include "roomslistdialog.h"
+#include "createroomdialog.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -9,6 +10,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     createTrayIcon();
+
+    connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(createRoomClicked()));
 }
 
 MainWindow::~MainWindow()
@@ -27,17 +31,19 @@ bool MainWindow::askForFileDownload(QString fileName) {
 }
 
 void MainWindow::chooseRoomClicked() {
+    emit querryRoomsList();
+
     /* TEST */
     QString tmp = "a";
-    QList<QString> list;
     for(int i = 0; i < 10; i++) {
-        list.append(tmp);
+        rooms.append(tmp, i);
         tmp += tmp;
     }
     /* TEST*/
 
     // getRooms()
-    RoomsListDialog dialog(list, this);
+    RoomsListDialog dialog(rooms.keys(), this);
+    connect(&dialog, SIGNAL(roomChoosed(QString,QString), this, SLOT(onRoomChoosed(QString,QString)));
     dialog.exec();
 }
 
@@ -75,10 +81,21 @@ void MainWindow::addRoom(QString name, qint32 address)
 
 }
 
-void MainWindow::connectedToRoom(QString roomName)
+void MainWindow::connectedToRoom(qint32 address)
 {
-    ui->roomLabel->setText(tr("&Your room: ") + roomName);
-    trayIcon->showMessage(tr("&You connected to room") + roomName, "Shared cleapboard");
+    ui->roomLabel->setText(tr("&Your room: ") + address);
+    trayIcon->showMessage(tr("&You connected to room") + address, "Shared cleapboard");
+}
+
+void MainWindow::onRoomChoosed(QString roomName, QString password)
+{
+    emit roomSelected(rooms.take(roomName), password, "SOME LOGIN");
+}
+
+void MainWindow::createRoomClicked()
+{
+    CreateRoomDialog dialog(this);
+    dialog.exec();
 }
 
 void MainWindow::deleteRoom(qint32 address)
@@ -126,8 +143,6 @@ void MainWindow::createTrayIcon()
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
                              this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
     connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(trayMessageClicked()));
-
-    connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
 
     trayIcon->showMessage("Shared Cleapboard run", "Click to open main window");
 }
