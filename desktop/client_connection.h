@@ -1,11 +1,11 @@
 #ifndef CLIENT_CONNECTION_H
 #define CLIENT_CONNECTION_H
 
-
 #include "connection.h"
 
 class ClientConnection : public Connection
 {
+    Q_OBJECT
     QString login;
 public:
     ClientConnection(QTcpSocket * socket);
@@ -15,6 +15,13 @@ public:
     QString getLogin();
 signals:
     bool verifyPass(QString pass, ClientConnection * conn);
+    void deleteMember(QHostAddress addr);
+private slots:
+    void emitDeleteMember();
+private:
+    QByteArray makeBinaryPack(pckg_t, char*, int);
+    QByteArray makeBinaryPack(pckg_t, QString);
+
 };
 
 #endif // CLIENT_CONNECTION_H

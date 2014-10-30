@@ -1,23 +1,29 @@
 #include "server_connection.h"
 
+QByteArray ServerConnection::makeBinaryPack(pckg_t type, char* dat, int datsize){
+    Data d;
+    d.rawData = dat;
+    TcpPackageHeader head = TcpPackageHeader(type, datsize);
+    TcpPackage pack = TcpPackage(head, d);
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out << pack;
+    return block;
+}
+
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
-    socket = new QTcpSocket(this); // is socket already initialised in parent class?
-    socket->connectToHost(host, (qint16)getpid()); // I don't know what else to do here
+    socket->connectToHost(host, PORT_NUMBER);
     //connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
               //SLOT(throwSocketError(QAbstractSocket::SocketError)));
-    //todo error handlers
+    //#todo error handlers
+    connect(socket, SIGNAL(readyRead()), this, SLOT(connectToServer()));
 }
 
 void ServerConnection::sendPassAndLogin(QString password, QString login)
 {
-    //how to ensure socket is ready to write?
-    /*QByteArray block;
-    QDataStream out(block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_2);
-    out << login;
-    TcpPackage loginPckg = TcpPackage(TcpPackageHeader(LOGIN, block.size()), block);
-    socket->write(loginPckg);
-    out << password;
-    TcpPackage passwordPckg = TcpPackage(TcpPackageHeader(PASS, block.size()), block);*/
+   QByteArray dat;
+   QDataStream out(&dat, QIODevice::WriteOnly);
+   out << login.size() << login << password.size() << password;
+   socket->write(makeBinaryPack(PASS, dat.data(), dat.size()));
 }
