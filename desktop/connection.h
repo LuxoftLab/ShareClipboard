@@ -12,10 +12,11 @@ class Connection : public QObject
     Q_OBJECT
 protected:
     QTcpSocket* socket;
-    QByteArray* makeBinaryPack(pckg_t, Data);
+    QByteArray makeBinaryPack(pckg_t type, char* dat, int datsize);
 public:
     Connection(QTcpSocket * socket);
     QHostAddress getIpv4();
+
 };
 
 #endif // CONNECTION_H

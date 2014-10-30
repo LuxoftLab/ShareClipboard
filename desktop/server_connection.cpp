@@ -1,16 +1,5 @@
 #include "server_connection.h"
 
-QByteArray ServerConnection::makeBinaryPack(pckg_t type, char* dat, int datsize){
-    Data d;
-    d.rawData = dat;
-    TcpPackageHeader head = TcpPackageHeader(type, datsize);
-    TcpPackage pack = TcpPackage(head, d);
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out << pack;
-    return block;
-}
-
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
     socket->connectToHost(host, PORT_NUMBER);
