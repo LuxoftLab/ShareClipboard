@@ -23,7 +23,7 @@ public:
 signals:
     void downloadFile();
     void roomCreated(QString name, QString pass, QString login);
-    void roomSelected(quint32 addr, QString password);
+    void roomSelected(quint32 addr, QString password, QString login);
 
 protected:
     void closeEvent(QCloseEvent * event);
