@@ -16,7 +16,10 @@ protected:
 public:
     Connection(QTcpSocket * socket);
     QHostAddress getIpv4();
-
+signals:
+    void gotData(const TcpPackage*);
+public slots:
+    void onData(qint64);
 };
 
 #endif // CONNECTION_H

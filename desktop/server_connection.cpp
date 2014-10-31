@@ -7,6 +7,7 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
               //SLOT(throwSocketError(QAbstractSocket::SocketError)));
     //#todo error handlers
     connect(socket, SIGNAL(readyRead()), this, SLOT(connectToServer()));
+    //  connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(onData(qint64)));
 }
 
 void ServerConnection::sendPassAndLogin(QString password, QString login)
@@ -16,3 +17,4 @@ void ServerConnection::sendPassAndLogin(QString password, QString login)
    out << login.size() << login << password.size() << password;
    socket->write(makeBinaryPack(PASS, dat.data(), dat.size()));
 }
+

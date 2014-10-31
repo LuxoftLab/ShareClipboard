@@ -11,11 +11,8 @@ TCPServer::TCPServer()
 
 QHostAddress TCPServer::getLocalAddress()
 {
-//    if(server)
-//        return server->serverAddress();
-//    else
-//       qDebug() << "server is not initialized";
-//    return QHostAddress::LocalHost;
+
+    return QHostAddress::LocalHost;
 }
 
 void TCPServer::newMember(){
