@@ -26,6 +26,7 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
     connect(socket, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
+    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
 }
 
 void ClientConnection::sendFail()

@@ -3,6 +3,7 @@
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
     socket->connectToHost(host, PORT_NUMBER);
+    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
     //connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
               //SLOT(throwSocketError(QAbstractSocket::SocketError)));
     //#todo error handlers

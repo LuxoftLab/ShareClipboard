@@ -3,7 +3,7 @@
 Connection::Connection(QTcpSocket * socket)
 {
     this->socket = socket;
-    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
+
 }
 
 QHostAddress Connection::getIpv4()
