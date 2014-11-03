@@ -30,7 +30,7 @@ signals:
     void gotRemoveRequest(const QString);
 
 public slots:
-    void onData(qint64);
+    void onData();
 };
 
 #endif // CONNECTION_H
