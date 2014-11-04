@@ -22,6 +22,7 @@ void Controller::addRoom(QString name, QHostAddress host)
 {
     qDebug() << "new room: " << name << ' ' << host.toString();
     rooms.insert(host.toIPv4Address(), new ClientRoom(name, host));
+    emit roomAdded(name, host.toIPv4Address());
 }
 
 void Controller::getRoom()
@@ -37,8 +38,9 @@ void Controller::deleteRoom(QHostAddress host)
     rooms.remove(host.toIPv4Address());
 }
 
-void Controller::createRoom(QString name, QString pass, QString login)
+void Controller::createRoom(QString name, QString pass)
 {
+    QString login = "login";
     qDebug() << "create room: " << name;
     if(serverRoom != NULL) {
         return;
@@ -49,8 +51,9 @@ void Controller::createRoom(QString name, QString pass, QString login)
     //joinRoom(serverRoom->getAddr(), login, pass);
 }
 
-void Controller::joinRoom(qint32 addr, QString pass, QString login)
+void Controller::joinRoom(qint32 addr, QString pass)
 {
+    QString login = "login";
     qDebug() << "join room: " << addr;
     if(clientRoom != NULL) {
         return;
@@ -59,5 +62,6 @@ void Controller::joinRoom(qint32 addr, QString pass, QString login)
     if(clientRoom == NULL) {
         return;
     }
-    clientRoom->connectToHost(login, pass);
+    qDebug() << "joined";
+    //clientRoom->connectToHost(login, pass);
 }

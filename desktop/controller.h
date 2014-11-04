@@ -23,9 +23,11 @@ private:
 public:
     Controller();
     ~Controller();
+signals:
+    void roomAdded(QString name, qint32 ip);
 public slots:
-    void createRoom(QString name, QString pass, QString login);
-    void joinRoom(qint32 addr, QString pass, QString login);
+    void createRoom(QString name, QString pass);
+    void joinRoom(qint32 addr, QString pass);
     void getRoom();
     void addRoom(QString name, QHostAddress host);
     void deleteRoom(QHostAddress host);
