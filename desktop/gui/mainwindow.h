@@ -30,11 +30,12 @@ signals:
 protected:
     void closeEvent(QCloseEvent * event);
 
-private slots:
-    void chooseRoomClicked();
-
+public slots:
     void cleapboardChanged(QMimeData * mimeData);
     void newDevicePluged(QString deviceName);
+
+private slots:
+    void chooseRoomClicked();
 
     void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
     void trayMessageClicked();
