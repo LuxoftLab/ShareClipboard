@@ -1,7 +1,6 @@
 #include <QMessageBox>
 #include "mainwindow.h"
 #include "roomslistdialog.h"
-#include "createroomdialog.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -12,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
     createTrayIcon();
 
     connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
-    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(createRoomClicked()));
 }
 
 MainWindow::~MainWindow()
@@ -20,7 +18,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-bool MainWindow::askForFileDownload(QString fileName) {
+bool MainWindow::askForFileDownload(QString fileName)
+{
     QMessageBox msgBox;
 
     msgBox.setInformativeText(tr("&Do you want to download file ") +  fileName + "?");
@@ -30,24 +29,14 @@ bool MainWindow::askForFileDownload(QString fileName) {
     return msgBox.exec() == QMessageBox::Save;
 }
 
-void MainWindow::chooseRoomClicked() {
-    emit querryRoomsList();
-
-    /* TEST */
-    QString tmp = "a";
-    for(int i = 0; i < 10; i++) {
-        rooms.append(tmp, i);
-        tmp += tmp;
-    }
-    /* TEST*/
-
-    // getRooms()
-    RoomsListDialog dialog(rooms.keys(), this);
-    connect(&dialog, SIGNAL(roomChoosed(QString,QString), this, SLOT(onRoomChoosed(QString,QString)));
+void MainWindow::chooseRoomClicked()
+{
+    RoomsListDialog dialog;
     dialog.exec();
 }
 
-void MainWindow::cleapboardChanged(QMimeData * mimeData) {
+void MainWindow::cleapboardChanged(QMimeData * mimeData)
+{
     if (mimeData->hasImage()) {
         ui->cleapboardText->setPixmap(qvariant_cast<QPixmap>(mimeData->imageData()));
     } else if (mimeData->hasUrls()) {
@@ -74,33 +63,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
         hide();
         event->ignore();
     }
-}
-
-void MainWindow::addRoom(QString name, qint32 address)
-{
-
-}
-
-void MainWindow::connectedToRoom(qint32 address)
-{
-    ui->roomLabel->setText(tr("&Your room: ") + address);
-    trayIcon->showMessage(tr("&You connected to room") + address, "Shared cleapboard");
-}
-
-void MainWindow::onRoomChoosed(QString roomName, QString password)
-{
-    emit roomSelected(rooms.take(roomName), password, "SOME LOGIN");
-}
-
-void MainWindow::createRoomClicked()
-{
-    CreateRoomDialog dialog(this);
-    dialog.exec();
-}
-
-void MainWindow::deleteRoom(qint32 address)
-{
-
 }
 
 void MainWindow::createTrayIcon()
@@ -141,7 +103,7 @@ void MainWindow::createTrayIcon()
     trayIcon->show();
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-                             this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
+            this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
     connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(trayMessageClicked()));
 
     trayIcon->showMessage("Shared Cleapboard run", "Click to open main window");

@@ -12,7 +12,7 @@ class PasswordDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PasswordDialog(QWidget *parent = 0);
+    explicit PasswordDialog(QString roomName, QWidget *parent = 0);
     ~PasswordDialog();
 
 signals:

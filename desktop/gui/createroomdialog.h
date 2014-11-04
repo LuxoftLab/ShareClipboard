@@ -15,6 +15,9 @@ public:
     explicit CreateRoomDialog(QWidget *parent = 0);
     ~CreateRoomDialog();
 
+signals:
+    void createRoom(QString name, QString password);
+
 public slots:
    void accept();
 

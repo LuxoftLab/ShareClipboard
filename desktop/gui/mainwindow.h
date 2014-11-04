@@ -20,25 +20,18 @@ public:
     ~MainWindow();
 
     void fillDevicesList(QList<QString> list);
-    void setRoomsHash(QHash<QString, int> rooms);
 
 signals:
     void downloadFile();
-    void querryRoomsList();
-    void roomCreated(QString name, QString pass, QString login);
-    void roomSelected(quint32 addr, QString password, QString login);
+
+//    void roomCreated(QString name, QString pass, QString login);
+//    void roomSelected(quint32 addr, QString password, QString login);
 
 protected:
     void closeEvent(QCloseEvent * event);
 
 private slots:
-    void addRoom(QString name, qint32 address);
-    void deleteRoom(qint32 address);
-    void connectedToRoom(qint32 address);
-    void onRoomChoosed(QString roomName, QString password);
-
     void chooseRoomClicked();
-    void createRoomClicked();
 
     void cleapboardChanged(QMimeData * mimeData);
     void newDevicePluged(QString deviceName);
@@ -49,7 +42,6 @@ private slots:
 private:
     Ui::MainWindow * ui;
     QSystemTrayIcon * trayIcon;
-    QHash<QString, int> rooms;
 
     void createTrayIcon();
     bool askForFileDownload(QString fileName);

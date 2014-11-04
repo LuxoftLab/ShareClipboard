@@ -16,8 +16,6 @@ CreateRoomDialog::~CreateRoomDialog()
 
 void CreateRoomDialog::accept()
 {
-    emit ((MainWindow)parent()).roomCreated(
-                ui->lineEdit->text(),
-                ui->lineEdit_2->text(),
-                "SOME LOGIN");  // TODO: Спроить, что за логин и где он хранится
+    emit (createRoom(ui->lineEdit->text(), ui->lineEdit_2->text()));
+    close();
 }

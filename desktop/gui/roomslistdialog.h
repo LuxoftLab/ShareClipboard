@@ -13,20 +13,26 @@ class RoomsListDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RoomsListDialog(QList<QString> rooms, QWidget * parent = 0);
+    explicit RoomsListDialog(QWidget * parent = 0);
     ~RoomsListDialog();
 
+    void setRoomsHash(QHash<QString, qint32> rooms);
+
 signals:
-    void roomChoosed(QString roomName, QString password);
+    void roomChoosed(qint32 roomId, QString password);
+    void newRoomCreated(QString name, QString password);
 
 public slots:
-   void accept();
+    void accept();
+    void addRoom(QString name, qint32 id);
 
 private slots:
-    void listItemDoubleClicked();
+//    void listItemDoubleClicked();
     void onPasswordTyped(QString password);
+    void onNewRoomButtonClicked();
 
 private:
+    QHash<QString, qint32> rooms;
     Ui::RoomsListDialog *ui;
 
 };
