@@ -21,8 +21,11 @@ Controller::~Controller()
 void Controller::addRoom(QString name, QHostAddress host)
 {
     qDebug() << "new room: " << name << ' ' << host.toString();
-    rooms.insert(host.toIPv4Address(), new ClientRoom(name, host));
-    emit roomAdded(name, host.toIPv4Address());
+    ClientRoom *last = rooms.value(host.toIPv4Address(), NULL);
+    if(last == NULL) {
+        rooms.insert(host.toIPv4Address(), new ClientRoom(name, host));
+        emit roomAdded(name, host.toIPv4Address());
+    }
 }
 
 void Controller::getRoom()

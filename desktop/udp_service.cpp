@@ -90,10 +90,9 @@ void UDPService::sendRoom(QString name){
     packet.type=ROOM;
     packet.id=qrand();
     packet.name=name;
-    foreach(QHostAddress addr, senders)
-        sendPackage(addr,packet);
-
-    senders.clear();
+    QHostAddress addr = senders.front();
+    senders.pop_front();
+    sendPackage(addr, packet);
 }
 
 void UDPService::listener(){
