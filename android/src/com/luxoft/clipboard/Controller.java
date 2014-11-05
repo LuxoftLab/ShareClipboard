@@ -41,6 +41,7 @@ public class Controller extends Service implements MessageManager.Listener {
 			return START_STICKY;
 		}
 		Log.w(LOG, "started");
+		rooms = new HashMap<InetAddress, ClientRoom>();
 		try {
 			udp = new UDPService(this);
 			udp.start();

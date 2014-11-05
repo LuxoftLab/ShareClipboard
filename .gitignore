@@ -3,3 +3,10 @@ android/bin/
 appcompat_v7/
 .metadata/
 .recommenders/
+android/.settings/
+android/gen/
+android/libs/
+android/.classpath
+android/.project
+android/proguard-project.txt
+android/project.properties
