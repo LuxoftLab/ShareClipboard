@@ -1,2 +1,5 @@
 android/bin/
 *.user
+appcompat_v7/
+.metadata/
+.recommenders/

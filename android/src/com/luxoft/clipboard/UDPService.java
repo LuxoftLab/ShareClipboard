@@ -12,73 +12,105 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 public class UDPService extends Thread {
-	public static String LOG = "udpservice";
-	public static final int PORT = 1234;
+	private final static String LOG = "udp";
 	
-	Controller controller;
-	DatagramSocket socket;
-	InetAddress address, broadcast;
+	public static final int PORT = 12345;
 	
-	boolean enabled;
+	private Controller controller;
+	private DatagramSocket socket;
+	private boolean enabled = false;
+	private InetAddress local, broadcast;
+	private int lastId;
 	
-	public UDPService(Controller _controller) throws IOException {
-		controller = _controller;
-		socket = new DatagramSocket(PORT);
-		address = getLocalAddress();
+	public UDPService(Controller controller) throws IOException {
+		this.controller = controller;
+		local = getLocal();
 		broadcast = getBroadcastAddress();
+		socket = new DatagramSocket(PORT);
 	}
 	
+	@Override
 	public void run() {
-		byte buf[] = new byte[1024]; //TODO delete magic numbers
-		DatagramPacket packet = new DatagramPacket(buf, buf.length);
+		byte[] buffer = new byte[1024];
+		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		enabled = true;
 		while(enabled) {
 			try {
-				socket.setBroadcast(false);
 				socket.receive(packet);
-				if(!packet.getAddress().equals(address)) {
-					processPacket(packet);
+				if(!packet.getAddress().equals(local)) {
+					onPacket(
+							new UDPPacket(packet.getData(), packet.getOffset(), packet.getLength()),
+							packet.getAddress()
+							);
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 	
+	public void close() {
+		enabled = false;
+		socket.close();
+	}
+	
 	public void getRooms() {
-		UDPPackage output = new UDPPackage(UDPPackage.GET_ROOM);
-		new Sender(broadcast, output, true);
+		UDPPacket packet = new UDPPacket(UDPPacket.GET_ROOM);
+		sendBroadcast(packet);
 	}
 	
-	public void sendRoom(String name, InetAddress addr) {
-		UDPPackage output = new UDPPackage(UDPPackage.NEW_ROOM, name);
-		new Sender(addr, output, false);
+	public void deleteRoom() {
+		UDPPacket packet = new UDPPacket(UDPPacket.DELETE_ROOM);
+		sendBroadcast(packet);
 	}
 	
-	private void processPacket(DatagramPacket packet) {
-		UDPPackage input = new UDPPackage(packet.getData(), packet.getOffset(), packet.getLength());
-		//TODO skip package with same id
-		switch(input.getType()) {
-		case UDPPackage.NEW_ROOM:
-			controller.onGetRoom(packet.getAddress());
+	public void sendRoom(InetAddress addr, String name) {
+		UDPPacket packet = new UDPPacket(UDPPacket.ROOM, name);
+		sendPacket(packet, addr);
+	}
+	
+	public void notifyAboutRoom(String name) {
+		UDPPacket packet = new UDPPacket(UDPPacket.ROOM, name);
+		sendBroadcast(packet);
+	}
+	
+	public InetAddress getLocalAddress() {
+		return local;
+	}
+	
+	private void onPacket(UDPPacket packet, InetAddress addr) {
+		if(lastId == packet.id) {
+			return;
+		}
+		lastId = packet.id;
+		switch(packet.type) {
+		case UDPPacket.GET_ROOM:
+			controller.getRoom(addr);
 			break;
-		case UDPPackage.GET_ROOM:
-			controller.addRoom(packet.getAddress(), input.getContent());
+		case UDPPacket.ROOM:
+			controller.addRoom(packet.content, addr);
+			break;
+		case UDPPacket.DELETE_ROOM:
+			controller.deleteRoom(addr);
 			break;
 		default:
-			controller.unknownPackage();
+			Log.w(LOG, "worng package type");
+			break;
 		}
 	}
 	
-	private InetAddress getLocalAddress() throws IOException {
-		WifiManager wifi = (WifiManager) controller.getSystemService(Context.WIFI_SERVICE);
-		DhcpInfo dhcp = wifi.getDhcpInfo();
-		byte[] quads = new byte[4];
-		int ip = dhcp.ipAddress;
-		for (int k = 0; k < 4; k++)
-			quads[k] = (byte) ((ip >> k * 8) & 0xFF);
-		return InetAddress.getByAddress(quads);
+	private void sendBroadcast(UDPPacket packet) {
+		sendPacket(packet, broadcast, true);
+	}
+	
+	private void sendPacket(UDPPacket packet, InetAddress addr) {
+		sendPacket(packet, addr, false);
+	}
+	
+	private void sendPacket(UDPPacket packet, InetAddress addr, boolean isBroadcast) {
+		byte[] buf = packet.getBinary();
+		DatagramPacket datagram = new DatagramPacket(buf,buf.length, addr, PORT);
+		new UDPSender(datagram, socket, isBroadcast).start();
 	}
 	
 	private InetAddress getBroadcastAddress() throws IOException {
@@ -91,35 +123,13 @@ public class UDPService extends Thread {
 		return InetAddress.getByAddress(quads);
 	}
 	
-	class Sender extends Thread {
-		
-		InetAddress address;
-		UDPPackage packet;
-		boolean broadcast;
-
-		public Sender(InetAddress adress, UDPPackage packet, boolean broadcast) {
-			this.address = adress;
-			this.packet = packet;
-			this.broadcast = broadcast;
-		}
-
-		public void run() {
-			try {
-				socket.setBroadcast(broadcast);
-				byte buf[] = packet.toBytes();
-				DatagramPacket packet = new DatagramPacket(buf,buf.length, address, PORT);
-				Log.d(LOG, "send...");
-				for(int i=0; i<5; i++) {
-					socket.send(packet);
-				}
-			} catch (SocketException e) {
-				Log.d(LOG, "fail to send");
-				e.printStackTrace();
-			} catch (IOException e) {
-				Log.d(LOG, "fail to send");
-				e.printStackTrace();
-			}
-		}
+	private InetAddress getLocal() throws IOException {
+		WifiManager wifi = (WifiManager) controller.getSystemService(Context.WIFI_SERVICE);
+		DhcpInfo dhcp = wifi.getDhcpInfo();
+		byte[] quads = new byte[4];
+		int ip = dhcp.ipAddress;
+		for (int k = 0; k < 4; k++)
+			quads[k] = (byte) ((ip >> k * 8) & 0xFF);
+		return InetAddress.getByAddress(quads);
 	}
-	
 }

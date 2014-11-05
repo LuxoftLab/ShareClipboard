@@ -1,8 +1,13 @@
 package com.luxoft.clipboard;
 
-public class ClientRoom extends Room{
+import java.net.InetAddress;
 
-	public ClientRoom(String name) {
-		super(name);
+public class ClientRoom {
+	private String name;
+	private InetAddress host;
+	
+	public ClientRoom(String name, InetAddress host) {
+		this.name = name;
+		this.host = host;
 	}
 }
