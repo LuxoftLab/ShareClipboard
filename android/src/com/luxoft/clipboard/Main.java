@@ -109,9 +109,13 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 		Log.d(LOG, "service disconnected");
 		serviceConnection.setTarget(null);
 	}
+	
+	public MessageManager getServiceConnection() {
+		return serviceConnection;
+	}
 
 	private void initGUI() {
-		ViewController controller = new ViewController(serviceConnection);
+		ViewController controller = new ViewController(this);
 		
         roomsList = (ListView)findViewById(R.id.roomsList);
         roomsAdapter = new ListAdapter(this, R.id.list_item);

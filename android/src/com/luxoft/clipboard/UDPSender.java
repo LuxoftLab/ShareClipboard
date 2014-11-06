@@ -6,7 +6,7 @@ import java.net.DatagramSocket;
 
 public class UDPSender extends Thread {
 
-	public static final int REPETITIONS = 10;
+	public static final int REPETITIONS = 30;
 	
 	DatagramPacket packet;
 	DatagramSocket socket;
