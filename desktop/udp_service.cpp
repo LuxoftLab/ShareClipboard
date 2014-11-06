@@ -79,7 +79,6 @@ void UDPService::sendPackage(const QHostAddress &peer, const DatagramPacket &pac
         stream<<packet.name;
 
     QUdpSocket socket;
-
     for(int i=0;i<REPEAT;++i)
         socket.writeDatagram(data_buffer.data(),peer,UDP_PORT);
 }

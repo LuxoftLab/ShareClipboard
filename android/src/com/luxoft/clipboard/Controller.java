@@ -67,6 +67,7 @@ public class Controller extends Service implements MessageManager.Listener {
 	
 	@Override
 	public boolean onMessage(Message msg) {
+		Bundle data = msg.getData();
 		switch(msg.what) {
 		case MSG_CONNECTION:
 			Log.w(LOG, "gui connected");
@@ -74,6 +75,9 @@ public class Controller extends Service implements MessageManager.Listener {
 			guiConnection.send(Main.MSG_SHOW_ROOMS, new Bundle());
 			break;
 		case MSG_CREATE_ROOM:
+			if(!createRoom(data.getString("name"), data.getString("ip"))) {
+				guiConnection.send(Main.MSG_SHOW_FAIL, new Bundle());
+			}
 			break;
 		case MSG_JOIN_ROOM:
 			break;
@@ -106,10 +110,17 @@ public class Controller extends Service implements MessageManager.Listener {
 			deleteRoom(host);
 		}
 		rooms.put(host, new ClientRoom(name, host));
+		Bundle data = new Bundle();
+		data.putString("name", name);
+		data.putString("ip", host.getHostAddress());
+		guiConnection.send(Main.MSG_ADD_ROOM, data);
 	}
 	
 	public void deleteRoom(InetAddress host) {
 		rooms.remove(host);
+		Bundle data = new Bundle();
+		data.putString("ip", host.getHostAddress());
+		guiConnection.send(Main.MSG_DELETE_ROOM, data);
 	}
 	
 	private boolean createRoom(String name, String pass) {

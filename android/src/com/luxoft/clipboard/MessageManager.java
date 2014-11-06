@@ -8,7 +8,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
-class MessageManager extends Handler {
+public class MessageManager extends Handler {
 	private static final String LOG = "handler";
 	
 	private Listener listener;
@@ -39,6 +39,7 @@ class MessageManager extends Handler {
 			return;
 		}
 		Message msg = Message.obtain(null, type);
+		msg.setData(data);
 		msg.replyTo = self;
 		try {
 			target.send(msg);

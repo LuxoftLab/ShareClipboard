@@ -1,10 +1,13 @@
 package com.luxoft.clipboard;
 
+import java.util.ArrayList;
+
+import com.luxoft.clipboard.view.ListAdapter;
+import com.luxoft.clipboard.view.RowData;
+import com.luxoft.clipboard.view.ViewController;
+
 import android.support.v7.app.ActionBarActivity;
-import android.bluetooth.BluetoothProfile;
-import android.bluetooth.BluetoothProfile.ServiceListener;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -12,8 +15,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.Toast;
 
 
 public class Main extends ActionBarActivity implements MessageManager.Listener, ServiceConnection {
@@ -28,6 +33,11 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 	private MessageManager serviceConnection;
 	private Intent serviceIntent;
 	
+	private ListView roomsList;
+	private ListAdapter roomsAdapter;
+	
+	private ImageButton addRoom;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +47,8 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
         startService(serviceIntent);
         
         serviceConnection = new MessageManager(this);
+        
+        initGUI();
         Log.d(LOG, "created");
     }
     
@@ -62,6 +74,7 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 
 	@Override
 	public boolean onMessage(Message msg) {
+		Bundle data = msg.getData();
 		switch(msg.what) {
 			case MSG_SHOW_ROOMS:
 				Log.d(LOG, "show rooms");
@@ -69,10 +82,13 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 			case MSG_SHOW_MEMBERS:
 				break;
 			case MSG_ADD_ROOM:
+				roomsAdapter.add(new RowData(data.getString("name"), data.getString("ip")));
 				break;
 			case MSG_DELETE_ROOM:
+				roomsAdapter.remove(data.getString("ip"));
 				break;
 			case MSG_SHOW_FAIL:
+				Toast.makeText(this, "Fail", Toast.LENGTH_LONG).show();
 				break;
 			default:
 				Log.w(LOG, "undefined message");
@@ -94,4 +110,14 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 		serviceConnection.setTarget(null);
 	}
 
+	private void initGUI() {
+		ViewController controller = new ViewController(serviceConnection);
+		
+        roomsList = (ListView)findViewById(R.id.roomsList);
+        roomsAdapter = new ListAdapter(this, R.id.list_item);
+        roomsList.setAdapter(roomsAdapter);
+        
+        addRoom = (ImageButton) findViewById(R.id.addRoom);
+        addRoom.setOnClickListener(controller);
+	}
 }

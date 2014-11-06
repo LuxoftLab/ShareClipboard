@@ -1,7 +1,7 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-#define REPEAT 10
+#define REPEAT 30
 #define UDP_PORT 12345
 
 enum PacketType{ROOM=0,GET_ROOM=1,DELETE_ROOM=2};
