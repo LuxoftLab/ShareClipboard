@@ -4,6 +4,7 @@ import com.luxoft.clipboard.Controller;
 import com.luxoft.clipboard.Main;
 import com.luxoft.clipboard.MessageManager;
 import com.luxoft.clipboard.R;
+import com.luxoft.clipboard.messages.CreateRoomMessage;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -40,12 +41,13 @@ public class ViewController implements OnClickListener, android.content.DialogIn
 	@Override
 	public void onClick(DialogInterface dialog, int which) {
 		if(dialog == createRoomDialog) {
-			Bundle data = new Bundle();
 			EditText name = (EditText)createRoomDialog.findViewById(R.id.roomName);
 			EditText password = (EditText)createRoomDialog.findViewById(R.id.password);
-			data.putString("name", name.getText().toString());
-			data.putString("pass", password.getText().toString());
-			connection.send(Controller.MSG_CREATE_ROOM, data);
+			CreateRoomMessage msg = new CreateRoomMessage(
+						name.getText().toString(),
+						password.getText().toString()
+					);
+			connection.send(Controller.MSG_CREATE_ROOM, msg);
 		}
 	}
 	

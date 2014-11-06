@@ -1,6 +1,7 @@
 package com.luxoft.clipboard;
 
-import android.os.Bundle;
+import com.luxoft.clipboard.messages.Packable;
+
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -33,13 +34,13 @@ public class MessageManager extends Handler {
 		return self.getBinder();
 	}
 	
-	public void send(int type, Bundle data) {
+	public void send(int type, Packable data) {
 		if(target == null) {
 			Log.w(LOG, "cannot send message");
 			return;
 		}
 		Message msg = Message.obtain(null, type);
-		msg.setData(data);
+		if(data != null) msg.setData(data.pack());
 		msg.replyTo = self;
 		try {
 			target.send(msg);

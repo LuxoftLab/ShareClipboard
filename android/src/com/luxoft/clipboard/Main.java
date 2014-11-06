@@ -1,7 +1,7 @@
 package com.luxoft.clipboard;
 
-import java.util.ArrayList;
-
+import com.luxoft.clipboard.messages.DeleteItemMessage;
+import com.luxoft.clipboard.messages.NewItemMessage;
 import com.luxoft.clipboard.view.ListAdapter;
 import com.luxoft.clipboard.view.RowData;
 import com.luxoft.clipboard.view.ViewController;
@@ -15,7 +15,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -68,7 +67,7 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
     
     @Override
 	public void onBackPressed() {
-		serviceConnection.send(Controller.MSG_CLOSE, new Bundle());
+		serviceConnection.send(Controller.MSG_CLOSE, null);
 		super.onBackPressed();
 	}
 
@@ -82,10 +81,12 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 			case MSG_SHOW_MEMBERS:
 				break;
 			case MSG_ADD_ROOM:
-				roomsAdapter.add(new RowData(data.getString("name"), data.getString("ip")));
+				NewItemMessage room = new NewItemMessage(data);
+				roomsAdapter.add(new RowData(room.name, room.ip));
 				break;
 			case MSG_DELETE_ROOM:
-				roomsAdapter.remove(data.getString("ip"));
+				DeleteItemMessage item = new DeleteItemMessage(data);
+				roomsAdapter.remove(item.ip);
 				break;
 			case MSG_SHOW_FAIL:
 				Toast.makeText(this, "Fail", Toast.LENGTH_LONG).show();
@@ -101,7 +102,7 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 	public void onServiceConnected(ComponentName name, IBinder service) {
 		Log.d(LOG, "service connected");
 		serviceConnection.setTarget(new Messenger(service));
-		serviceConnection.send(Controller.MSG_CONNECTION, new Bundle());
+		serviceConnection.send(Controller.MSG_CONNECTION, null);
 	}
 
 	@Override

@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashMap;
 
+import com.luxoft.clipboard.messages.CreateRoomMessage;
+import com.luxoft.clipboard.messages.DeleteItemMessage;
+import com.luxoft.clipboard.messages.NewItemMessage;
+
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -11,7 +15,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.Messenger;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -72,11 +75,12 @@ public class Controller extends Service implements MessageManager.Listener {
 		case MSG_CONNECTION:
 			Log.w(LOG, "gui connected");
 			guiConnection.setTarget(msg.replyTo);
-			guiConnection.send(Main.MSG_SHOW_ROOMS, new Bundle());
+			guiConnection.send(Main.MSG_SHOW_ROOMS, null);
 			break;
 		case MSG_CREATE_ROOM:
-			if(!createRoom(data.getString("name"), data.getString("ip"))) {
-				guiConnection.send(Main.MSG_SHOW_FAIL, new Bundle());
+			CreateRoomMessage room = new CreateRoomMessage(data);
+			if(!createRoom(room.name, room.password)) {
+				guiConnection.send(Main.MSG_SHOW_FAIL, null);
 			}
 			break;
 		case MSG_JOIN_ROOM:
@@ -110,17 +114,14 @@ public class Controller extends Service implements MessageManager.Listener {
 			deleteRoom(host);
 		}
 		rooms.put(host, new ClientRoom(name, host));
-		Bundle data = new Bundle();
-		data.putString("name", name);
-		data.putString("ip", host.getHostAddress());
-		guiConnection.send(Main.MSG_ADD_ROOM, data);
+		NewItemMessage msg = new NewItemMessage(name, host.getHostAddress());
+		guiConnection.send(Main.MSG_ADD_ROOM, msg);
 	}
 	
 	public void deleteRoom(InetAddress host) {
 		rooms.remove(host);
-		Bundle data = new Bundle();
-		data.putString("ip", host.getHostAddress());
-		guiConnection.send(Main.MSG_DELETE_ROOM, data);
+		DeleteItemMessage msg = new DeleteItemMessage(host.getHostAddress());
+		guiConnection.send(Main.MSG_DELETE_ROOM, msg);
 	}
 	
 	private boolean createRoom(String name, String pass) {
