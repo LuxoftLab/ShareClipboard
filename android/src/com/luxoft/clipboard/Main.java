@@ -15,8 +15,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
@@ -24,18 +26,21 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 	private static final String LOG = "activity";
 	
 	public static final int MSG_SHOW_ROOMS = 0,
-							MSG_SHOW_MEMBERS = 1,
+							MSG_SHOW_DEVICES = 1,
 							MSG_ADD_ROOM = 2,
 							MSG_DELETE_ROOM = 3,
-							MSG_SHOW_FAIL = 4;
+							MSG_SHOW_FAIL = 4,
+							MSG_ADD_DEVICE = 5,
+							MSG_DELETE_DEVICE = 6;
 	
 	private MessageManager serviceConnection;
 	private Intent serviceIntent;
 	
-	private ListView roomsList;
+	private ViewController controller;
 	private ListAdapter roomsAdapter;
-	
-	private ImageButton addRoom;
+	private ListAdapter devicesAdapter;
+	private RelativeLayout mainView, roomView;
+
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +51,7 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
         startService(serviceIntent);
         
         serviceConnection = new MessageManager(this);
-        
+        controller = new ViewController(this);
         initGUI();
         Log.d(LOG, "created");
     }
@@ -76,9 +81,12 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 		Bundle data = msg.getData();
 		switch(msg.what) {
 			case MSG_SHOW_ROOMS:
-				Log.d(LOG, "show rooms");
+				mainView.setVisibility(View.VISIBLE);
+				roomView.setVisibility(View.GONE);
 				break;
-			case MSG_SHOW_MEMBERS:
+			case MSG_SHOW_DEVICES:
+				roomView.setVisibility(View.VISIBLE);
+				mainView.setVisibility(View.GONE);
 				break;
 			case MSG_ADD_ROOM:
 				NewItemMessage room = new NewItemMessage(data);
@@ -90,6 +98,14 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 				break;
 			case MSG_SHOW_FAIL:
 				Toast.makeText(this, "Fail", Toast.LENGTH_LONG).show();
+				break;
+			case MSG_ADD_DEVICE:
+				room = new NewItemMessage(data);
+				devicesAdapter.add(new RowData(room.name, room.ip));
+				break;
+			case MSG_DELETE_DEVICE:
+				item = new DeleteItemMessage(data);
+				devicesAdapter.remove(item.ip);
 				break;
 			default:
 				Log.w(LOG, "undefined message");
@@ -116,13 +132,18 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 	}
 
 	private void initGUI() {
-		ViewController controller = new ViewController(this);
+		mainView = (RelativeLayout)findViewById(R.id.mainView);
+		roomView = (RelativeLayout)findViewById(R.id.roomView);
 		
-        roomsList = (ListView)findViewById(R.id.roomsList);
+        ListView roomsList = (ListView)findViewById(R.id.roomsList);
         roomsAdapter = new ListAdapter(this, R.id.list_item);
         roomsList.setAdapter(roomsAdapter);
         
-        addRoom = (ImageButton) findViewById(R.id.addRoom);
+        ListView devicesList = (ListView)findViewById(R.id.devicesList);
+        devicesAdapter = new ListAdapter(this, R.id.list_item);
+        devicesList.setAdapter(devicesAdapter);
+        
+        ImageButton addRoom = (ImageButton) findViewById(R.id.addRoom);
         addRoom.setOnClickListener(controller);
 	}
 }

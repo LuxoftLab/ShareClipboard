@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashMap;
 
+import com.luxoft.clipboard.ClientRoom.Device;
 import com.luxoft.clipboard.messages.CreateRoomMessage;
 import com.luxoft.clipboard.messages.DeleteItemMessage;
 import com.luxoft.clipboard.messages.NewItemMessage;
@@ -12,6 +13,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
@@ -30,6 +32,8 @@ public class Controller extends Service implements MessageManager.Listener {
 					  MSG_LEAVE_ROOM = 4,
 					  MSG_CLOSE = 5;
 	
+	
+	private String login = Build.MODEL;
 	private UDPService udp;
 	private ServerRoom server;
 	private ClientRoom currentRoom;
@@ -44,6 +48,7 @@ public class Controller extends Service implements MessageManager.Listener {
 			return START_STICKY;
 		}
 		Log.w(LOG, "started");
+		currentRoom = null;
 		rooms = new HashMap<InetAddress, ClientRoom>();
 		try {
 			udp = new UDPService(this);
@@ -58,13 +63,19 @@ public class Controller extends Service implements MessageManager.Listener {
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		Log.w(LOG, "bind");
+		Log.d(LOG, "bind");
 		return guiConnection.getBinder();
 	}
 	
 	@Override
+	public boolean onUnbind(Intent intent) {
+		guiConnection.setTarget(null);
+		return super.onUnbind(intent);
+	}
+	
+	@Override
 	public void onDestroy() {
-		Log.w(LOG, "destroyed");
+		Log.d(LOG, "destroyed");
 		super.onDestroy();
 	}
 	
@@ -73,17 +84,21 @@ public class Controller extends Service implements MessageManager.Listener {
 		Bundle data = msg.getData();
 		switch(msg.what) {
 		case MSG_CONNECTION:
-			Log.w(LOG, "gui connected");
+			Log.d(LOG, "gui connected");
 			guiConnection.setTarget(msg.replyTo);
-			guiConnection.send(Main.MSG_SHOW_ROOMS, null);
+			synchronizeGUI();
 			break;
 		case MSG_CREATE_ROOM:
 			CreateRoomMessage room = new CreateRoomMessage(data);
 			if(!createRoom(room.name, room.password)) {
 				guiConnection.send(Main.MSG_SHOW_FAIL, null);
 			}
+			guiConnection.send(Main.MSG_SHOW_DEVICES, null);
 			break;
 		case MSG_JOIN_ROOM:
+			if(!joinRoom(null, null)) {
+				guiConnection.send(Main.MSG_SHOW_FAIL, null);
+			}
 			break;
 		case MSG_DELETE_ROOM:
 			break;
@@ -93,7 +108,7 @@ public class Controller extends Service implements MessageManager.Listener {
 			udp.close();
 			stopForeground(true);
 			stopSelf();
-			Log.w(LOG, "closed");
+			Log.d(LOG, "closed");
 			break;
 		default:
 			Log.w(LOG, "undefined message");
@@ -109,13 +124,12 @@ public class Controller extends Service implements MessageManager.Listener {
 	}
 	
 	public void addRoom(String name, InetAddress host) {
-		Log.w(LOG, "got room"+name);
+		Log.d(LOG, "got room"+name);
 		if(rooms.containsKey(host)) {
 			deleteRoom(host);
 		}
-		rooms.put(host, new ClientRoom(name, host));
-		NewItemMessage msg = new NewItemMessage(name, host.getHostAddress());
-		guiConnection.send(Main.MSG_ADD_ROOM, msg);
+		rooms.put(host, new ClientRoom(name, host, this));
+		notifyAboutRoom(name, host);
 	}
 	
 	public void deleteRoom(InetAddress host) {
@@ -124,10 +138,34 @@ public class Controller extends Service implements MessageManager.Listener {
 		guiConnection.send(Main.MSG_DELETE_ROOM, msg);
 	}
 	
+	public void notifyAboutFail(int error) {
+		guiConnection.send(Main.MSG_SHOW_FAIL, null);
+	}
+	
+	public void notifyAboutDevice(String login, InetAddress addr) {
+		NewItemMessage msg = new NewItemMessage(login, addr.getHostAddress());
+		guiConnection.send(Main.MSG_ADD_DEVICE, msg);
+	}
+	
+	public void notifyAboutDeviceDeletion(InetAddress addr) {
+		DeleteItemMessage msg = new DeleteItemMessage(addr.getHostAddress());
+		guiConnection.send(Main.MSG_DELETE_DEVICE, msg);
+	}
+
+	public void onDisconnected() {
+		currentRoom = null;
+		guiConnection.send(Main.MSG_SHOW_ROOMS, null);
+	}
+	
 	private boolean createRoom(String name, String pass) {
 		if(server != null || currentRoom != null)
 			return false;
-		server = new ServerRoom(name, pass);
+		try {
+			server = new ServerRoom(name, pass);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 		InetAddress local = udp.getLocalAddress();
 		addRoom(name, local);
 		udp.notifyAboutRoom(name);
@@ -141,8 +179,26 @@ public class Controller extends Service implements MessageManager.Listener {
 		if(room == null)
 			return false;
 		currentRoom = room;
-		//TODO connect to host
-		return true;
+		Log.d(LOG, "join with "+login+" "+pass);
+		return room.connectToHost(login, pass);
+	}
+	
+	private void synchronizeGUI() {
+		for(ClientRoom room : rooms.values())
+			notifyAboutRoom(room.getName(), room.getHost());
+		if(currentRoom == null) 
+			guiConnection.send(Main.MSG_SHOW_ROOMS, null);
+		else {
+			guiConnection.send(Main.MSG_SHOW_DEVICES, null);
+			for(Device device : currentRoom.getDevice()) {
+				notifyAboutDevice(device.login, device.addr);
+			}
+		}
+	}
+	
+	private void notifyAboutRoom(String name, InetAddress host) {
+		NewItemMessage msg = new NewItemMessage(name, host.getHostAddress());
+		guiConnection.send(Main.MSG_ADD_ROOM, msg);
 	}
 	
 	private Notification createNotification() {

@@ -1,13 +1,90 @@
 package com.luxoft.clipboard;
 
+import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Collection;
+import java.util.HashMap;
+
+import com.luxoft.clipboard.packets.DeleteDevicePacket;
+import com.luxoft.clipboard.packets.DevicePacket;
+import com.luxoft.clipboard.packets.ErrorPacket;
 
 public class ClientRoom {
+	private static final String LOG = "clientRoom";
+	
 	private String name;
 	private InetAddress host;
+	private String login, pass;
+	private ServerConnection connection;
+	private HashMap<InetAddress, Device> devices;
 	
-	public ClientRoom(String name, InetAddress host) {
+	private Controller controller;
+	
+	public ClientRoom(String name, InetAddress host, Controller controller) {
 		this.name = name;
 		this.host = host;
+		this.controller = controller;
+		devices = new HashMap<InetAddress, Device>();
+	}
+	
+	public boolean connectToHost(String login, String password) {
+		this.login = login;
+		this.pass = password;
+		try {
+			connection = new ServerConnection(host, this);
+			connection.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public void onStarted() {
+		connection.sendPasswordAndLogin(login, pass);
+	}
+	
+	public void onServerDisconnected() {
+		controller.onDisconnected();
+	}
+	
+	public void addDevice(DevicePacket packet) {
+		if(devices.containsKey(packet.addr)) {
+			deleteDevice(packet);
+		}
+		devices.put(packet.addr, new Device(packet.login, packet.addr));
+		controller.notifyAboutDevice(packet.login, packet.addr);
+	}
+	
+	public void deleteDevice(DeleteDevicePacket packet) {
+		Device device = devices.remove(packet.addr);
+		if(device != null)
+			controller.notifyAboutDeviceDeletion(packet.addr);
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public InetAddress getHost() {
+		return host;
+	}
+	
+	public Collection<Device> getDevice() {
+		return devices.values();
+	}
+
+	public void notifyAboutFail(ErrorPacket packet) {
+		controller.notifyAboutFail(packet.value);
+	}
+	
+	class Device {
+		String login;
+		InetAddress addr;
+		
+		public Device(String login, InetAddress addr) {
+			this.login = login;
+			this.addr = addr;
+		}
 	}
 }

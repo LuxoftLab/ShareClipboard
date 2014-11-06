@@ -1,4 +1,4 @@
-package com.luxoft.clipboard;
+package com.luxoft.clipboard.packets;
 
 import java.nio.ByteBuffer;
 
@@ -8,9 +8,9 @@ public class UDPPacket {
 							 DELETE_ROOM = 2;
 	private static final int CONTENT_OFFSET = 5;
 	
-	byte type;
-	int id;
-	String content;
+	public byte type;
+	public int id;
+	public String content;
 	
 	public UDPPacket(byte[] data, int offset, int length) {
 		ByteBuffer wrapped = ByteBuffer.wrap(data, offset, length);

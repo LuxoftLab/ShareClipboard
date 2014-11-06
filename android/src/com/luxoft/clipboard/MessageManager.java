@@ -35,10 +35,7 @@ public class MessageManager extends Handler {
 	}
 	
 	public void send(int type, Packable data) {
-		if(target == null) {
-			Log.w(LOG, "cannot send message");
-			return;
-		}
+		if(target == null) return;
 		Message msg = Message.obtain(null, type);
 		if(data != null) msg.setData(data.pack());
 		msg.replyTo = self;

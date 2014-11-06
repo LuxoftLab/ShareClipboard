@@ -5,7 +5,8 @@
     tools:context="com.luxoft.clipboard.Main" >
 
     <RelativeLayout
-        android:id="@+id/relativeLayout1"
+        android:id="@+id/mainView"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
@@ -39,6 +40,40 @@
 
     </RelativeLayout>
 
+	<RelativeLayout
+        android:id="@+id/roomView"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp" >
 
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="Devices:"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+        <ImageButton
+            android:id="@+id/leaveRoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
+        <ListView
+            android:id="@+id/devicesList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/leaveRoom"
+            android:layout_centerHorizontal="true" >
+
+        </ListView>
+
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -6,6 +6,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+import com.luxoft.clipboard.packets.UDPPacket;
+
 import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
