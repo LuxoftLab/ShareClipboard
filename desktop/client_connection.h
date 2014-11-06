@@ -14,13 +14,15 @@ public:
     void removeMember(QHostAddress addr);
     QString getLogin();
 signals:
-    bool verifyPass(QString pass, ClientConnection * conn);
+    void verifyPass(QString pass, QString login, ClientConnection * conn);
     void deleteMember(QHostAddress addr);
 private slots:
-    void emitDeleteMember();
+    void onData();
 private:
     QByteArray makeBinaryPack(pckg_t, char*, int);
     QByteArray makeBinaryPack(pckg_t, QString);
+    void makeMember(char*);
+    QHostAddress makeHostAdress(char*);
 
 };
 

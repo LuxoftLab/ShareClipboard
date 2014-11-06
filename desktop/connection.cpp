@@ -22,7 +22,7 @@ QByteArray Connection::makeBinaryPack(pckg_t type, char* dat, int datsize){
     return block;
 }
 
-void Connection::onData(){
+/*void Connection::onData(){
     QDataStream in(socket);
     TcpPackage pack;
     in >> pack;
@@ -57,3 +57,4 @@ QPair<QString, QString> Connection::makeMember(char* block){
     member.second = pwdStr;
     return member;
 }
+*/

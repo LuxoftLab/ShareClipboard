@@ -13,10 +13,10 @@ class ServerConnection : public Connection
 public:
     ServerConnection(QHostAddress host);
     void sendPassAndLogin(QString password, QString login);
-public slots:
+    void deleteMe(QHostAddress address);
+signals:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
-
 };
 
 #endif // SERVER_CONNECTION_H

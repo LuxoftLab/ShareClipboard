@@ -21,16 +21,16 @@ public:
 signals:
     //void gotData(const TcpPackage*);
 
-    void gotText(const QString);
+    /*void gotText(const QString);
     void gotPass(const QString);
     void gotMember(const QPair<QString, QString>);
     void gotRawData(const char*, const int);
     void gotInvalidPass();
     void gotAdress(const QString);
     void gotRemoveRequest(const QString);
-
+    */
 public slots:
-    void onData();
+    //void onData();
 };
 
 #endif // CONNECTION_H
