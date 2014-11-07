@@ -1,7 +1,9 @@
 #include <QMessageBox>
+#include <QtNetwork/QHostInfo>
 #include "mainwindow.h"
 #include "roomslistdialog.h"
 #include "ui_mainwindow.h"
+#include "changenamedialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -10,7 +12,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     createTrayIcon();
 
+    ui->nameLabel->setText("Имя устройства: " + QHostInfo::localHostName());
+
+    connect(ui->changeNamePushButton, SIGNAL(clicked()), this, SLOT(changeNameClicked()));
     connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
+
 }
 
 MainWindow::~MainWindow()
@@ -32,6 +38,13 @@ bool MainWindow::askForFileDownload(QString fileName)
 void MainWindow::chooseRoomClicked()
 {
     RoomsListDialog dialog;
+    dialog.exec();
+}
+
+void MainWindow::changeNameClicked()
+{
+    ChangeNameDialog dialog;
+    connect(&dialog, SIGNAL(nameChoosed(QString)), this, SIGNAL(changeName(QString)));
     dialog.exec();
 }
 
@@ -119,6 +132,11 @@ void MainWindow::fillDevicesList(QList<QString> list) {
 void MainWindow::newDevicePluged(QString deviceName)
 {
     trayIcon->showMessage(deviceName + tr("& connected to room"), "Shared cleapboard");
+}
+
+void MainWindow::newNameVerified(QString newName)
+{
+    ui->nameLabel->setText("Имя устройства: " + newName);
 }
 
 void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)

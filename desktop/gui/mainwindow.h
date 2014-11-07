@@ -23,9 +23,7 @@ public:
 
 signals:
     void downloadFile();
-
-//    void roomCreated(QString name, QString pass, QString login);
-//    void roomSelected(quint32 addr, QString password, QString login);
+    void changeName(QString name);
 
 protected:
     void closeEvent(QCloseEvent * event);
@@ -33,9 +31,11 @@ protected:
 public slots:
     void cleapboardChanged(QMimeData * mimeData);
     void newDevicePluged(QString deviceName);
+    void newNameVerified(QString newName);
 
 private slots:
     void chooseRoomClicked();
+    void changeNameClicked();
 
     void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
     void trayMessageClicked();
