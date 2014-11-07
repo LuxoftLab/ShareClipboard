@@ -1,6 +1,8 @@
 #ifndef PACKET_H
 #define PACKET_H
 
+#include <QDataStream>
+
 #define REPEAT 10
 #define UDP_PORT 12345
 
@@ -11,5 +13,7 @@ struct DatagramPacket{
   qint32 id;
   QString name;
 };
+
+DatagramPacket unpackPackage(QDataStream &stream);
 
 #endif
