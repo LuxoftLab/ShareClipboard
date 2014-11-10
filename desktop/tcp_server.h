@@ -15,11 +15,13 @@ public:
     QHostAddress getLocalAddress();
 signals:
     void addMember(QTcpSocket * socket);
+    void deleteMember(QHostAddress);
 private:
     QTcpServer* server;
 
 private slots:
     void newMember();
+    void emitDeleteMember();
 };
 
 #endif // TCP_SERVER_H

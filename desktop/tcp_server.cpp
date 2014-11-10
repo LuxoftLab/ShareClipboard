@@ -16,8 +16,13 @@ QHostAddress TCPServer::getLocalAddress()
 }
 
 void TCPServer::newMember(){
-    if(QTcpSocket* newConnection = server->nextPendingConnection())
+    if(QTcpSocket* newConnection = server->nextPendingConnection()){
+        connect(newConnection, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
         emit addMember(newConnection);
+    }
 }
 
+void TCPServer::emitDeleteMember(){
+
+}
 

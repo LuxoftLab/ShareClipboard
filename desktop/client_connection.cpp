@@ -22,6 +22,18 @@ QByteArray ClientConnection::makeBinaryPack(pckg_t type, QString str){
     return block;
 }
 
+QByteArray ClientConnection::makeBinaryPack(pckg_t type, qint32 num)
+{
+    TcpPackageHeader head = TcpPackageHeader(type, 4);
+    Data dat;
+    sprintf(dat.rawData, "%d", num);
+    TcpPackage pack = TcpPackage(head, dat);
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out << pack;
+    return block;
+}
+
 void ClientConnection::makeMember(char* block)
 {
     QDataStream in(block);
@@ -33,34 +45,49 @@ void ClientConnection::makeMember(char* block)
     char* pwd = new char[pwdSize];
     in >> pwd;
 
-    emit verifyPass(pwd, login, this);
+    //emit verifyPass(pwd, login, this);
+}
+
+void ClientConnection::makePass(char *block)
+{
+    int passSize, loginSize;
+    QString pass;
+    QString login;
+    QDataStream in(block);
+    in >> passSize;
+    char* rawPass = new char[passSize];
+    in >> loginSize;
+    char* rawLogin = new char[loginSize];
+    in >> rawLogin;
+    pass = QString::fromUtf8(rawPass);
+    login = QString::fromUtf8(rawLogin);
+    emit(verifyPass(pass, login, this));
 }
 
 ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
-    //connect(socket, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
 }
 
 void ClientConnection::sendFail()
 {
-    //socket->write(makeBinaryPack(INVALID_PASS, NULL, 0));
+    socket->write(makeBinaryPack(INVALID_PASS, NULL, 0));
 }
 
 void ClientConnection::sendMember(QString login, QHostAddress addr)
 {
-    /*QByteArray dat;
-     *
+    QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
     out << login.size() << login << addr.toString().size() << addr.toString();
     socket->write(makeBinaryPack(MEMBER, dat.data(), dat.size()));
-    */
+
 }
 
 void ClientConnection::removeMember(QHostAddress addr)
 {
-    //socket->write(makeBinaryPack(REMOVE, addr.toString()));
+    socket->write(makeBinaryPack(REMOVE, addr.toIPv4Address()));
 }
 
 QString ClientConnection::getLogin() {
@@ -75,8 +102,7 @@ void ClientConnection::onData(){
     //make something sane here instead switch
     switch(pack.getHeader()->type){
         //case TEXT:      {emit gotText(*pack.getData()->strData); break;}
-        //case PASS:      {emit gotPass(*pack.getData()->strData); break;}
-        case MEMBER:    {makeMember(pack.getData()->rawData); break;}
+        case PASS:      {makePass(pack.getData()->rawData); break;}
         //case RAW: {emit gotRawData(pack.getData()->rawData, pack.getHeader()->length); break;}
         //case INVALID_PASS: {emit gotInvalidPass(); break;}
         //case ADRESS: {emit gotAdress(*pack.getData()->strData); break;}
@@ -87,5 +113,5 @@ void ClientConnection::onData(){
 
 QHostAddress ClientConnection::makeHostAdress(char* block){
     QHostAddress* address = new QHostAddress;
-
+    return *address;
 }

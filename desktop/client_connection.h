@@ -21,7 +21,9 @@ private slots:
 private:
     QByteArray makeBinaryPack(pckg_t, char*, int);
     QByteArray makeBinaryPack(pckg_t, QString);
+    QByteArray makeBinaryPack(pckg_t, qint32);
     void makeMember(char*);
+    void makePass(char*);
     QHostAddress makeHostAdress(char*);
 
 };
