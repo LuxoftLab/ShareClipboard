@@ -104,9 +104,8 @@ void ClientConnection::onData(){
         //case TEXT:      {emit gotText(*pack.getData()->strData); break;}
         case PASS:      {makePass(pack.getData()->rawData); break;}
         //case RAW: {emit gotRawData(pack.getData()->rawData, pack.getHeader()->length); break;}
-        //case INVALID_PASS: {emit gotInvalidPass(); break;}
         //case ADRESS: {emit gotAdress(*pack.getData()->strData); break;}
-        case REMOVE: {emit deleteMember(makeHostAdress(pack.getData()->rawData)); break;}
+        //case REMOVE: {emit deleteMember(makeHostAdress(pack.getData()->rawData)); break;}
     default: throw pack.getHeader()->type;
     }
 }

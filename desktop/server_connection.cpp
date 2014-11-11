@@ -19,12 +19,12 @@ void ServerConnection::sendPassAndLogin(QString password, QString login){
    socket->write(makeBinaryPack(PASS, dat.data(), dat.size()));
 }
 
-void ServerConnection::deleteMe(QHostAddress address){
+/*void ServerConnection::deleteMe(QHostAddress address){
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
     out << address.toIPv4Address();
     socket->write(makeBinaryPack(REMOVE, dat.data(), dat.size()))   ;
-}
+}*/
 
 void ServerConnection::onData()
 {
@@ -40,7 +40,7 @@ void ServerConnection::onData()
 //        case RAW: {emit gotRawData(pack.getData()->rawData, pack.getHeader()->length); break;}
         case INVALID_PASS: {emit gotInvalidPass(); break;}
 //        case ADRESS: {emit gotAdress(*pack.getData()->strData); break;}
-//        case REMOVE: {emit gotRemoveRequest(*pack.getData()->strData); break;}
+        case REMOVE: {emitRemoveMember(pack.getData()->rawData); break;}
     default: throw pack.getHeader()->type;
     }
 }
@@ -57,4 +57,13 @@ void ServerConnection::makeMember(char *block)
     in >> addressRaw;
     addr = QHostAddress(addressRaw);
     emit addMember(login, addr);
+}
+
+void ServerConnection::emitRemoveMember(char* block){
+    QDataStream in(block);
+    qint32 address;
+    QHostAddress addr;
+    in >> address;
+    addr = QHostAddress(address);
+    emit(deleteMember(addr));
 }

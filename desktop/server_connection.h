@@ -23,6 +23,10 @@ signals:
     void gotInvalidPass();
 private:
     void makeMember(char *);
+private slots:
+    void emitRemoveMember(char*);
+
+
 };
 
 #endif // SERVER_CONNECTION_H

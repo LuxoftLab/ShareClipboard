@@ -18,7 +18,7 @@ signals:
     void deleteMember(QHostAddress);
 private:
     QTcpServer* server;
-
+    QTcpSocket* newConnection;
 private slots:
     void newMember();
     void emitDeleteMember();
