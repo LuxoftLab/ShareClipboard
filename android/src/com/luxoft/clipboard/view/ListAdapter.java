@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.luxoft.clipboard.R;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class ListAdapter extends ArrayAdapter<RowData> {
-
+	private static final String LOG = "activity";
 	HashMap<String, RowData> rows;
 	LayoutInflater inflator;
 	public ListAdapter(Context context, int resource) {
@@ -23,6 +24,7 @@ public class ListAdapter extends ArrayAdapter<RowData> {
 	}
 	
 	public void put(RowData row) {
+		Log.d(LOG, "add room "+row.ip);
 		RowData last = rows.put(row.ip, row);
 		if(last != null) {
 			remove(last);
@@ -34,6 +36,7 @@ public class ListAdapter extends ArrayAdapter<RowData> {
 	public void remove(String ip) {
 		RowData last = rows.get(ip);
 		if(last != null) {
+			Log.d(LOG, "delete room "+last.name);
 			remove(last);
 			notifyDataSetChanged();
 		}

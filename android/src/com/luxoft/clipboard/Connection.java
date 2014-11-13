@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.luxoft.clipboard.packets.TCPPacket;
 import com.luxoft.clipboard.packets.TCPPacketFactory;
+import com.luxoft.clipboard.packets.TextPacket;
 
 public abstract class Connection extends Thread {
 	private static final String LOG = "connection";
@@ -50,14 +51,17 @@ public abstract class Connection extends Thread {
 			}
 		} catch (IOException e) {
 			Log.w(LOG, "exception in "+socket.getInetAddress().getHostAddress());
-			if(socket.isClosed())
-				onDisconnected(getInetAddress());
+			onDisconnected(getInetAddress());
 			e.printStackTrace();
 		}
 	}
 	
 	public void sendPacket(TCPPacket packet) {
 		new TCPSender(packet, out).start();
+	}
+	
+	public void sendClipboardText(String text) {
+		sendPacket(new TextPacket(text));
 	}
 	
 	public void close() {

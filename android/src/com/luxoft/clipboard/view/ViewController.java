@@ -5,28 +5,36 @@ import com.luxoft.clipboard.Main;
 import com.luxoft.clipboard.MessageManager;
 import com.luxoft.clipboard.R;
 import com.luxoft.clipboard.messages.CreateRoomMessage;
+import com.luxoft.clipboard.messages.JoinRoomMessage;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
+import android.widget.TextView;
 
-public class ViewController implements OnClickListener, android.content.DialogInterface.OnClickListener {
+public class ViewController implements OnClickListener, android.content.DialogInterface.OnClickListener, OnItemClickListener {
 
-	MessageManager connection;
-	Context context;
-	LayoutInflater inflater;
-	AlertDialog createRoomDialog;
+	private MessageManager connection;
+	private Context context;
+	private LayoutInflater inflater;
+	private AlertDialog createRoomDialog, joinRoomDialog,
+						leaveRoomDialog;
+	
+	private String selectedRoom;
 	
 	public ViewController(Main activity) {
 		connection = activity.getServiceConnection();
 		context = activity;
 		inflater = activity.getLayoutInflater();
-		initCreateRoomDialog();
+		createRoomDialog = createDialog("Room creation", R.layout.dialog_create_room);
+		joinRoomDialog = createDialog("Room creation", R.layout.dialog_join_room);
+		leaveRoomDialog = createDialog("Are you sure to leave room?", 0);
 	}
 
 	@Override
@@ -34,6 +42,9 @@ public class ViewController implements OnClickListener, android.content.DialogIn
 		switch(view.getId()) {
 		case R.id.addRoom:
 			createRoomDialog.show();
+			break;
+		case R.id.leaveRoom:
+			leaveRoomDialog.show();
 			break;
 		}
 	}
@@ -48,18 +59,34 @@ public class ViewController implements OnClickListener, android.content.DialogIn
 						password.getText().toString()
 					);
 			connection.send(Controller.MSG_CREATE_ROOM, msg);
+		} else if(dialog == joinRoomDialog) {
+			EditText password = (EditText)joinRoomDialog.findViewById(R.id.password);
+			JoinRoomMessage msg = new JoinRoomMessage(
+						selectedRoom,
+						password.getText().toString()
+					);
+			connection.send(Controller.MSG_JOIN_ROOM, msg);
+		} else if(dialog == leaveRoomDialog) {
+			connection.send(Controller.MSG_LEAVE_ROOM, null);
 		}
 	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		TextView ip = (TextView)view.findViewById(R.id.ip);
+		selectedRoom = ip.getText().toString();
+		joinRoomDialog.show();
+	}
 	
-	private void initCreateRoomDialog() {
+	private AlertDialog createDialog(String title, int res) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		
-		builder.setTitle("Room creation");
-		builder.setView(inflater.inflate(R.layout.dialog_create_room, null));
+		builder.setTitle(title);
+		if(res != 0)
+			builder.setView(inflater.inflate(res, null));
 		builder.setPositiveButton("OK", this);
 		builder.setNegativeButton("Cancel", null);
 		
-		createRoomDialog = builder.create();
+		return builder.create();
 	}
-	
 }

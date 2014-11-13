@@ -90,10 +90,11 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 				break;
 			case MSG_ADD_ROOM:
 				NewItemMessage room = new NewItemMessage(data);
-				roomsAdapter.add(new RowData(room.name, room.ip));
+				roomsAdapter.put(new RowData(room.name, room.ip));
 				break;
 			case MSG_DELETE_ROOM:
 				DeleteItemMessage item = new DeleteItemMessage(data);
+				Log.d(LOG, "delete room"+item.ip);
 				roomsAdapter.remove(item.ip);
 				break;
 			case MSG_SHOW_FAIL:
@@ -101,7 +102,7 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 				break;
 			case MSG_ADD_DEVICE:
 				room = new NewItemMessage(data);
-				devicesAdapter.add(new RowData(room.name, room.ip));
+				devicesAdapter.put(new RowData(room.name, room.ip));
 				break;
 			case MSG_DELETE_DEVICE:
 				item = new DeleteItemMessage(data);
@@ -138,6 +139,7 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
         ListView roomsList = (ListView)findViewById(R.id.roomsList);
         roomsAdapter = new ListAdapter(this, R.id.list_item);
         roomsList.setAdapter(roomsAdapter);
+        roomsList.setOnItemClickListener(controller);
         
         ListView devicesList = (ListView)findViewById(R.id.devicesList);
         devicesAdapter = new ListAdapter(this, R.id.list_item);
@@ -145,5 +147,8 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
         
         ImageButton addRoom = (ImageButton) findViewById(R.id.addRoom);
         addRoom.setOnClickListener(controller);
+        
+        ImageButton leave = (ImageButton) findViewById(R.id.leaveRoom);
+        leave.setOnClickListener(controller);
 	}
 }

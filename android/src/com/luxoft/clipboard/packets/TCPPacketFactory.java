@@ -12,6 +12,8 @@ public class TCPPacketFactory {
 			return new ErrorPacket();
 		case TCPPacket.DELETE_DEVICE:
 			return new DeleteDevicePacket();
+		case TCPPacket.CLIPBOARD_TEXT:
+			return new TextPacket();
 		default:
 			return null;
 		}

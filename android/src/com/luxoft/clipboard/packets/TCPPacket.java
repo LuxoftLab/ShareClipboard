@@ -9,7 +9,8 @@ public abstract class TCPPacket {
 	public static final byte AUTH = 0,
 							 DEVICE = 1,
 							 FAIL = 2,
-							 DELETE_DEVICE = 3;
+							 DELETE_DEVICE = 3,
+							 CLIPBOARD_TEXT = 4;
 	
 	public byte type;
 	

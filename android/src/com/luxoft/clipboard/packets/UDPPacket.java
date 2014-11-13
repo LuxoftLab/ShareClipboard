@@ -21,7 +21,7 @@ public class UDPPacket {
 	
 	public UDPPacket(byte type) {
 		this.type = type;
-		id = (int) (Math.random()*(0xffffffffL));
+		id = (int) (Math.random()*100000);
 	}
 	
 	public UDPPacket(byte type, String content) {

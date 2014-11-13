@@ -8,6 +8,7 @@ import com.luxoft.clipboard.packets.DeleteDevicePacket;
 import com.luxoft.clipboard.packets.DevicePacket;
 import com.luxoft.clipboard.packets.ErrorPacket;
 import com.luxoft.clipboard.packets.TCPPacket;
+import com.luxoft.clipboard.packets.TextPacket;
 
 import android.util.Log;
 
@@ -47,6 +48,9 @@ public class ClientConnection extends Connection {
 		switch(packet.type) {
 		case TCPPacket.AUTH:
 			room.verifyPassword(getInetAddress(), (AuthPacket)packet);
+			break;
+		case TCPPacket.CLIPBOARD_TEXT:
+			room.onClipboardUpdated(getInetAddress(), (TextPacket)packet);
 			break;
 		default:
 			Log.w(LOG, "unexpected package");

@@ -2,16 +2,20 @@ package com.luxoft.clipboard;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 
 import com.luxoft.clipboard.ClientRoom.Device;
 import com.luxoft.clipboard.messages.CreateRoomMessage;
 import com.luxoft.clipboard.messages.DeleteItemMessage;
+import com.luxoft.clipboard.messages.JoinRoomMessage;
 import com.luxoft.clipboard.messages.NewItemMessage;
 
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,7 +32,6 @@ public class Controller extends Service implements MessageManager.Listener {
 	public static final int MSG_CONNECTION = 0,
 					  MSG_CREATE_ROOM = 1,
 					  MSG_JOIN_ROOM = 2,
-					  MSG_DELETE_ROOM = 3,
 					  MSG_LEAVE_ROOM = 4,
 					  MSG_CLOSE = 5;
 	
@@ -40,6 +43,7 @@ public class Controller extends Service implements MessageManager.Listener {
 	private HashMap<InetAddress, ClientRoom> rooms;
 	
 	private MessageManager guiConnection = new MessageManager(this);
+	private ClipboardManager clipboardManager;
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -50,6 +54,7 @@ public class Controller extends Service implements MessageManager.Listener {
 		Log.w(LOG, "started");
 		currentRoom = null;
 		rooms = new HashMap<InetAddress, ClientRoom>();
+		 clipboardManager = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
 		try {
 			udp = new UDPService(this);
 			udp.start();
@@ -89,23 +94,25 @@ public class Controller extends Service implements MessageManager.Listener {
 			synchronizeGUI();
 			break;
 		case MSG_CREATE_ROOM:
-			CreateRoomMessage room = new CreateRoomMessage(data);
-			if(!createRoom(room.name, room.password)) {
+			CreateRoomMessage createRoom = new CreateRoomMessage(data);
+			if(!createRoom(createRoom.name, createRoom.password)) {
 				guiConnection.send(Main.MSG_SHOW_FAIL, null);
 			}
 			guiConnection.send(Main.MSG_SHOW_DEVICES, null);
 			break;
 		case MSG_JOIN_ROOM:
-			if(!joinRoom(null, null)) {
+			JoinRoomMessage joinRoom = new JoinRoomMessage(data);
+			if(!joinRoom(joinRoom.ip, joinRoom.password)) {
 				guiConnection.send(Main.MSG_SHOW_FAIL, null);
 			}
-			break;
-		case MSG_DELETE_ROOM:
+			guiConnection.send(Main.MSG_SHOW_DEVICES, null);
 			break;
 		case MSG_LEAVE_ROOM:
+			leaveRoom();
 			break;
 		case MSG_CLOSE:
 			udp.close();
+			leaveRoom();
 			stopForeground(true);
 			stopSelf();
 			Log.d(LOG, "closed");
@@ -133,6 +140,7 @@ public class Controller extends Service implements MessageManager.Listener {
 	}
 	
 	public void deleteRoom(InetAddress host) {
+		Log.d(LOG, "delete room"+host.getHostAddress());
 		rooms.remove(host);
 		DeleteItemMessage msg = new DeleteItemMessage(host.getHostAddress());
 		guiConnection.send(Main.MSG_DELETE_ROOM, msg);
@@ -157,6 +165,23 @@ public class Controller extends Service implements MessageManager.Listener {
 		guiConnection.send(Main.MSG_SHOW_ROOMS, null);
 	}
 	
+	public ClipboardManager getClipboardManager() {
+		return clipboardManager;
+	}
+	
+	private void leaveRoom() {
+		if(currentRoom != null) {
+			currentRoom.disconnect();
+			onDisconnected();
+		}
+		if(server != null) {
+			deleteRoom(udp.getLocalAddress());
+			udp.deleteRoom();
+			server.close();
+			server = null;
+		}
+	}
+	
 	private boolean createRoom(String name, String pass) {
 		if(server != null || currentRoom != null)
 			return false;
@@ -169,12 +194,19 @@ public class Controller extends Service implements MessageManager.Listener {
 		InetAddress local = udp.getLocalAddress();
 		addRoom(name, local);
 		udp.notifyAboutRoom(name);
-		return joinRoom(local, pass);
+		return joinRoom(local.getHostAddress(), pass);
 	}
 	
-	private boolean joinRoom(InetAddress host, String pass) {
+	private boolean joinRoom(String ip, String pass) {
 		if(currentRoom != null)
 			return false;
+		InetAddress host;
+		try {
+			host = InetAddress.getByName(ip);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			return false;
+		}
 		ClientRoom room = rooms.get(host);
 		if(room == null)
 			return false;

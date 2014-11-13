@@ -5,9 +5,13 @@ import java.net.InetAddress;
 import java.util.Collection;
 import java.util.HashMap;
 
+import android.content.ClipboardManager;
+import android.content.Context;
+
 import com.luxoft.clipboard.packets.DeleteDevicePacket;
 import com.luxoft.clipboard.packets.DevicePacket;
 import com.luxoft.clipboard.packets.ErrorPacket;
+import com.luxoft.clipboard.packets.TextPacket;
 
 public class ClientRoom {
 	private static final String LOG = "clientRoom";
@@ -19,6 +23,7 @@ public class ClientRoom {
 	private HashMap<InetAddress, Device> devices;
 	
 	private Controller controller;
+	private ClipboardService clipboard;
 	
 	public ClientRoom(String name, InetAddress host, Controller controller) {
 		this.name = name;
@@ -41,11 +46,20 @@ public class ClientRoom {
 	}
 	
 	public void onStarted() {
+		clipboard = new ClipboardService(controller, this);
 		connection.sendPasswordAndLogin(login, pass);
 	}
 	
 	public void onServerDisconnected() {
 		controller.onDisconnected();
+	}
+	
+	public void onTextCopied(String data) {
+		connection.sendClipboardText(data);
+	}
+	
+	public void updateClipboard(TextPacket packet) {
+		clipboard.putText(packet.text);
 	}
 	
 	public void addDevice(DevicePacket packet) {
@@ -76,6 +90,10 @@ public class ClientRoom {
 
 	public void notifyAboutFail(ErrorPacket packet) {
 		controller.notifyAboutFail(packet.value);
+	}
+	
+	public void disconnect() {
+		connection.close();
 	}
 	
 	class Device {

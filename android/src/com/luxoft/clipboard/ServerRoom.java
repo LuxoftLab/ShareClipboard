@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import android.util.Log;
 
 import com.luxoft.clipboard.packets.AuthPacket;
+import com.luxoft.clipboard.packets.TextPacket;
 
 public class ServerRoom {
 	private static final String LOG = "serverRoom";
@@ -17,6 +18,8 @@ public class ServerRoom {
 	private TCPServer server;
 	private HashMap<InetAddress, ClientConnection> unverifiedDevices;
 	private HashMap<InetAddress, ClientConnection> devices;
+	
+	private String clipboardText = null;
 	
 	public ServerRoom(String name, String password) throws IOException {
 		this.name = name;
@@ -41,6 +44,7 @@ public class ServerRoom {
 		connection = devices.remove(addr);
 		if(connection != null) {
 			for(Entry<InetAddress, ClientConnection> e : devices.entrySet()) {
+				Log.d(LOG, "send remove to"+e.getKey().getHostAddress());
 				e.getValue().deleteMember(addr);
 			}
 		}
@@ -63,7 +67,31 @@ public class ServerRoom {
 			if(c != connection)
 				connection.sendMember(c.getLogin(), e.getKey());
 		}
+		if(clipboardText != null) {
+			connection.sendClipboardText(clipboardText);
+		}
 		connection.setLogin(packet.login);
+	}
+	
+	public void onClipboardUpdated(InetAddress addr, TextPacket packet) {
+		ClientConnection connection = devices.get(addr);
+		if(connection == null)
+			return;
+		clipboardText = packet.text;
+		for(Entry<InetAddress, ClientConnection> e : devices.entrySet()) {
+			ClientConnection c = e.getValue();
+			c.sendPacket(packet);
+		}
+	}
+	
+	public void close() {
+		for(Entry<InetAddress, ClientConnection> e : devices.entrySet()) {
+			e.getValue().close();
+		}
+		for(Entry<InetAddress, ClientConnection> e : unverifiedDevices.entrySet()) {
+			e.getValue().close();
+		}
+		server.close();
 	}
 	
 	public String getName() {
