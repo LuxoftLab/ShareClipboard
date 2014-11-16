@@ -10,8 +10,6 @@ RoomsListDialog::RoomsListDialog(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(onNewRoomButtonClicked()));
-//    connect(ui->listWidget, SIGNAL(doubleClicked(QModelIndex)),
-//                                   this, SLOT(listItemDoubleClicked(QModelIndex)));
 }
 
 RoomsListDialog::~RoomsListDialog()
@@ -28,11 +26,6 @@ void RoomsListDialog::setRoomsHash(QHash<QString, qint32> rooms)
         ui->listWidget->addItem(*i);
     }
 }
-
-//void RoomsListDialog::listItemDoubleClicked()
-//{
-//    emit accept();
-//}
 
 void RoomsListDialog::onPasswordTyped(QString password)
 {
