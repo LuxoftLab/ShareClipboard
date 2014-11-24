@@ -22,15 +22,15 @@ bool UDPService::initListener(){
             )
 
             foreach(QNetworkAddressEntry address_ent, iface.addressEntries())
-                if(!address_ent.broadcast().isNull()&&address_ent.ip().toIPv4Address())
-                    broadcasts<<address_ent.broadcast();
+                if(!address_ent.broadcast().isNull() && address_ent.ip().toIPv4Address())
+                    broadcasts << address_ent.broadcast();
 
-    udp_socket=new QUdpSocket();
+    udp_socket = new QUdpSocket();
 
-    if (!udp_socket->bind(UDP_PORT,QUdpSocket::ShareAddress))
+    if (!udp_socket->bind(UDP_PORT, QUdpSocket::ShareAddress))
         return 1;
 
-    connect(udp_socket,&QUdpSocket::readyRead,this,&UDPService::listener);
+    connect(udp_socket, &QUdpSocket::readyRead, this, &UDPService::listener);
 
     return 0;
 }
@@ -38,8 +38,8 @@ bool UDPService::initListener(){
 void UDPService::getRooms(){
     DatagramPacket packet;
 
-    packet.type=GET_ROOM;
-    packet.id=qrand();
+    packet.type = GET_ROOM;
+    packet.id = qrand();
 
     sendBroadcastPackadge(packet);
 }
@@ -47,9 +47,9 @@ void UDPService::getRooms(){
 void UDPService::notifyAboutRoom(QString name){
     DatagramPacket packet;
 
-    packet.type=ROOM;
-    packet.id=qrand();
-    packet.name=name;
+    packet.type = ROOM;
+    packet.id = qrand();
+    packet.name = name;
 
     sendBroadcastPackadge(packet);
 }
@@ -57,8 +57,8 @@ void UDPService::notifyAboutRoom(QString name){
 void UDPService::notifyAboutRoomDeleting(){
     DatagramPacket packet;
 
-    packet.type=DELETE_ROOM;
-    packet.id=qrand();
+    packet.type = DELETE_ROOM;
+    packet.id = qrand();
 
     sendBroadcastPackadge(packet);
 }
@@ -66,7 +66,7 @@ void UDPService::notifyAboutRoomDeleting(){
 void UDPService::sendBroadcastPackadge(const DatagramPacket &packet){
 
     foreach(QHostAddress addr, broadcasts)
-        sendPackage(addr,packet);
+        sendPackage(addr, packet);
 }
 
 void UDPService::sendPackage(const QHostAddress &peer, const DatagramPacket &packet){
@@ -74,26 +74,26 @@ void UDPService::sendPackage(const QHostAddress &peer, const DatagramPacket &pac
     data_buffer.open(QIODevice::WriteOnly);
     QDataStream stream(&data_buffer);
 
-    stream<<packet.type;
-    stream<<packet.id;
+    stream << packet.type;
+    stream << packet.id;
 
-    if(packet.type==ROOM){
+    if(packet.type == ROOM){
         QByteArray toBytes = packet.name.toUtf8();
-        stream<<toBytes.data();
+        stream << toBytes.data();
     }
 
     QUdpSocket socket;
 
     for(int i=0;i<REPEAT;++i)
-        socket.writeDatagram(data_buffer.data(),peer,UDP_PORT);
+        socket.writeDatagram(data_buffer.data(), peer, UDP_PORT);
 }
 
 void UDPService::sendRoom(QString name){
     DatagramPacket packet;
 
-    packet.type=ROOM;
-    packet.id=qrand();
-    packet.name=name;
+    packet.type = ROOM;
+    packet.id = qrand();
+    packet.name = name;
 
     QHostAddress addr = senders.front();
     senders.pop_front();
@@ -111,9 +111,9 @@ void UDPService::listener(){
         QByteArray data;
         data.resize(udp_socket->pendingDatagramSize());
         QHostAddress sender_adr;
-        udp_socket->readDatagram(data.data(),data.size(),&sender_adr);
+        udp_socket->readDatagram(data.data(), data.size(), &sender_adr);
 
-        QDataStream stream(&data,QIODevice::ReadOnly);
+        QDataStream stream(&data, QIODevice::ReadOnly);
         DatagramPacket packet;
 
         packet=unpackPackage(stream);
@@ -121,18 +121,18 @@ void UDPService::listener(){
         if(received_id.contains(packet.id))
             continue;
 
-        foreach(QHostAddress localhost,localhost_ip)
-            if(sender_adr==localhost)
+        foreach(QHostAddress localhost, localhost_ip)
+            if(sender_adr == localhost)
                 continue;
 
         received_id.push_back(packet.id);
 
-        QTimer::singleShot(300000,this, SLOT(clearReceivedId()));
+        QTimer::singleShot(300000, this, SLOT(clearReceivedId()));
 
         switch(packet.type){
 
             case ROOM:
-                emit roomReceived(packet.name,sender_adr);
+                emit roomReceived(packet.name, sender_adr);
             break;
 
             case GET_ROOM:
