@@ -95,7 +95,13 @@ void UDPService::sendRoom(QString name){
     packet.id = qrand();
     packet.name = name;
 
+    //senders.front - upd_socket::localAddress() because it have been inserted in senders
+    //after pop_front() sending packet to client instead of myself
     QHostAddress addr = senders.front();
+    senders.pop_front();
+    sendPackage(addr, packet);
+
+    addr = senders.front();
     senders.pop_front();
     sendPackage(addr, packet);
 }
