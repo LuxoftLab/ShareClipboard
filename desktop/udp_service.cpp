@@ -136,8 +136,8 @@ void UDPService::listener(){
             break;
 
             case GET_ROOM:
-                emit roomRequested();
                 senders.push_back(sender_adr);
+                emit roomRequested();
             break;
 
             case DELETE_ROOM:
