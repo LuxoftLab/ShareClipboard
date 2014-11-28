@@ -101,9 +101,9 @@ void UDPService::sendRoom(QString name){
     senders.pop_front();
     sendPackage(addr, packet);
 
-    addr = senders.front();
-    senders.pop_front();
-    sendPackage(addr, packet);
+//    addr = senders.front();
+//    senders.pop_front();
+//    sendPackage(addr, packet);
 }
 
 void UDPService::clearReceivedId(){
