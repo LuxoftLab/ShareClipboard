@@ -126,10 +126,12 @@ void UDPService::listener(){
 
         if(received_id.contains(packet.id))
             continue;
-
+        bool local = false;
         foreach(QHostAddress localhost, localhost_ip)
             if(sender_adr == localhost)
-                continue;
+                local = true;
+                //continue;
+        // TODO: need to be checked on 2 devices
 
         received_id.push_back(packet.id);
 
@@ -142,8 +144,11 @@ void UDPService::listener(){
             break;
 
             case GET_ROOM:
-                senders.push_back(sender_adr);
-                emit roomRequested();
+                if(!local)
+                {
+                    senders.push_back(sender_adr);
+                    emit roomRequested();
+                }
             break;
 
             case DELETE_ROOM:
