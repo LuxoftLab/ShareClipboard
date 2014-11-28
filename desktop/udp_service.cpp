@@ -128,7 +128,7 @@ void UDPService::listener(){
             continue;
         bool local = false;
         foreach(QHostAddress localhost, localhost_ip)
-            if(sender_adr == localhost)
+            if(sender_adr == localhost || sender_adr == QHostAddress("127.0.0.1"))
                 local = true;
                 //continue;
         // TODO: need to be checked on 2 devices
