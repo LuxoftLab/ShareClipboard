@@ -8,7 +8,6 @@
 #include <QTime>
 #include <QTimer>
 #include <QBuffer>
-#include <QQueue>
 #include <QVector>
 #include <QDataStream>
 #include <QTcpSocket>
@@ -22,7 +21,7 @@ public:
     UDPService();
     bool initListener();
     void getRooms();
-    void sendRoom(QString name);
+    void sendRoom(QString name, QHostAddress addr);
     void notifyAboutRoom(QString name);
     void notifyAboutRoomDeleting();
 signals:
@@ -40,7 +39,6 @@ private:
     QVector <int> received_id;
     QUdpSocket * udp_socket;
     QList <QHostAddress> broadcasts;
-    QQueue <QHostAddress> senders;
 };
 
 #endif // UDP_SERVICE_H
