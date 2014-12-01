@@ -11,6 +11,7 @@
 #include <QQueue>
 #include <QVector>
 #include <QDataStream>
+#include <QTcpSocket>
 
 #include "udp_packet.h"
 

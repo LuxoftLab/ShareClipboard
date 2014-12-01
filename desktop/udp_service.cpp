@@ -1,5 +1,15 @@
 #include "udp_service.h"
 
+/*
+ * Serious bug - in function initListener() cycle can't define the ip of local machine, it locates only
+ * adress of the router
+ * So, in function listener() this adress passes condition and in case of GET_ROOM signal generates with 
+ * the wrong adress - adress of the local mashine, not the adress of sender
+ * Function sendRoom() sends packet only to first adress in queue, which is localhost adress, that's why
+ * client do not display room in the list
+ * Temporarily fix - pop one element in sendRoom() before sending
+*/
+
 UDPService::UDPService() : QObject(0),
     udp_socket(0)
 {
@@ -9,11 +19,13 @@ bool UDPService::initListener(){
 
     QTime now = QTime::currentTime();
     qsrand(now.msec());
-
+    
+    // Finding the localhosts adresses
     foreach (const QHostAddress &address, QNetworkInterface::allAddresses())
-        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != QHostAddress(QHostAddress::LocalHost)            )
+        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != QHostAddress(QHostAddress::LocalHost))
             localhost_ip.push_back(address);
-
+    
+    // Filling the distribution list by valid adresses
     foreach(QNetworkInterface iface, QNetworkInterface::allInterfaces())
 
         if (iface.isValid() &&
@@ -94,16 +106,12 @@ void UDPService::sendRoom(QString name){
     packet.type = ROOM;
     packet.id = qrand();
     packet.name = name;
-
-    //senders.front - upd_socket::localAddress() because it have been inserted in senders
-    //after pop_front() sending packet to client instead of myself
+    
+    senders.pop_front(); //that's it
+    
     QHostAddress addr = senders.front();
     senders.pop_front();
     sendPackage(addr, packet);
-
-//    addr = senders.front();
-//    senders.pop_front();
-//    sendPackage(addr, packet);
 }
 
 void UDPService::clearReceivedId(){
@@ -126,12 +134,10 @@ void UDPService::listener(){
 
         if(received_id.contains(packet.id))
             continue;
-        bool local = false;
+
         foreach(QHostAddress localhost, localhost_ip)
-            if(sender_adr == localhost || sender_adr == QHostAddress("127.0.0.1"))
-                local = true;
-                //continue;
-        // TODO: need to be checked on 2 devices
+            if(sender_adr == localhost)
+                continue;
 
         received_id.push_back(packet.id);
 
@@ -144,11 +150,8 @@ void UDPService::listener(){
             break;
 
             case GET_ROOM:
-                if(!local)
-                {
-                    senders.push_back(sender_adr);
-                    emit roomRequested();
-                }
+                senders.push_back(sender_adr);
+                emit roomRequested();
             break;
 
             case DELETE_ROOM:
