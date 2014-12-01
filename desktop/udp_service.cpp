@@ -1,15 +1,5 @@
 #include "udp_service.h"
 
-/*
- * Serious bug - in function initListener() cycle can't define the ip of local machine, it locates only
- * adress of the router
- * So, in function listener() this adress passes condition and in case of GET_ROOM signal generates with 
- * the wrong adress - adress of the local mashine, not the adress of sender
- * Function sendRoom() sends packet only to first adress in queue, which is localhost adress, that's why
- * client do not display room in the list
- * Temporarily fix - pop one element in sendRoom() before sending
-*/
-
 UDPService::UDPService() : QObject(0),
     udp_socket(0)
 {
