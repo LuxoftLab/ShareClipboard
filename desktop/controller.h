@@ -28,7 +28,7 @@ signals:
 public slots:
     void createRoom(QString name, QString pass);
     void joinRoom(qint32 addr, QString pass);
-    void getRoom();
+    void getRoom(QHostAddress sender_addr);
     void addRoom(QString name, QHostAddress host);
     void deleteRoom(QHostAddress host);
 };

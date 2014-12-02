@@ -120,14 +120,11 @@ void UDPService::listener(){
 
         if (received_id.contains(packet.id))
             continue;
-
-        bool local = 0;
-
-        foreach (QHostAddress localhost, localhost_ip)
-            if (sender_adr == localhost)
-                local = 1;
-
-        if (local) continue;
+/* In case of using signal with sender_adr
+ *no need to use bool local anymore.
+ * In case of local packet controller sends packet about room immediately
+ * It works fine without address comparison.
+ */
 
         received_id.push_back(packet.id);
 

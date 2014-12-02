@@ -5,8 +5,8 @@ Controller::Controller() : QObject(0)
     udpService = new UDPService();
     connect(udpService, SIGNAL(roomReceived(QString,QHostAddress)),
             this, SLOT(addRoom(QString,QHostAddress)));
-    connect(udpService, SIGNAL(roomRequested()),
-            this, SLOT(getRoom()));
+    connect(udpService, SIGNAL(roomRequested(QHostAddress)),
+            this, SLOT(getRoom(QHostAddress)));
     connect(udpService, SIGNAL(roomDeleted(QHostAddress)),
             this, SLOT(deleteRoom(QHostAddress)));
     udpService->initListener();
@@ -28,11 +28,11 @@ void Controller::addRoom(QString name, QHostAddress host)
     }
 }
 
-void Controller::getRoom()
+void Controller::getRoom(QHostAddress sender_address)
 {
     qDebug() << "room requested";
     if(serverRoom != NULL) {
-        udpService->sendRoom(serverRoom->getName());
+        udpService->sendRoom(serverRoom->getName(), sender_address);
     }
 }
 
