@@ -1,34 +1,43 @@
 #include "udp_service.h"
 
 UDPService::UDPService() : QObject(0),
-    udp_socket(0),
-    last_packadge_id(-1)
+    udp_socket(0)
 {
+}
+
+UDPService::~UDPService()
+{
+    this->notifyAboutRoomDeleting();
 }
 
 bool UDPService::initListener(){
 
     QTime now = QTime::currentTime();
     qsrand(now.msec());
-
+    
+    // Finding the localhosts adresses
     foreach (const QHostAddress &address, QNetworkInterface::allAddresses())
         if (address.protocol() == QAbstractSocket::IPv4Protocol && address != QHostAddress(QHostAddress::LocalHost))
-            localhost_ip=address;
+            localhost_ip.push_back(address);
+    
+    // Filling the distribution list by valid adresses
+    foreach (QNetworkInterface iface, QNetworkInterface::allInterfaces())
 
-    foreach(QNetworkInterface iface, QNetworkInterface::allInterfaces())
+        if (iface.isValid() &&
+            !iface.flags().testFlag(QNetworkInterface::IsLoopBack) &&
+            iface.flags().testFlag(QNetworkInterface::IsRunning)
+            )
 
-        if (iface.isValid() && !iface.flags().testFlag(QNetworkInterface::IsLoopBack)) //!iface.flags().testFlag(QNetworkInterface::IsUp) &&
+            foreach (QNetworkAddressEntry address_ent, iface.addressEntries())
+                if (!address_ent.broadcast().isNull() && address_ent.ip().toIPv4Address())
+                    broadcasts << address_ent.broadcast();
 
-            foreach(QNetworkAddressEntry address_ent, iface.addressEntries())
-                if(!address_ent.broadcast().isNull())
-                    broadcasts<<address_ent.broadcast();
+    udp_socket = new QUdpSocket();
 
-
-    udp_socket=new QUdpSocket();
-    if (!udp_socket->bind(UDP_PORT,QUdpSocket::ShareAddress))
+    if (!udp_socket->bind(UDP_PORT, QUdpSocket::ShareAddress))
         return 1;
 
-    connect(udp_socket,&QUdpSocket::readyRead,this,&UDPService::listener);
+    connect(udp_socket, &QUdpSocket::readyRead, this, &UDPService::listener);
 
     return 0;
 }
@@ -36,8 +45,8 @@ bool UDPService::initListener(){
 void UDPService::getRooms(){
     DatagramPacket packet;
 
-    packet.type=GET_ROOM;
-    packet.id=qrand();
+    packet.type = GET_ROOM;
+    packet.id = qrand();
 
     sendBroadcastPackadge(packet);
 }
@@ -45,9 +54,9 @@ void UDPService::getRooms(){
 void UDPService::notifyAboutRoom(QString name){
     DatagramPacket packet;
 
-    packet.type=ROOM;
-    packet.id=qrand();
-    packet.name=name;
+    packet.type = ROOM;
+    packet.id = qrand();
+    packet.name = name;
 
     sendBroadcastPackadge(packet);
 }
@@ -55,16 +64,16 @@ void UDPService::notifyAboutRoom(QString name){
 void UDPService::notifyAboutRoomDeleting(){
     DatagramPacket packet;
 
-    packet.type=DELETE_ROOM;
-    packet.id=qrand();
+    packet.type = DELETE_ROOM;
+    packet.id = qrand();
 
     sendBroadcastPackadge(packet);
 }
 
 void UDPService::sendBroadcastPackadge(const DatagramPacket &packet){
 
-    foreach(QHostAddress addr, broadcasts)
-        sendPackage(addr,packet);
+    foreach (QHostAddress addr, broadcasts)
+        sendPackage(addr, packet);
 }
 
 void UDPService::sendPackage(const QHostAddress &peer, const DatagramPacket &packet){
@@ -72,60 +81,68 @@ void UDPService::sendPackage(const QHostAddress &peer, const DatagramPacket &pac
     data_buffer.open(QIODevice::WriteOnly);
     QDataStream stream(&data_buffer);
 
-    stream<<packet.type;
-    stream<<packet.id;
+    stream << packet.type;
+    stream << packet.id;
 
-    if(packet.type==ROOM)
-        stream<<packet.name;
+    if (packet.type == ROOM){
+        QByteArray toBytes = packet.name.toUtf8();
+        stream << toBytes.data();
+    }
 
     QUdpSocket socket;
 
-    for(int i=0;i<REPEAT;++i)
-        socket.writeDatagram(data_buffer.data(),peer,UDP_PORT);
+    for (int i = 0; i < REPEAT; ++i)
+        socket.writeDatagram(data_buffer.data(), peer, UDP_PORT);
 }
 
-void UDPService::sendRoom(QString name){
+void UDPService::sendRoom(QString name, QHostAddress addr){
     DatagramPacket packet;
 
-    packet.type=ROOM;
-    packet.id=qrand();
-    packet.name=name;
-    foreach(QHostAddress addr, senders)
-        sendPackage(addr,packet);
+    packet.type = ROOM;
+    packet.id = qrand();
+    packet.name = name;
+    
+    sendPackage(addr, packet);
+}
 
-    senders.clear();
+void UDPService::clearReceivedId(){
+    received_id.clear();
 }
 
 void UDPService::listener(){
 
     while (udp_socket->hasPendingDatagrams()){
+
         QByteArray data;
         data.resize(udp_socket->pendingDatagramSize());
         QHostAddress sender_adr;
-        udp_socket->readDatagram(data.data(),data.size(),&sender_adr);
+        udp_socket->readDatagram(data.data(), data.size(), &sender_adr);
 
+        QDataStream stream(&data, QIODevice::ReadOnly);
         DatagramPacket packet;
-        QDataStream stream(&data,QIODevice::ReadOnly);
 
-        stream>>packet.type;
-        stream>>packet.id;
-        if(packet.type==ROOM)
-            stream>>packet.name;
+        packet = unpackPackage(stream);
 
-        if(packet.id==last_packadge_id||sender_adr==localhost_ip)
+        if (received_id.contains(packet.id))
             continue;
+/* In case of using signal with sender_adr
+ *no need to use bool local anymore.
+ * In case of local packet controller sends packet about room immediately
+ * It works fine without address comparison.
+ */
 
-        last_packadge_id=packet.id;
+        received_id.push_back(packet.id);
 
-        switch(packet.type){
+        QTimer::singleShot(300000, this, SLOT(clearReceivedId()));
+
+        switch (packet.type){
 
             case ROOM:
-                emit roomReceived(packet.name,sender_adr);
+                emit roomReceived(packet.name, sender_adr);
             break;
 
             case GET_ROOM:
-                emit roomRequested();
-                senders.push_back(sender_adr);
+                emit roomRequested(sender_adr);
             break;
 
             case DELETE_ROOM:

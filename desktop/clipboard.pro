@@ -13,27 +13,50 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    controller.cpp \
-    udp_service.cpp \
-    room.cpp \
-    server_room.cpp \
-    tcp_server.cpp \
+    client_connection.cpp \
     client_room.cpp \
     connection.cpp \
+    controller.cpp \
+    room.cpp \
     server_connection.cpp \
-    client_connection.cpp \
-    tcp_package.cpp
+    server_room.cpp \
+    tcp_package.cpp \
+    tcp_server.cpp \
+    udp_packet.cpp \
+    udp_service.cpp \
+    gui/mainwindow.cpp \
+    gui/passworddialog.cpp \
+    gui/roomslistdialog.cpp \
+    gui/createroomdialog.cpp \
+    gui/changenamedialog.cpp
 
 HEADERS  += \
-    controller.h \
-    udp_service.h \
-    room.h \
-    server_room.h \
-    tcp_server.h \
+    client_connection.h \
     client_room.h \
     connection.h \
-    server_connection.h \
-    client_connection.h \
-    udp_packet.h \
+    constants.h \
+    controller.h \
     fails.h \
-    tcp_package.h
+    room.h \
+    server_connection.h \
+    server_room.h \
+    tcp_package.h \
+    tcp_server.h \
+    udp_packet.h \
+    udp_service.h \
+    gui/mainwindow.h \
+    gui/passworddialog.h \
+    gui/roomslistdialog.h \
+    gui/createroomdialog.h \
+    gui/changenamedialog.h \
+
+
+RESOURCES += \
+    gui/images.qrc
+
+FORMS += \
+    gui/mainwindow.ui \
+    gui/passworddialog.ui \
+    gui/roomslistdialog.ui \
+    gui/createroomdialog.ui \
+    gui/changenamedialog.ui

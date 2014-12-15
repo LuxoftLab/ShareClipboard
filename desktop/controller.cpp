@@ -5,8 +5,8 @@ Controller::Controller() : QObject(0)
     udpService = new UDPService();
     connect(udpService, SIGNAL(roomReceived(QString,QHostAddress)),
             this, SLOT(addRoom(QString,QHostAddress)));
-    connect(udpService, SIGNAL(roomRequested()),
-            this, SLOT(getRoom()));
+    connect(udpService, SIGNAL(roomRequested(QHostAddress)),
+            this, SLOT(getRoom(QHostAddress)));
     connect(udpService, SIGNAL(roomDeleted(QHostAddress)),
             this, SLOT(deleteRoom(QHostAddress)));
     udpService->initListener();
@@ -21,43 +21,53 @@ Controller::~Controller()
 void Controller::addRoom(QString name, QHostAddress host)
 {
     qDebug() << "new room: " << name << ' ' << host.toString();
-    rooms.insert(host.toIPv4Address(), new ClientRoom(name, host));
+    ClientRoom *last = rooms.value(host.toIPv4Address(), NULL);
+    if(last == NULL) {
+        rooms.insert(host.toIPv4Address(), new ClientRoom(name, host));
+        emit roomAdded(name, host.toIPv4Address());
+    }
 }
 
-void Controller::getRoom()
+void Controller::getRoom(QHostAddress sender_address)
 {
     qDebug() << "room requested";
     if(serverRoom != NULL) {
-        udpService->sendRoom(serverRoom->getName());
+        udpService->sendRoom(serverRoom->getName(), sender_address);
     }
 }
 
 void Controller::deleteRoom(QHostAddress host)
 {
+    qDebug() << "room deleted";
+    QString name= rooms.value(host.toIPv4Address())->getName();
     rooms.remove(host.toIPv4Address());
+    emit roomDeleted(name);
 }
 
-bool Controller::createRoom(QString name, QString login, QString pass)
+void Controller::createRoom(QString name, QString pass)
 {
+    QString login = "login";
+    qDebug() << "create room: " << name;
     if(serverRoom != NULL) {
-        return false;
+        return;
     }
     serverRoom = new ServerRoom(name, pass);
     udpService->notifyAboutRoom(name);
     //addRoom(name, serverRoom->getAddr());
     //joinRoom(serverRoom->getAddr(), login, pass);
-    return true;
 }
 
-bool Controller::joinRoom(QHostAddress host, QString login, QString pass)
+void Controller::joinRoom(qint32 addr, QString pass)
 {
+    QString login = "login";
+    qDebug() << "join room: " << addr;
     if(clientRoom != NULL) {
-        return false;
+        return;
     }
-    clientRoom = rooms.value(host.toIPv4Address(), NULL);
+    clientRoom = rooms.value(addr, NULL);
     if(clientRoom == NULL) {
-        return false;
+        return;
     }
-    clientRoom->connectToHost(login, pass);
-    return true;
+    qDebug() << "joined";
+    //clientRoom->connectToHost(login, pass);
 }

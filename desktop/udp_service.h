@@ -4,11 +4,13 @@
 #include <QObject>
 #include <QHostAddress>
 #include <QUdpSocket>
-#include <QBuffer>
-#include <QQueue>
-#include <QDataStream>
 #include <QNetworkInterface>
 #include <QTime>
+#include <QTimer>
+#include <QBuffer>
+#include <QVector>
+#include <QDataStream>
+#include <QTcpSocket>
 
 #include "udp_packet.h"
 
@@ -17,25 +19,27 @@ class UDPService : public QObject {
 
 public:
     UDPService();
+    ~UDPService();
     bool initListener();
     void getRooms();
-    void sendRoom(QString name);
+    void sendRoom(QString name, QHostAddress addr);
     void notifyAboutRoom(QString name);
     void notifyAboutRoomDeleting();
 signals:
     void roomReceived(QString name, QHostAddress host);
     void roomDeleted(QHostAddress host);
-    void roomRequested();
+    void roomRequested(QHostAddress sender_address);
+private slots:
+    void clearReceivedId();
 private:
     void sendPackage(const QHostAddress &peer, const DatagramPacket &packet);
     void sendBroadcastPackadge(const DatagramPacket &packet);
     void listener();
 
-    QHostAddress localhost_ip;
+    QVector <QHostAddress> localhost_ip;
+    QVector <int> received_id;
     QUdpSocket * udp_socket;
-    QList<QHostAddress> broadcasts;
-    QQueue<QHostAddress> senders;
-    qint32 last_packadge_id;
+    QList <QHostAddress> broadcasts;
 };
 
 #endif // UDP_SERVICE_H
