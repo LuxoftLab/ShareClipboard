@@ -5,6 +5,11 @@ UDPService::UDPService() : QObject(0),
 {
 }
 
+UDPService::~UDPService()
+{
+    this->notifyAboutRoomDeleting();
+}
+
 bool UDPService::initListener(){
 
     QTime now = QTime::currentTime();

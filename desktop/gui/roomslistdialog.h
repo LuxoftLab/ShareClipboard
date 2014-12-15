@@ -25,6 +25,7 @@ signals:
 public slots:
     void accept();
     void addRoom(QString name, qint32 id);
+    void deleteRoom(QString name);
 
 private slots:
 //    void listItemDoubleClicked();

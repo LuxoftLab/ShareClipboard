@@ -19,6 +19,7 @@ class UDPService : public QObject {
 
 public:
     UDPService();
+    ~UDPService();
     bool initListener();
     void getRooms();
     void sendRoom(QString name, QHostAddress addr);
