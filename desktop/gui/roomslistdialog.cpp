@@ -56,13 +56,3 @@ void RoomsListDialog::addRoom(QString name, qint32 id)
     rooms.insert(name, id);
     ui->listWidget->addItem(name);
 }
-
-void RoomsListDialog::deleteRoom(QString name)
-{
-    //looks awful but it works
-    rooms.remove(name);
-    QList<QListWidgetItem*> list = ui->listWidget->findItems(name, Qt::MatchFixedString);
-    int row = ui->listWidget->row(list.first());
-    QListWidgetItem* item = ui->listWidget->takeItem(row);
-    delete item;
-}

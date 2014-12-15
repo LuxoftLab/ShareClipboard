@@ -38,10 +38,7 @@ void Controller::getRoom(QHostAddress sender_address)
 
 void Controller::deleteRoom(QHostAddress host)
 {
-    qDebug() << "room deleted";
-    QString name= rooms.value(host.toIPv4Address())->getName();
     rooms.remove(host.toIPv4Address());
-    emit roomDeleted(name);
 }
 
 void Controller::createRoom(QString name, QString pass)

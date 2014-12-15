@@ -25,7 +25,6 @@ public:
     ~Controller();
 signals:
     void roomAdded(QString name, qint32 ip);
-    void roomDeleted(QString name);
 public slots:
     void createRoom(QString name, QString pass);
     void joinRoom(qint32 addr, QString pass);
