@@ -4,9 +4,9 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
     socket = new QTcpSocket(this);
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
+    socket->abort();
     socket->connectToHost(host, PORT_NUMBER);
-    if (socket->state() == QAbstractSocket::ConnectedState)
-        qDebug() << "connected to server at" << host.toString();
+    getSocketState(socket);
      connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
               SLOT(throwSocketError(QAbstractSocket::SocketError)));
     //#todo error handlers
@@ -80,4 +80,35 @@ void ServerConnection::connected()
 {
     qDebug() << "connected";
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
+}
+
+void ServerConnection::getSocketState (QTcpSocket* socket)
+{
+   switch (socket->state ())
+   {
+      case QAbstractSocket::UnconnectedState:
+         qDebug() << (tr("unconnected state"));
+         break;
+      case QAbstractSocket::HostLookupState:
+         qDebug() << (tr("host lookup state"));
+         break;
+      case QAbstractSocket::ConnectingState:
+         qDebug() << (tr("connecting state"));
+         break;
+      case QAbstractSocket::ConnectedState:
+         qDebug() << (tr("connected state"));
+         break;
+      case QAbstractSocket::BoundState:
+         qDebug() << (tr("bound state"));
+         break;
+      case QAbstractSocket::ClosingState:
+         qDebug() << (tr("Closing state"));
+         break;
+      case QAbstractSocket::ListeningState:
+         qDebug() << (tr("Listening  state"));
+         break;
+      default:
+         qDebug() << (tr("Unknown state"));
+         break;
+   }
 }

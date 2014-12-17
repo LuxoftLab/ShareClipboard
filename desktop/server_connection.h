@@ -21,6 +21,7 @@ signals:
     void gotInvalidPass();
 private:
     void makeMember(char *);
+    void getSocketState(QTcpSocket*);
 private slots:
     void emitRemoveMember(char*);
     void throwSocketError(QAbstractSocket::SocketError);
