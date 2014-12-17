@@ -18,12 +18,13 @@ public slots:
 signals:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
-
     void gotInvalidPass();
 private:
     void makeMember(char *);
 private slots:
     void emitRemoveMember(char*);
+    void throwSocketError(QAbstractSocket::SocketError);
+    void connected();
 
 
 };

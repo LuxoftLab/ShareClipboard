@@ -3,10 +3,12 @@
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
     socket = new QTcpSocket(this);
+    connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     socket->connectToHost(host, PORT_NUMBER);
-    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
-    //connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
-              //SLOT(throwSocketError(QAbstractSocket::SocketError)));
+    if (socket->state() == QAbstractSocket::ConnectedState)
+        qDebug() << "connected to server at" << host.toString();
+     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
+              SLOT(throwSocketError(QAbstractSocket::SocketError)));
     //#todo error handlers
     //connect(socket, SIGNAL(readyRead()), this, SLOT(connectToServer()));
     //  connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(onData(qint64)));
@@ -17,7 +19,7 @@ void ServerConnection::sendPassAndLogin(QString password, QString login){
    QByteArray dat;
    QDataStream out(&dat, QIODevice::WriteOnly);
    out << login.toUtf8().size() << login.toUtf8() << password.toUtf8().size() << password.toUtf8();
-   socket->write(makeBinaryPack(PASS, dat.data(), dat.size()));
+   //socket->write(makeBinaryPack(PASS, dat.data(), dat.size()));
 }
 
 /*void ServerConnection::deleteMe(QHostAddress address){
@@ -67,4 +69,15 @@ void ServerConnection::emitRemoveMember(char* block){
     in >> address;
     addr = QHostAddress(address);
     emit(deleteMember(addr));
+}
+
+void ServerConnection::throwSocketError(QAbstractSocket::SocketError err)
+{
+    qDebug() << err;
+}
+
+void ServerConnection::connected()
+{
+    qDebug() << "connected";
+    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
 }
