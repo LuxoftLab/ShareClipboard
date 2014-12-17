@@ -50,14 +50,14 @@ void Controller::createRoom(QString name, QString pass)
     }
     serverRoom = new ServerRoom(name, pass);
     udpService->notifyAboutRoom(name);
-    //addRoom(name, serverRoom->getAddr());
-    //joinRoom(serverRoom->getAddr(), login, pass);
+    addRoom(name, serverRoom->getAddr());
+    joinRoom(serverRoom->getAddr().toIPv4Address(), pass);
 }
 
 void Controller::joinRoom(qint32 addr, QString pass)
 {
     QString login = "login";
-    qDebug() << "join room: " << addr;
+    qDebug() << "join room: " << QHostAddress(addr).toString();
     if(clientRoom != NULL) {
         return;
     }
@@ -66,5 +66,5 @@ void Controller::joinRoom(qint32 addr, QString pass)
         return;
     }
     qDebug() << "joined";
-    //clientRoom->connectToHost(login, pass);
+    clientRoom->connectToHost(login, pass);
 }

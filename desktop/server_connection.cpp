@@ -2,6 +2,7 @@
 
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
+    socket = new QTcpSocket(this);
     socket->connectToHost(host, PORT_NUMBER);
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
     //connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
