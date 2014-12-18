@@ -19,7 +19,7 @@ void ServerConnection::sendPassAndLogin(QString password, QString login){
    QByteArray dat;
    QDataStream out(&dat, QIODevice::WriteOnly);
    out << login.toUtf8().size() << login.toUtf8() << password.toUtf8().size() << password.toUtf8();
-   //socket->write(makeBinaryPack(PASS, dat.data(), dat.size()));
+   socket->write(makeBinaryPack(PASS, dat.data(), dat.size()));
 }
 
 /*void ServerConnection::deleteMe(QHostAddress address){
