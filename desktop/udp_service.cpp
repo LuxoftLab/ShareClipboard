@@ -5,11 +5,6 @@ UDPService::UDPService() : QObject(0),
 {
 }
 
-UDPService::~UDPService()
-{
-    this->notifyAboutRoomDeleting();
-}
-
 bool UDPService::initListener(){
 
     QTime now = QTime::currentTime();
@@ -125,11 +120,6 @@ void UDPService::listener(){
 
         if (received_id.contains(packet.id))
             continue;
-/* In case of using signal with sender_adr
- *no need to use bool local anymore.
- * In case of local packet controller sends packet about room immediately
- * It works fine without address comparison.
- */
 
         received_id.push_back(packet.id);
 
@@ -142,7 +132,8 @@ void UDPService::listener(){
             break;
 
             case GET_ROOM:
-                emit roomRequested(sender_adr);
+                if(!localhost_ip.contains(sender_adr))
+                    emit roomRequested(sender_adr);
             break;
 
             case DELETE_ROOM:

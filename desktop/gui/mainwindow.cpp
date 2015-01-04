@@ -48,19 +48,19 @@ void MainWindow::changeNameClicked()
     dialog.exec();
 }
 
-void MainWindow::cleapboardChanged(QMimeData * mimeData)
+void MainWindow::clipboardChanged(QMimeData * mimeData)
 {
     if (mimeData->hasImage()) {
-        ui->cleapboardText->setPixmap(qvariant_cast<QPixmap>(mimeData->imageData()));
+        ui->clipboardText->setPixmap(qvariant_cast<QPixmap>(mimeData->imageData()));
     } else if (mimeData->hasUrls()) {
-        ui->cleapboardText->setText("url: " + mimeData->text());
+        ui->clipboardText->setText("url: " + mimeData->text());
         if(askForFileDownload(mimeData->text())) {
             emit downloadFile();
         }
     } else if (mimeData->hasText()) {
-        ui->cleapboardText->setText(mimeData->text());
+        ui->clipboardText->setText(mimeData->text());
     }  else {
-        ui->cleapboardText->setText(tr("Cannot display data"));
+        ui->clipboardText->setText(tr("Cannot display data"));
     }
 }
 
@@ -111,7 +111,7 @@ void MainWindow::createTrayIcon()
 
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setToolTip("Shared cleapboard");
+    trayIcon->setToolTip("Shared clipboard");
     trayIcon->setIcon(QIcon(":images/communities.svg"));
     trayIcon->show();
 
@@ -119,7 +119,7 @@ void MainWindow::createTrayIcon()
             this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
     connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(trayMessageClicked()));
 
-    trayIcon->showMessage("Shared Cleapboard run", "Click to open main window");
+    trayIcon->showMessage("Shared Clipboard run", "Click to open main window");
 }
 
 void MainWindow::fillDevicesList(QList<QString> list) {
@@ -131,7 +131,7 @@ void MainWindow::fillDevicesList(QList<QString> list) {
 
 void MainWindow::newDevicePluged(QString deviceName)
 {
-    trayIcon->showMessage(deviceName + tr("& connected to room"), "Shared cleapboard");
+    trayIcon->showMessage(deviceName + tr("& connected to room"), "Shared clipboard");
 }
 
 void MainWindow::newNameVerified(QString newName)

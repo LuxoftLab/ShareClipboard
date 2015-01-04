@@ -25,12 +25,13 @@ signals:
 public slots:
     void accept();
     void addRoom(QString name, qint32 id);
-    void deleteRoom(QString name);
+    //void deleteRoom(QString name);
 
 private slots:
-//    void listItemDoubleClicked();
+    //void listItemDoubleClicked();
     void onPasswordTyped(QString password);
     void onNewRoomButtonClicked();
+    void onDelRoomButtonClicked();
 
 private:
     QHash<QString, qint32> rooms;

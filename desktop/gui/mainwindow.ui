@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>314</width>
-    <height>380</height>
+    <height>405</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,7 +106,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="cleapboardText">
+         <widget class="QLabel" name="clipboardText">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -139,7 +139,7 @@
      <x>0</x>
      <y>0</y>
      <width>314</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

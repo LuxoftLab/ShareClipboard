@@ -1,5 +1,6 @@
 #include "controller.h"
 #include <QDebug>
+
 Controller::Controller() : QObject(0)
 {
     udpService = new UDPService();
@@ -9,6 +10,7 @@ Controller::Controller() : QObject(0)
             this, SLOT(getRoom(QHostAddress)));
     connect(udpService, SIGNAL(roomDeleted(QHostAddress)),
             this, SLOT(deleteRoom(QHostAddress)));
+
     udpService->initListener();
     udpService->getRooms();
 }
@@ -39,18 +41,21 @@ void Controller::getRoom(QHostAddress sender_address)
 void Controller::deleteRoom(QHostAddress host)
 {
     qDebug() << "room deleted";
-    QString name= rooms.value(host.toIPv4Address())->getName();
+    QString name = rooms.value(host.toIPv4Address())->getName();
     rooms.remove(host.toIPv4Address());
-    emit roomDeleted(name);
+    //emit roomDeleted(name);
 }
 
 void Controller::createRoom(QString name, QString pass)
 {
-    QString login = "login";
-    qDebug() << "create room: " << name;
+    //QString login = "login";
+
     if(serverRoom != NULL) {
         return;
     }
+
+    qDebug() << "create room: " << name;
+
     serverRoom = new ServerRoom(name, pass);
     udpService->notifyAboutRoom(name);
     //addRoom(name, serverRoom->getAddr());
@@ -59,8 +64,11 @@ void Controller::createRoom(QString name, QString pass)
 
 void Controller::joinRoom(qint32 addr, QString pass)
 {
-    QString login = "login";
-    qDebug() << "join room: " << addr;
+    QHostAddress host(addr);
+    qDebug() << "join room: " << host.toString();
+
+    //QString login = "login";
+
     if(clientRoom != NULL) {
         return;
     }
@@ -68,6 +76,6 @@ void Controller::joinRoom(qint32 addr, QString pass)
     if(clientRoom == NULL) {
         return;
     }
-    qDebug() << "joined";
+    //qDebug() << "joined";
     //clientRoom->connectToHost(login, pass);
 }

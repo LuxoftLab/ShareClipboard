@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     QObject::connect(&rooms, SIGNAL(newRoomCreated(QString,QString)), &controller, SLOT(createRoom(QString,QString)));
     QObject::connect(&rooms, SIGNAL(roomChoosed(qint32,QString)), &controller, SLOT(joinRoom(qint32,QString)));
     QObject::connect(&controller, SIGNAL(roomAdded(QString,qint32)), &rooms, SLOT(addRoom(QString,qint32)));
-    QObject::connect(&controller, SIGNAL(roomDeleted(QString)), &rooms, SLOT(deleteRoom(QString)));
+    //QObject::connect(&controller, SIGNAL(roomDeleted(QString)), &rooms, SLOT(deleteRoom(QString)));
     rooms.show();
     return a.exec();
 }
