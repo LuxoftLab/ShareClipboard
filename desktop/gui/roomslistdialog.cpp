@@ -46,7 +46,7 @@ void RoomsListDialog::onNewRoomButtonClicked()
 
 void RoomsListDialog::onDelRoomButtonClicked()
 {
-    if(ui->listWidget->selectedItems().isEmpty()) return;
+    //if(ui->listWidget->selectedItems().isEmpty()) return;
 
     PasswordDialog dialog(ui->listWidget->selectedItems()[0]->text(), this);
     //connect(&dialog, SIGNAL(passwordTyped(QString)), this, SLOT(onPasswordTyped(QString)));
