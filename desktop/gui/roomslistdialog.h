@@ -22,7 +22,7 @@ public:
 signals:
     void roomChoosed(qint32 roomId, QString password);
     void newRoomCreated(QString name, QString password);
-    void deleteRoomNameGet(QString name);
+    void deleteServerRoom();
 
 public slots:
     void accept();

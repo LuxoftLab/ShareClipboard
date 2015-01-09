@@ -49,7 +49,7 @@ void RoomsListDialog::onNewRoomButtonClicked()
 
 void RoomsListDialog::onDelRoomButtonClicked()
 {
-    emit deleteRoomNameGet(ui->listWidget->selectedItems()[0]->text());
+    emit deleteServerRoom();
 
     //PasswordDialog dialog(ui->listWidget->selectedItems()[0]->text(), this);
     //connect(&dialog, SIGNAL(passwordTyped(QString)), this, SLOT(onPasswordTyped(QString)));
@@ -58,7 +58,7 @@ void RoomsListDialog::onDelRoomButtonClicked()
 
 void RoomsListDialog::onServerIsUp(QString serverName){
     localServer = serverName;
-    connect(ui->listWidget, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(buttonView(QListWidgetItem*)));
+    connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(buttonView(QListWidgetItem*)));
 }
 
 void RoomsListDialog::buttonView(QListWidgetItem* row){
