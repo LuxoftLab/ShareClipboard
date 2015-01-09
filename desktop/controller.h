@@ -19,13 +19,14 @@ private:
     UDPService* udpService = NULL;
     ServerRoom* serverRoom = NULL;
     ClientRoom* clientRoom = NULL;
-    QMap<qint32, ClientRoom*> rooms;
+    QMap <qint32, ClientRoom*> rooms;
 public:
     Controller();
     ~Controller();
 signals:
     void roomAdded(QString name, qint32 ip);
     void roomDeleted(QString name);
+    void serverIsUp(QString name);
 public slots:
     void createRoom(QString name, QString pass);
     void joinRoom(qint32 addr, QString pass);

@@ -11,6 +11,7 @@ RoomsListDialog::RoomsListDialog(QWidget *parent) :
 
     connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(onNewRoomButtonClicked()));
     connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(onDelRoomButtonClicked()));
+
     ui->pushButton_2->setHidden(1);
 }
 
@@ -41,16 +42,28 @@ void RoomsListDialog::onNewRoomButtonClicked()
     CreateRoomDialog dialog;
     connect(&dialog, SIGNAL(createRoom(QString,QString)),
             this, SIGNAL(newRoomCreated(QString,QString)));
+
     dialog.exec();
 }
 
+
 void RoomsListDialog::onDelRoomButtonClicked()
 {
-    if(ui->listWidget->selectedItems().isEmpty()) return;
+    emit deleteRoomNameGet(ui->listWidget->selectedItems()[0]->text());
 
-    PasswordDialog dialog(ui->listWidget->selectedItems()[0]->text(), this);
+    //PasswordDialog dialog(ui->listWidget->selectedItems()[0]->text(), this);
     //connect(&dialog, SIGNAL(passwordTyped(QString)), this, SLOT(onPasswordTyped(QString)));
-    dialog.exec();
+    //dialog.exec();
+}
+
+void RoomsListDialog::onServerIsUp(QString serverName){
+    localServer = serverName;
+    connect(ui->listWidget, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(buttonView(QListWidgetItem*)));
+}
+
+void RoomsListDialog::buttonView(QListWidgetItem* row){
+    if(row->text()==localServer)
+        ui->pushButton_2->setVisible(1);
 }
 
 void RoomsListDialog::accept()
@@ -68,14 +81,17 @@ void RoomsListDialog::addRoom(QString name, qint32 id)
     ui->listWidget->addItem(name);
 
 }
-/*
+
 void RoomsListDialog::deleteRoom(QString name)
 {
-    //looks awful but it works
     rooms.remove(name);
-    QList<QListWidgetItem*> list = ui->listWidget->findItems(name, Qt::MatchFixedString);
+
+    QList <QListWidgetItem*> list = ui->listWidget->findItems(name, Qt::MatchFixedString);
     int row = ui->listWidget->row(list.first());
     QListWidgetItem* item = ui->listWidget->takeItem(row);
+
+    disconnect(ui->listWidget, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(buttonView(QListWidgetItem*)));
+
     delete item;
 }
-*/
+
