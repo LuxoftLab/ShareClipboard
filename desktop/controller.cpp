@@ -33,9 +33,9 @@ void Controller::addRoom(QString name, QHostAddress host)
 void Controller::getRoom(QHostAddress sender_address)
 {
     qDebug() << "room requested";
-    if(serverRoom != NULL) {
+    if(serverRoom != NULL)
         udpService->sendRoom(serverRoom->getName(), sender_address);
-    }
+
 }
 
 void Controller::deleteRoom(QHostAddress host)
@@ -46,12 +46,12 @@ void Controller::deleteRoom(QHostAddress host)
     emit roomDeleted(name);
 }
 
-void Controller::createRoom(QString name, QString pass)
+void Controller::createServerRoom(QString name, QString pass)
 {
     if(serverRoom != NULL)
         return;
 
-    qDebug() << "create room: " << name;
+    qDebug() << "create server room: " << name;
 
     serverRoom = new ServerRoom(name, pass);
     udpService->notifyAboutRoom(name);
@@ -62,6 +62,19 @@ void Controller::createRoom(QString name, QString pass)
 
     //QString login = "login";
     //joinRoom(serverRoom->getAddr(), login, pass);
+}
+
+void Controller::deleteServerRoom()
+{
+    if(serverRoom == NULL)
+        return;
+
+    delete serverRoom;
+
+    qDebug() << "server room deleted ";
+
+    udpService->notifyAboutRoomDeleting();
+
 }
 
 void Controller::joinRoom(qint32 addr, QString pass)
