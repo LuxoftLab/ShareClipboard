@@ -10,9 +10,8 @@ RoomsListDialog::RoomsListDialog(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(onNewRoomButtonClicked()));
-    connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(onDelRoomButtonClicked()));
-
-    ui->pushButton_2->setHidden(1);
+    connect(ui->listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onListItemChaned()));
+    connect(ui->listWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onListItemDoubleClicked(QModelIndex)));
 }
 
 RoomsListDialog::~RoomsListDialog()
@@ -39,6 +38,12 @@ void RoomsListDialog::onPasswordTyped(QString password)
 
 void RoomsListDialog::onNewRoomButtonClicked()
 {
+    if(ui->listWidget->count() != 0 && ui->listWidget->selectedItems()[0]->text() == localServer)
+    {
+        emit deleteServerRoom();
+        return;
+    }
+
     CreateRoomDialog dialog;
     connect(&dialog, SIGNAL(createRoom(QString,QString)),
             this, SIGNAL(newRoomCreated(QString,QString)));
@@ -46,24 +51,25 @@ void RoomsListDialog::onNewRoomButtonClicked()
     dialog.exec();
 }
 
-
-void RoomsListDialog::onDelRoomButtonClicked()
+void RoomsListDialog::onServerIsUp(QString serverName)
 {
-    emit deleteServerRoom();
-
-    //PasswordDialog dialog(ui->listWidget->selectedItems()[0]->text(), this);
-    //connect(&dialog, SIGNAL(passwordTyped(QString)), this, SLOT(onPasswordTyped(QString)));
-    //dialog.exec();
-}
-
-void RoomsListDialog::onServerIsUp(QString serverName){
     localServer = serverName;
     connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(buttonView(QListWidgetItem*)));
 }
 
-void RoomsListDialog::buttonView(QListWidgetItem* row){
-    if(row->text()==localServer)
-        ui->pushButton_2->setVisible(1);
+void RoomsListDialog::onListItemDoubleClicked(QModelIndex index)
+{
+    accept();
+}
+
+void RoomsListDialog::onListItemChaned()
+{
+    if(ui->listWidget->selectedItems()[0]->text() == localServer)
+    {
+        ui->pushButton->setText("Delete");
+    } else {
+        ui->pushButton->setText("New");
+    }
 }
 
 void RoomsListDialog::accept()

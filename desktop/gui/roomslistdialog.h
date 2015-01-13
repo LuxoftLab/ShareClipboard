@@ -31,11 +31,11 @@ public slots:
     void onServerIsUp(QString serverName);
 
 private slots:
-    //void listItemDoubleClicked();
-    void onDelRoomButtonClicked();
+    void onListItemDoubleClicked(QModelIndex index);
+    void onListItemChaned();
+
     void onPasswordTyped(QString password);
     void onNewRoomButtonClicked();
-    void buttonView(QListWidgetItem* row);
 
 private:
     QHash<QString, qint32> rooms;
