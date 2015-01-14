@@ -3,6 +3,8 @@
 #include "passworddialog.h"
 #include "createroomdialog.h"
 
+#include "QDebug"
+
 RoomsListDialog::RoomsListDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RoomsListDialog)
@@ -12,6 +14,8 @@ RoomsListDialog::RoomsListDialog(QWidget *parent) :
     connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(onNewRoomButtonClicked()));
     connect(ui->listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onListItemChaned()));
     connect(ui->listWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onListItemDoubleClicked(QModelIndex)));
+
+    localServer = "";
 }
 
 RoomsListDialog::~RoomsListDialog()
@@ -37,24 +41,25 @@ void RoomsListDialog::onPasswordTyped(QString password)
 }
 
 void RoomsListDialog::onNewRoomButtonClicked()
-{
-    if(ui->listWidget->count() != 0 && ui->listWidget->selectedItems()[0]->text() == localServer)
+{  
+    if(localServer ==  NULL) {
+        CreateRoomDialog dialog;
+        connect(&dialog, SIGNAL(createRoom(QString,QString)),
+                this, SIGNAL(newRoomCreated(QString,QString)));
+        dialog.exec();
+        return;
+    }
+
+    if(ui->listWidget->selectedItems()[0]->text() == localServer)
     {
         emit deleteServerRoom();
         return;
     }
-
-    CreateRoomDialog dialog;
-    connect(&dialog, SIGNAL(createRoom(QString,QString)),
-            this, SIGNAL(newRoomCreated(QString,QString)));
-
-    dialog.exec();
 }
 
 void RoomsListDialog::onServerIsUp(QString serverName)
 {
     localServer = serverName;
-    connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(buttonView(QListWidgetItem*)));
 }
 
 void RoomsListDialog::onListItemDoubleClicked(QModelIndex index)
@@ -64,7 +69,7 @@ void RoomsListDialog::onListItemDoubleClicked(QModelIndex index)
 
 void RoomsListDialog::onListItemChaned()
 {
-    if(ui->listWidget->selectedItems()[0]->text() == localServer)
+    if(ui->listWidget->count() !=  0 && ui->listWidget->selectedItems()[0]->text() == localServer)
     {
         ui->pushButton->setText("Delete");
     } else {
@@ -90,13 +95,16 @@ void RoomsListDialog::addRoom(QString name, qint32 id)
 
 void RoomsListDialog::deleteRoom(QString name)
 {
+    if(name == localServer) {
+        localServer = "";
+        ui->pushButton->setText("New");
+    }
+
     rooms.remove(name);
 
     QList <QListWidgetItem*> list = ui->listWidget->findItems(name, Qt::MatchFixedString);
     int row = ui->listWidget->row(list.first());
     QListWidgetItem* item = ui->listWidget->takeItem(row);
-
-    disconnect(ui->listWidget, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(buttonView(QListWidgetItem*)));
 
     delete item;
 }
