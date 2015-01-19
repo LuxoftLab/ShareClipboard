@@ -6,8 +6,10 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     socket->abort();
     socket->connectToHost(host, PORT_NUMBER);
-    getSocketState(socket);
-     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
+    if(socket->waitForConnected(3000))
+        qDebug() << "connected";
+    //getSocketState(socket);
+    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
               SLOT(throwSocketError(QAbstractSocket::SocketError)));
     //#todo error handlers
     //connect(socket, SIGNAL(readyRead()), this, SLOT(connectToServer()));
