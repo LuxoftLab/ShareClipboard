@@ -48,6 +48,8 @@ void Controller::deleteRoom(QHostAddress host)
 
 void Controller::createServerRoom(QString name, QString pass)
 {
+    qDebug() << serverRoom;
+
     if(serverRoom != NULL)
         return;
 
@@ -70,6 +72,7 @@ void Controller::deleteServerRoom()
         return;
 
     delete serverRoom;
+    serverRoom = NULL;
 
     qDebug() << "server room deleted ";
 

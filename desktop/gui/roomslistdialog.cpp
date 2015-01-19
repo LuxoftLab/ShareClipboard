@@ -12,7 +12,6 @@ RoomsListDialog::RoomsListDialog(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(onNewRoomButtonClicked()));
-    connect(ui->listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(onListItemChaned()));
     connect(ui->listWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onListItemDoubleClicked(QModelIndex)));
 
     localServer = "";
