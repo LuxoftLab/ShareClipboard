@@ -47,34 +47,20 @@ void RoomsListDialog::onNewRoomButtonClicked()
         connect(&dialog, SIGNAL(createRoom(QString,QString)),
                 this, SIGNAL(newRoomCreated(QString,QString)));
         dialog.exec();
-        return;
-    }
-
-    if(ui->listWidget->selectedItems()[0]->text() == localServer)
-    {
+    } else {
         emit deleteServerRoom();
-        return;
     }
 }
 
 void RoomsListDialog::onServerIsUp(QString serverName)
 {
     localServer = serverName;
+    ui->pushButton->setText("Delete my room");
 }
 
 void RoomsListDialog::onListItemDoubleClicked(QModelIndex index)
 {
     accept();
-}
-
-void RoomsListDialog::onListItemChaned()
-{
-    if(ui->listWidget->count() !=  0 && ui->listWidget->selectedItems()[0]->text() == localServer)
-    {
-        ui->pushButton->setText("Delete");
-    } else {
-        ui->pushButton->setText("New");
-    }
 }
 
 void RoomsListDialog::accept()

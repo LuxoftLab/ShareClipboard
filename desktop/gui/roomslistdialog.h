@@ -32,7 +32,6 @@ public slots:
 
 private slots:
     void onListItemDoubleClicked(QModelIndex index);
-    void onListItemChaned();
 
     void onPasswordTyped(QString password);
     void onNewRoomButtonClicked();
