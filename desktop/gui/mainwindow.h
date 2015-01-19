@@ -29,7 +29,7 @@ protected:
     void closeEvent(QCloseEvent * event);
 
 public slots:
-    void cleapboardChanged(QMimeData * mimeData);
+    void clipboardChanged(QMimeData * mimeData);
     void newDevicePluged(QString deviceName);
     void newNameVerified(QString newName);
 
