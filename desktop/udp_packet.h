@@ -1,12 +1,10 @@
-#ifndef PACKET_H
-#define PACKET_H
+#ifndef UDP_PACKET_H
+#define UDP_PACKET_H
 
 #include <QDataStream>
+#include "constants.h"
 
-#define REPEAT 10
-#define UDP_PORT 12345
-
-enum PacketType{ROOM=0,GET_ROOM=1,DELETE_ROOM=2};
+enum PacketType{ROOM = 0, GET_ROOM = 1, DELETE_ROOM = 2};
 
 struct DatagramPacket{
     quint8 type;

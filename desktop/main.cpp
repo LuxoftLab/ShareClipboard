@@ -10,9 +10,16 @@ int main(int argc, char *argv[])
 
     Controller controller;
     RoomsListDialog rooms;
-    QObject::connect(&rooms, SIGNAL(newRoomCreated(QString,QString)), &controller, SLOT(createRoom(QString,QString)));
-    QObject::connect(&rooms, SIGNAL(roomChoosed(qint32,QString)), &controller, SLOT(joinRoom(qint32,QString)));
+
+    //create room implementation
+    QObject::connect(&rooms, SIGNAL(newRoomCreated(QString,QString)), &controller, SLOT(createServerRoom(QString,QString)));
+    //join room implementation
     QObject::connect(&controller, SIGNAL(roomAdded(QString,qint32)), &rooms, SLOT(addRoom(QString,qint32)));
+    //delete room implementation
+    QObject::connect(&controller, SIGNAL(serverIsUp(QString)), &rooms, SLOT(onServerIsUp(QString)));
+    QObject::connect(&rooms, SIGNAL(deleteServerRoom()), &controller, SLOT(deleteServerRoom()));
+    QObject::connect(&controller, SIGNAL(roomDeleted(QString)), &rooms, SLOT(deleteRoom(QString)));
+
     rooms.show();
     return a.exec();
 }

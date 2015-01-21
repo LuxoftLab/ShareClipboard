@@ -17,6 +17,7 @@ public:
 
 signals:
     void createRoom(QString name, QString password);
+    void onServerCreated(QString serverName);
 
 public slots:
    void accept();

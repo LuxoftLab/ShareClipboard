@@ -1,5 +1,5 @@
 #include "server_connection.h"
-
+#include <iostream>
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
     socket = new QTcpSocket(this);
@@ -17,11 +17,14 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 }
 
 
-void ServerConnection::sendPassAndLogin(QString password, QString login){
+int ServerConnection::sendPassAndLogin(QString password, QString login){
    QByteArray dat;
    QDataStream out(&dat, QIODevice::WriteOnly);
    out << login.toUtf8().size() << login.toUtf8() << password.toUtf8().size() << password.toUtf8();
-   socket->write(makeBinaryPack(PASS, dat.data(), dat.size()));
+   if(socket->write(makeBinaryPack(PASS, dat.data(), dat.size())) == 0){
+       qDebug() << "No data written";
+       std::cout << "No data written";
+   }
 }
 
 /*void ServerConnection::deleteMe(QHostAddress address){
