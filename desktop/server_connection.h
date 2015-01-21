@@ -8,15 +8,26 @@
 
 class ServerConnection : public Connection
 {
-
+    Q_OBJECT
 public:
     ServerConnection(QHostAddress host);
     void sendPassAndLogin(QString password, QString login);
+    void deleteMe(QHostAddress address);
 public slots:
+    void onData();
+signals:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
+    void gotInvalidPass();
 private:
-    QByteArray makeBinaryPack(pckg_t, char*, int);
+    void makeMember(char *);
+    void getSocketState(QTcpSocket*);
+private slots:
+    void emitRemoveMember(char*);
+    void throwSocketError(QAbstractSocket::SocketError);
+    void connected();
+
+
 };
 
 #endif // SERVER_CONNECTION_H

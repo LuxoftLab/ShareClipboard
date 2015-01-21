@@ -62,8 +62,8 @@ void Controller::createServerRoom(QString name, QString pass)
 
     //addRoom(name, serverRoom->getAddr());
 
-    //QString login = "login";
-    //joinRoom(serverRoom->getAddr(), login, pass);
+    QString login = "login";
+    joinRoom(serverRoom->getAddr(), login, pass);
 }
 
 void Controller::deleteServerRoom()
@@ -80,21 +80,17 @@ void Controller::deleteServerRoom()
 
 }
 
-void Controller::joinRoom(qint32 addr, QString pass)
+void Controller::joinRoom(QHostAddress addr, QString login, QString pass)
 {
-    QHostAddress host(addr);
-    qDebug() << "joining room: " << host.toString();
-
-    if(clientRoom != NULL)
-        return;
-
-    clientRoom = rooms.value(addr, NULL);
-
-    if(clientRoom == NULL)
-        return;
-
-    //qDebug() << "joined";
-
     //QString login = "login";
-    //clientRoom->connectToHost(login, pass);
+    qDebug() << "join room: " << addr.toString();
+    if(clientRoom != NULL) {
+        return;
+    }
+    clientRoom = rooms.value(addr.toIPv4Address(), NULL);
+    if(clientRoom == NULL) {
+        return;
+    }
+    qDebug() << "joined";
+    clientRoom->connectToHost(login, pass);
 }

@@ -1,13 +1,16 @@
 #include "tcp_package.h"
 
 QDataStream& operator<<(QDataStream& out, const TcpPackage& pack){
-    if(pack.getHeader()->type == RAW || pack.getHeader()->type == INVALID_PASS){
+    if(pack.getHeader()->type == RAW
+       || pack.getHeader()->type == INVALID_PASS
+       || pack.getHeader()->type == MEMBER){
         out << pack.getHeader()->type;
         out << pack.getHeader()->length;
         out << pack.getData()->rawData;
     }
-    else if(pack.getHeader()->type == TEXT || pack.getHeader()->type == MEMBER
-            || pack.getHeader()->type == PASS || pack.getHeader()->type == ADRESS
+    else if(pack.getHeader()->type == TEXT
+            || pack.getHeader()->type == PASS
+            || pack.getHeader()->type == ADRESS
             || pack.getHeader()->type == REMOVE){
             out << pack.getHeader()->type;
             out << pack.getHeader()->length;

@@ -15,6 +15,8 @@ struct Member {
 
 class ClientRoom : public Room
 {
+    Q_OBJECT
+
     ServerConnection * connection;
     QHostAddress host;
     QMap<qint32, Member*> members;

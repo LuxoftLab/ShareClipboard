@@ -11,15 +11,18 @@ TCPServer::TCPServer()
 
 QHostAddress TCPServer::getLocalAddress()
 {
-    if(server)
-        return server->serverAddress();
-    else
-       qDebug() << "server is not initialized";
+
+    return QHostAddress::LocalHost;
 }
 
 void TCPServer::newMember(){
-    if(QTcpSocket* newConnection = server->nextPendingConnection())
+    if(newConnection = server->nextPendingConnection()){
+        connect(newConnection, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
         emit addMember(newConnection);
+    }
 }
 
+void TCPServer::emitDeleteMember(){
+    deleteMember(newConnection->peerAddress());
+}
 

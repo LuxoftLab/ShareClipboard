@@ -9,12 +9,11 @@ void ClientRoom::connectToHost(QString login, QString pass)
 {
     this->pass = pass;
     connection = new ServerConnection(host);
-    connect(connection, SIGNAL(ServerConnection::addMember()),
-            this, SLOT(addMember()));
-    connect(connection, SIGNAL(ServerConnection::deleteMember()),
-            this, SLOT(deleteMember()));
+    connect(connection, SIGNAL(addMember(QString, QHostAddress)),
+            this, SLOT(addMember(QString, QHostAddress)));
+    connect(connection, SIGNAL(deleteMember(QHostAddress)),
+            this, SLOT(deleteMember(QHostAddress)));
     connection->sendPassAndLogin(pass, login);
-    //init listener
 }
 
 void ClientRoom::addMember(QString login, QHostAddress addr) {

@@ -93,4 +93,3 @@ void RoomsListDialog::deleteRoom(QString name)
 
     delete item;
 }
-

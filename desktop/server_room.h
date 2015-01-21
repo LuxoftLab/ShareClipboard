@@ -10,6 +10,7 @@
 
 class ServerRoom : public Room
 {
+    Q_OBJECT
     TCPServer * server;
     QMap<qint32, ClientConnection*> notVerified;
     QMap<qint32, ClientConnection*> verified;
