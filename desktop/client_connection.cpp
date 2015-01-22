@@ -61,7 +61,7 @@ void ClientConnection::makePass(char *block)
     in >> rawLogin;
     pass = QString::fromUtf8(rawPass);
     login = QString::fromUtf8(rawLogin);
-    emit(verifyPass(pass, login, this));
+    emit(verifyPass(pass, this));
 }
 
 ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
@@ -108,6 +108,11 @@ void ClientConnection::onData(){
         //case REMOVE: {emit deleteMember(makeHostAdress(pack.getData()->rawData)); break;}
     default: throw pack.getHeader()->type;
     }
+}
+
+void ClientConnection::emitDeleteMember()
+{
+
 }
 
 QHostAddress ClientConnection::makeHostAdress(char* block){
