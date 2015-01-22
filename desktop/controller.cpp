@@ -40,11 +40,8 @@ void Controller::getRoom(QHostAddress sender_address)
 
 void Controller::deleteRoom(QHostAddress host)
 {
-<<<<<<< HEAD
-=======
     qDebug() << "room deleted";
     QString name = rooms.value(host.toIPv4Address())->getName();
->>>>>>> 1c0c7652828a54eb7bc206825d9f34957b2c0a05
     rooms.remove(host.toIPv4Address());
 }
 
@@ -93,15 +90,9 @@ void Controller::joinRoom(qint32 addr, QString pass)
 
     if(clientRoom == NULL)
         return;
-<<<<<<< HEAD
-    }
-    qDebug() << "joined";
-    clientRoom->connectToHost(login, pass);
-=======
-
     //qDebug() << "joined";
 
     //QString login = "login";
     //clientRoom->connectToHost(login, pass);
->>>>>>> 1c0c7652828a54eb7bc206825d9f34957b2c0a05
+
 }
