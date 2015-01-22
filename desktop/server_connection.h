@@ -18,6 +18,7 @@ signals:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
     void gotInvalidPass();
+    void gotPass(QString);
 private:
     void makeMember(char *);
     void getSocketState(QTcpSocket*);

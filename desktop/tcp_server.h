@@ -6,6 +6,8 @@
 #include <QTcpServer>
 #include <QHostAddress>
 
+#include "constants.h"
+
 class TCPServer : public QObject
 {
     Q_OBJECT

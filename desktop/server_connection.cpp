@@ -6,9 +6,10 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     socket->abort();
     socket->connectToHost(host, PORT_NUMBER);
-    if(socket->waitForConnected(3000))
-        qDebug() << "connected";
-    //getSocketState(socket);
+
+    if(!socket->waitForConnected(3000))
+        qDebug() << socket->error();
+//    //getSocketState(socket);
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
               SLOT(throwSocketError(QAbstractSocket::SocketError)));
     //#todo error handlers
@@ -43,7 +44,7 @@ void ServerConnection::onData()
     //make something sane here instead switch
     switch(pack.getHeader()->type){
 //        case TEXT:      {emit gotText(*pack.getData()->strData); break;}
-//        case PASS:      {emit gotPass(*pack.getData()->strData); break;}
+        case PASS:      {emit gotPass(*pack.getData()->strData); break;}
         case MEMBER:    {makeMember(pack.getData()->rawData); break;}
 //        case RAW: {emit gotRawData(pack.getData()->rawData, pack.getHeader()->length); break;}
         case INVALID_PASS: {emit gotInvalidPass(); break;}

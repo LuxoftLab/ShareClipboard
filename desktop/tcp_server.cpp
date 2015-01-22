@@ -3,7 +3,7 @@
 TCPServer::TCPServer()
 {
     server = new QTcpServer(this);
-    if(!server->listen())
+    if(!server->listen(QHostAddress::Any, PORT_NUMBER))
         qDebug() << "Server is not listening";
     connect(server, SIGNAL(newConnection()), this, SLOT(newMember()));
 
