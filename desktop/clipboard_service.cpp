@@ -19,8 +19,8 @@ void ClipboardService::onClipboardChanged()
     if (data->hasText())
     {
         text = data->text();
-        clipboard->clear();
         qDebug()<<"has text:";
         qDebug()<< text;
+        emit pasteText(text);
     }
 }

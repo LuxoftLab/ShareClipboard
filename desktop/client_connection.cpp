@@ -26,6 +26,7 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
     connect(socket, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
+//    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
 }
 
 void ClientConnection::sendFail()
@@ -52,5 +53,15 @@ QString ClientConnection::getLogin() {
 
 void ClientConnection::emitDeleteMember(){
     emit deleteMember(this->getIpv4());
+}
+
+void ClientConnection::onData()
+{
+    qDebug() << "ready-read data";
+}
+
+void ClientConnection::sendText(QString text)
+{
+    //nothing to do here?
 }
 

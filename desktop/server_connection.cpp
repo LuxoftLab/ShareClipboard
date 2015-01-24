@@ -27,3 +27,11 @@ void ServerConnection::sendPassAndLogin(QString password, QString login)
    out << login.size() << login << password.size() << password;
    socket->write(makeBinaryPack(PASS, dat.data(), dat.size()));
 }
+
+void ServerConnection::sendText(QString text)
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << text.size() << text;
+    socket->write(makeBinaryPack(TEXT, dat.data(), dat.size()));
+}

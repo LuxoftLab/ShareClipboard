@@ -3,7 +3,6 @@
 #include "controller.h"
 #include "gui/mainwindow.h"
 #include "gui/roomslistdialog.h"
-#include "clipboard_service.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,7 +10,6 @@ int main(int argc, char *argv[])
 
     Controller controller;
     RoomsListDialog rooms;
-    ClipboardService cservice;
 
     //create room implementation
     QObject::connect(&rooms, SIGNAL(newRoomCreated(QString,QString)), &controller, SLOT(createServerRoom(QString,QString)));

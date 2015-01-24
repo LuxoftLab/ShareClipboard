@@ -15,7 +15,6 @@ public slots:
     void onClipboardChanged();
 private:
     QClipboard* clipboard;
-    QString last_text;
 };
 
 #endif // CLIPBOARDSERVICE_H

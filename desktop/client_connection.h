@@ -13,11 +13,13 @@ public:
     void sendMember(QString login, QHostAddress addr);
     void removeMember(QHostAddress addr);
     QString getLogin();
+    void sendText(QString text);
 signals:
     bool verifyPass(QString pass, ClientConnection * conn);
     void deleteMember(QHostAddress addr);
 private slots:
     void emitDeleteMember();
+    void onData();
 private:
     QByteArray makeBinaryPack(pckg_t, char*, int);
     QByteArray makeBinaryPack(pckg_t, QString);

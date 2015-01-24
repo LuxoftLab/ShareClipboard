@@ -89,7 +89,7 @@ void Controller::joinRoom(qint32 addr, QString pass)
         return;
 
     clientRoom = rooms.value(addr, NULL);
-
+    QObject::connect(&cservice, SIGNAL(pasteText(QString)), clientRoom, SLOT(sendText(QString)));
     if(clientRoom == NULL)
         return;
 
