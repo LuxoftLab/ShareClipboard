@@ -29,7 +29,6 @@ public slots:
     void addRoom(QString name, qint32 id);
     void deleteRoom(QString name);
     void onServerIsUp(QString serverName);
-
 private slots:
     void onListItemDoubleClicked(QModelIndex index);
     void onPasswordTyped(QString password);
