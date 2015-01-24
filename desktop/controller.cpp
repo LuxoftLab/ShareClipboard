@@ -47,8 +47,6 @@ void Controller::deleteRoom(QHostAddress host)
 
 void Controller::createServerRoom(QString name, QString pass)
 {
-    qDebug() << serverRoom;
-
     if(serverRoom != NULL)
         return;
 
@@ -58,10 +56,10 @@ void Controller::createServerRoom(QString name, QString pass)
     udpService->notifyAboutRoom(name);
     emit serverIsUp(name);
 
-    addRoom(name, serverRoom->getAddr());
+    //addRoom(name, serverRoom->getAddr());
 
     QString login = "login";
-    joinRoom(serverRoom->getAddr().toIPv4Address(), pass);
+    //joinRoom(serverRoom->getAddr().toIPv4Address(), pass);
 }
 
 void Controller::deleteServerRoom()
