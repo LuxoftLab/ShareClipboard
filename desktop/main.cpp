@@ -8,8 +8,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Controller controller;
-    MainWindow window;
+    MainWindow * window = new MainWindow();
+    Controller controller(window);
 
     //RoomsListDialog roomsDialog;
 
@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 //    QObject::connect(&roomsDialog, SIGNAL(roomChoosed(qint32, QString)), &controller, SLOT(joinRoom(qint32,QString)));
 
     //roomsDialog.show();
-    window.show();
+    window->show();
 
     return a.exec();
 }

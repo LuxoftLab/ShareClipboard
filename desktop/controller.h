@@ -12,6 +12,7 @@
 #include "server_room.h"
 #include "client_room.h"
 #include "clipboard_service.h"
+#include "gui/mainwindow.h"
 
 class Controller : public QObject
 {
@@ -21,9 +22,10 @@ private:
     ServerRoom* serverRoom = NULL;
     ClientRoom* clientRoom = NULL;
     QMap <qint32, ClientRoom*> rooms;
+    MainWindow * mainWindow;
     ClipboardService cservice;
 public:
-    Controller();
+    Controller(MainWindow * mainWindow);
     ~Controller();
 signals:
     void roomAdded(QString name, qint32 ip);

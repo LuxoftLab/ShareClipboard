@@ -3,8 +3,10 @@
 #include "gui/mainwindow.h"
 #include <QDebug>
 
-Controller::Controller() : QObject(0)
+Controller::Controller(MainWindow *mainWindow) : QObject(0)
 {
+    this->mainWindow = mainWindow;
+
     udpService = new UDPService();
     connect(udpService, SIGNAL(roomReceived(QString,QHostAddress)),
             this, SLOT(addRoom(QString,QHostAddress)));
