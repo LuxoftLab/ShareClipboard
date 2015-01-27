@@ -26,6 +26,7 @@ void ClientRoom::deleteMember(QHostAddress addr) {
 
 ClientRoom::~ClientRoom() {
     delete connection;
+
 }
 
 Member::Member(QString login, QHostAddress addr) {

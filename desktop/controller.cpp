@@ -97,5 +97,5 @@ void Controller::joinRoom(qint32 addr, QString pass)
     QString login = "login";
     clientRoom->connectToHost(login, pass);
 
-    //MainWindow().show();
+    MainWindow().show();
 }

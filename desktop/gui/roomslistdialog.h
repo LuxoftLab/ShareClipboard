@@ -20,7 +20,7 @@ public:
     void setRoomsHash(QHash<QString, qint32> rooms);
 
 signals:
-    void roomChoosed(qint32 roomId, QString password);
+    void roomChoosed(qint32 roomIp, QString password);
     void newRoomCreated(QString name, QString password);
     void deleteServerRoom();
 
