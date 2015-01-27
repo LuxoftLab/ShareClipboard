@@ -23,7 +23,7 @@ private:
     ClientRoom* clientRoom = NULL;
     QMap <qint32, ClientRoom*> rooms;
     MainWindow * mainWindow;
-    ClipboardService cservice;
+    ClipboardService cleapboardService;
 public:
     Controller(MainWindow * mainWindow);
     ~Controller();
@@ -38,6 +38,9 @@ public slots:
     void addRoom(QString name, QHostAddress host);
     void deleteRoom(QHostAddress host);
     void deleteServerRoom();
+
+private:
+    void initClipboardToGuiConnection();
 };
 
 #endif // CONTROLLER_H

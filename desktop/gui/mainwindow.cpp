@@ -48,22 +48,6 @@ void MainWindow::changeNameClicked()
     dialog.exec();
 }
 
-void MainWindow::clipboardChanged(QMimeData * mimeData)
-{
-    if (mimeData->hasImage()) {
-        ui->clipboardText->setPixmap(qvariant_cast<QPixmap>(mimeData->imageData()));
-    } else if (mimeData->hasUrls()) {
-        ui->clipboardText->setText("url: " + mimeData->text());
-        if(askForFileDownload(mimeData->text())) {
-            emit downloadFile();
-        }
-    } else if (mimeData->hasText()) {
-        ui->clipboardText->setText(mimeData->text());
-    }  else {
-        ui->clipboardText->setText(tr("Cannot display data"));
-    }
-}
-
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (trayIcon->isVisible())
@@ -76,6 +60,16 @@ void MainWindow::closeEvent(QCloseEvent *event)
         hide();
         event->ignore();
     }
+}
+
+void MainWindow::textPushedToClipboard(QString text)
+{
+    ui->clipboardText->setText(text);
+}
+
+void MainWindow::imagePushedToClipboard(QPixmap image)
+{
+    ui->clipboardText->setPixmap(image);
 }
 
 void MainWindow::createTrayIcon()

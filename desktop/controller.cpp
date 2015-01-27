@@ -7,6 +7,8 @@ Controller::Controller(MainWindow *mainWindow) : QObject(0)
 {
     this->mainWindow = mainWindow;
 
+    initClipboardToGuiConnection();
+
     udpService = new UDPService();
     connect(udpService, SIGNAL(roomReceived(QString,QHostAddress)),
             this, SLOT(addRoom(QString,QHostAddress)));
@@ -82,6 +84,12 @@ void Controller::deleteServerRoom()
 
 }
 
+void Controller::initClipboardToGuiConnection()
+{
+    connect(&cleapboardService, SIGNAL(hasText(QString)), mainWindow, SLOT(textPushedToClipboard(QString)));
+    connect(&cleapboardService, SIGNAL(hasImage(QPixmap)), mainWindow, SLOT(imagePushedToClipboard(QPixmap)));
+}
+
 void Controller::joinRoom(qint32 addr, QString pass)
 {
     QHostAddress host(addr);
@@ -91,7 +99,7 @@ void Controller::joinRoom(qint32 addr, QString pass)
         return;
 
     clientRoom = rooms.value(addr, NULL);
-    QObject::connect(&cservice, SIGNAL(pasteText(QString)), clientRoom, SLOT(sendText(QString)));
+    //QObject::connect(&cservice, SIGNAL(pasteText(QString)), clientRoom, SLOT(sendText(QString)));
     if(clientRoom == NULL)
         return;
     qDebug() << "joined";

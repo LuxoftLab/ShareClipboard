@@ -4,8 +4,7 @@
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 #include <QCloseEvent>
-#include <QMimeData>
-#include <QHash>
+#include <QPixmap>
 
 namespace Ui {
 class MainWindow;
@@ -29,7 +28,9 @@ protected:
     void closeEvent(QCloseEvent * event);
 
 public slots:
-    void clipboardChanged(QMimeData * mimeData);
+    void textPushedToClipboard(QString text);
+    void imagePushedToClipboard(QPixmap image);
+
     void newDevicePluged(QString deviceName);
     void newNameVerified(QString newName);
 
