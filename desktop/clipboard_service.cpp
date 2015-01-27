@@ -17,19 +17,24 @@ ClipboardService::~ClipboardService()
 void ClipboardService::onClipboardChanged()
 {
     const QMimeData* mimeData = clipboard->mimeData();
+
     if (mimeData->hasUrls()) {
+        qDebug() << "has url: " << mimeData->text();
         if(mimeData->urls().first().isLocalFile()) {
-         //   emit onFile(mimeData->urls().first().toLocalFile());
-            qDebug() << "has file: " << mimeData->urls().first().toLocalFile();
+            emit hasFile(mimeData->urls().first().toLocalFile());
         } else {
-        //    emit onText(mimeData->text());
-            qDebug() << "has url: " << mimeData->text();
+            emit hasText(mimeData->text());
         }
-    } else if (mimeData->hasImage()) {
-        //emit onImage(qvariant_cast<QPixmap>(mimeData->imageData()));
+        return;
+    }
+    if (mimeData->hasImage()) {
+        emit hasImage(qvariant_cast<QPixmap>(mimeData->imageData()));
         qDebug() << "has image";
-    } else if (mimeData->hasText()) {
-        //emit onText(mimeData->text());
+        return;
+    }
+    if (mimeData->hasText()) {
+        emit hasText(mimeData->text());
         qDebug() << "has text: " << mimeData->text();
+        return;
     }
 }

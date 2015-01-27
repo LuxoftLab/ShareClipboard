@@ -2,6 +2,8 @@
 #define CLIPBOARDSERVICE_H
 #include <QClipboard>
 #include <QApplication>
+#include <QMimeData>
+#include <QPixmap>
 
 class ClipboardService : public QObject
 {
@@ -10,7 +12,9 @@ public:
     ClipboardService();
     ~ClipboardService();
 signals:
-    void pasteText(QString text);
+    void hasFile(QString);
+    void hasText(QString);
+    void hasImage(QPixmap);
 public slots:
     void onClipboardChanged();
 private:
