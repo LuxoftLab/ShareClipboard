@@ -68,7 +68,7 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
     connect(socket, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
-    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
+//    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
 }
 
 void ClientConnection::sendFail()
@@ -119,3 +119,10 @@ QHostAddress ClientConnection::makeHostAdress(char* block){
     QHostAddress* address = new QHostAddress;
     return *address;
 }
+
+
+void ClientConnection::sendText(QString text)
+{
+    //nothing to do here?
+}
+

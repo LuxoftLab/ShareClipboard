@@ -18,6 +18,7 @@ protected:
 public:
     Connection(QTcpSocket * socket);
     QHostAddress getIpv4();
+
 signals:
     //void gotData(const TcpPackage*);
 
@@ -31,6 +32,7 @@ signals:
     */
 public slots:
     //void onData();
+    virtual void sendText(QString text) = 0;
 };
 
 #endif // CONNECTION_H

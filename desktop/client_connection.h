@@ -13,6 +13,7 @@ public:
     void sendMember(QString login, QHostAddress addr);
     void removeMember(QHostAddress addr);
     QString getLogin();
+    void sendText(QString text);
 signals:
     void verifyPass(QString pass, ClientConnection * conn);
     void deleteMember(QHostAddress addr);

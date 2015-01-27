@@ -12,6 +12,7 @@ public:
     ServerConnection(QHostAddress host);
     int sendPassAndLogin(QString password, QString login);
     void deleteMe(QHostAddress address);
+    void sendText(QString text);
 public slots:
     void onData();
 signals:

@@ -87,3 +87,11 @@ void ServerConnection::connected()
     qDebug() << "connected";
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
 }
+
+void ServerConnection::sendText(QString text)
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << text.size() << text;
+    socket->write(makeBinaryPack(TEXT, dat.data(), dat.size()));
+}

@@ -22,7 +22,8 @@ int main(int argc, char *argv[])
 //    QObject::connect(&roomsDialog, SIGNAL(roomChoosed(qint32, QString)), &controller, SLOT(joinRoom(qint32,QString)));
 
     //roomsDialog.show();
-    window.init();
+    window.show();
+
     return a.exec();
 }
 
