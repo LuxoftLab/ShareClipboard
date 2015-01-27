@@ -1,6 +1,8 @@
 #include "clipboard_service.h"
 #include <QDebug>
 #include <QMimeData>
+#include <QUrl>
+
 
 ClipboardService::ClipboardService()
 {
@@ -14,13 +16,20 @@ ClipboardService::~ClipboardService()
 
 void ClipboardService::onClipboardChanged()
 {
-    QString text;
-    const QMimeData* data = clipboard->mimeData();
-    if (data->hasText())
-    {
-        text = data->text();
-        qDebug()<<"has text:";
-        qDebug()<< text;
-        emit pasteText(text);
+    const QMimeData* mimeData = clipboard->mimeData();
+    if (mimeData->hasUrls()) {
+        if(mimeData->urls().first().isLocalFile()) {
+         //   emit onFile(mimeData->urls().first().toLocalFile());
+            qDebug() << "has file: " << mimeData->urls().first().toLocalFile();
+        } else {
+        //    emit onText(mimeData->text());
+            qDebug() << "has url: " << mimeData->text();
+        }
+    } else if (mimeData->hasImage()) {
+        //emit onImage(qvariant_cast<QPixmap>(mimeData->imageData()));
+        qDebug() << "has image";
+    } else if (mimeData->hasText()) {
+        //emit onText(mimeData->text());
+        qDebug() << "has text: " << mimeData->text();
     }
 }
