@@ -13,6 +13,7 @@
 #include "client_room.h"
 #include "clipboard_service.h"
 #include "gui/mainwindow.h"
+#include "gui/roomslistdialog.h"
 
 class Controller : public QObject
 {
@@ -39,8 +40,11 @@ public slots:
     void deleteRoom(QHostAddress host);
     void deleteServerRoom();
 
+    void onRoomsListOpen(RoomsListDialog *roomsDialog);
+
 private:
     void initClipboardToGuiConnection();
+    void initUDPService();
 };
 
 #endif // CONTROLLER_H

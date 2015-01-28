@@ -37,8 +37,12 @@ bool MainWindow::askForFileDownload(QString fileName)
 
 void MainWindow::chooseRoomClicked()
 {
-    RoomsListDialog dialog;
-    dialog.exec();
+    RoomsListDialog * dialog = new RoomsListDialog();
+    emit roomListOpened(dialog);
+    dialog->exec();
+
+    // TODO implement changing of room after connection
+   // ui->pushButton_3->setEnabled(false);
 }
 
 void MainWindow::changeNameClicked()

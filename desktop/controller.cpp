@@ -6,19 +6,10 @@
 Controller::Controller(MainWindow *mainWindow) : QObject(0)
 {
     this->mainWindow = mainWindow;
+    connect(mainWindow, SIGNAL(roomListOpened(RoomsListDialog*)), this, SLOT(onRoomsListOpen(RoomsListDialog*)));
 
     initClipboardToGuiConnection();
-
-    udpService = new UDPService();
-    connect(udpService, SIGNAL(roomReceived(QString,QHostAddress)),
-            this, SLOT(addRoom(QString,QHostAddress)));
-    connect(udpService, SIGNAL(roomRequested(QHostAddress)),
-            this, SLOT(getRoom(QHostAddress)));
-    connect(udpService, SIGNAL(roomDeleted(QHostAddress)),
-            this, SLOT(deleteRoom(QHostAddress)));
-
-    udpService->initListener();
-    udpService->getRooms();
+    initUDPService();
 }
 
 Controller::~Controller()
@@ -49,6 +40,7 @@ void Controller::deleteRoom(QHostAddress host)
     qDebug() << "room deleted";
     QString name = rooms.value(host.toIPv4Address())->getName();
     rooms.remove(host.toIPv4Address());
+    emit roomDeleted(name);
 }
 
 void Controller::createServerRoom(QString name, QString pass)
@@ -84,10 +76,52 @@ void Controller::deleteServerRoom()
 
 }
 
+void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
+{
+    QMap<QString, qint32> roomsForGui;
+    QMapIterator<qint32, ClientRoom*> i(rooms);
+    while (i.hasNext())
+    {
+        i.next();
+        roomsForGui.insert(i.value()->getName(), i.key());
+    }
+
+    if(serverRoom == NULL)
+    {
+        roomsDialog->setRoomsHash(roomsForGui, QString::null);
+    } else {
+        roomsDialog->setRoomsHash(roomsForGui, serverRoom->getName());
+    }
+
+    connect(roomsDialog, SIGNAL(newRoomCreated(QString,QString)), this, SLOT(createServerRoom(QString,QString)));
+    connect(this, SIGNAL(roomAdded(QString,qint32)), roomsDialog, SLOT(addRoom(QString,qint32)));
+
+    connect(this, SIGNAL(serverIsUp(QString)), roomsDialog, SLOT(onServerIsUp(QString)));
+    connect(roomsDialog, SIGNAL(roomChoosed(qint32, QString)), this, SLOT(joinRoom(qint32,QString)));
+
+    connect(roomsDialog, SIGNAL(deleteServerRoom()), this, SLOT(deleteServerRoom()));
+    connect(this, SIGNAL(roomDeleted(QString)), roomsDialog, SLOT(deleteRoom(QString)));
+
+}
+
 void Controller::initClipboardToGuiConnection()
 {
     connect(&cleapboardService, SIGNAL(hasText(QString)), mainWindow, SLOT(textPushedToClipboard(QString)));
     connect(&cleapboardService, SIGNAL(hasImage(QPixmap)), mainWindow, SLOT(imagePushedToClipboard(QPixmap)));
+}
+
+void Controller::initUDPService()
+{
+    udpService = new UDPService();
+    connect(udpService, SIGNAL(roomReceived(QString,QHostAddress)),
+            this, SLOT(addRoom(QString,QHostAddress)));
+    connect(udpService, SIGNAL(roomRequested(QHostAddress)),
+            this, SLOT(getRoom(QHostAddress)));
+    connect(udpService, SIGNAL(roomDeleted(QHostAddress)),
+            this, SLOT(deleteRoom(QHostAddress)));
+
+    udpService->initListener();
+    udpService->getRooms();
 }
 
 void Controller::joinRoom(qint32 addr, QString pass)

@@ -24,13 +24,21 @@ RoomsListDialog::~RoomsListDialog()
     delete ui;
 }
 
-void RoomsListDialog::setRoomsHash(QHash<QString, qint32> rooms)
+void RoomsListDialog::setRoomsHash(QMap<QString, qint32> rooms, QString serverName)
 {
     QList<QString> roomsList = rooms.keys();
     QList<QString>::iterator i;
     for(i = roomsList.begin(); i != roomsList.end(); ++i)
     {
         ui->listWidget->addItem(*i);
+    }
+
+    localServer = serverName;
+    if(localServer == QString::null)
+    {
+        ui->pushButton->setText("New room");
+    } else {
+        ui->pushButton->setText("Delete your room");
     }
 }
 

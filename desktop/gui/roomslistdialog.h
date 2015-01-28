@@ -17,7 +17,7 @@ public:
     explicit RoomsListDialog(QWidget * parent = 0);
     ~RoomsListDialog();
 
-    void setRoomsHash(QHash<QString, qint32> rooms);
+    void setRoomsHash(QMap<QString, qint32> rooms, QString serverName);
 
 signals:
     void roomChoosed(qint32 roomIp, QString password);
@@ -35,7 +35,7 @@ private slots:
     void onNewRoomButtonClicked();
 
 private:
-    QHash<QString, qint32> rooms;
+    QMap<QString, qint32> rooms;
     Ui::RoomsListDialog *ui;
     QString localServer;
 

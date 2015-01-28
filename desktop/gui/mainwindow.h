@@ -5,6 +5,7 @@
 #include <QSystemTrayIcon>
 #include <QCloseEvent>
 #include <QPixmap>
+#include "gui/roomslistdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,6 +24,7 @@ public:
 signals:
     void downloadFile();
     void changeName(QString name);
+    void roomListOpened(RoomsListDialog *);
 
 protected:
     void closeEvent(QCloseEvent * event);
