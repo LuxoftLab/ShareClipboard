@@ -18,6 +18,7 @@ signals:
     void hasImage(QString);
 public slots:
     void onClipboardChanged();
+    void pushDataToClipboard(QString stringData);
 private:
     QClipboard* clipboard;
     QList<QString> clipboardData;

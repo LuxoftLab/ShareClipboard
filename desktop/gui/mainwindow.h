@@ -25,7 +25,7 @@ signals:
     void downloadFile();
     void changeName(QString name);
     void roomListOpened(RoomsListDialog *);
-
+    void pushDataChoosed(QString);
 protected:
     void closeEvent(QCloseEvent * event);
 
@@ -42,6 +42,8 @@ private slots:
 
     void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
     void trayMessageClicked();
+
+    void clipboardDataListItemDBClicked(QListWidgetItem *listItem);
 
 private:
     Ui::MainWindow * ui;

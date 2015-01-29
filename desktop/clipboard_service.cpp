@@ -7,7 +7,7 @@
 ClipboardService::ClipboardService()
 {
     this->clipboard = QApplication::clipboard();
-    QObject::connect(clipboard, SIGNAL(dataChanged()), this, SLOT(onClipboardChanged()));
+    connect(clipboard, SIGNAL(dataChanged()), this, SLOT(onClipboardChanged()));
 }
 
 ClipboardService::~ClipboardService()
@@ -42,4 +42,11 @@ void ClipboardService::onClipboardChanged()
         emit hasText(mimeData->text());
         return;
     }
+}
+
+void ClipboardService::pushDataToClipboard(QString stringData) // todo : change to mime data
+{
+    QMimeData * mimeData = new QMimeData();
+    mimeData->setText(stringData);
+    clipboard->setMimeData(mimeData);
 }

@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->changeNamePushButton, SIGNAL(clicked()), this, SLOT(changeNameClicked()));
     connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
-
+    connect(ui->clipboardText, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(clipboardDataListItemDBClicked(QListWidgetItem*)));
 }
 
 MainWindow::~MainWindow()
@@ -150,6 +150,11 @@ void MainWindow::trayMessageClicked()
     show();
     raise();
     activateWindow();
+}
+
+void MainWindow::clipboardDataListItemDBClicked(QListWidgetItem * listItem)
+{
+    emit pushDataChoosed(listItem->text());
 }
 
 
