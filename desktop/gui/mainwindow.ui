@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>314</width>
-    <height>405</height>
+    <height>428</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,26 +106,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="clipboardText">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="autoFillBackground">
-           <bool>true</bool>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Box</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
+         <widget class="QListWidget" name="clipboardText"/>
         </item>
        </layout>
       </item>
@@ -139,7 +120,7 @@
      <x>0</x>
      <y>0</y>
      <width>314</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

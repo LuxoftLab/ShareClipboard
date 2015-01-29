@@ -68,12 +68,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::textPushedToClipboard(QString text)
 {
-    ui->clipboardText->setText(text);
+    ui->clipboardText->insertItem(0, text);
 }
 
-void MainWindow::imagePushedToClipboard(QPixmap image)
+void MainWindow::imagePushedToClipboard(QString imageName)//QPixmap image)
 {
-    ui->clipboardText->setPixmap(image);
+    ui->clipboardText->insertItem(0, imageName);
 }
 
 void MainWindow::createTrayIcon()

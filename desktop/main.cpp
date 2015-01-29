@@ -10,13 +10,6 @@ int main(int argc, char *argv[])
 
     MainWindow * window = new MainWindow();
     Controller controller(window);
-
-    //RoomsListDialog roomsDialog;
-
-
-
-
-    //roomsDialog.show();
     window->show();
 
     return a.exec();

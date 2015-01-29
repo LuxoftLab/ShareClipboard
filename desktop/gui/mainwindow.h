@@ -31,7 +31,7 @@ protected:
 
 public slots:
     void textPushedToClipboard(QString text);
-    void imagePushedToClipboard(QPixmap image);
+    void imagePushedToClipboard(QString imageName);//QPixmap image);
 
     void newDevicePluged(QString deviceName);
     void newNameVerified(QString newName);

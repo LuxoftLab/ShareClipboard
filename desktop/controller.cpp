@@ -107,7 +107,9 @@ void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
 void Controller::initClipboardToGuiConnection()
 {
     connect(&cleapboardService, SIGNAL(hasText(QString)), mainWindow, SLOT(textPushedToClipboard(QString)));
-    connect(&cleapboardService, SIGNAL(hasImage(QPixmap)), mainWindow, SLOT(imagePushedToClipboard(QPixmap)));
+   // connect(&cleapboardService, SIGNAL(hasImage(QPixmap)), mainWindow, SLOT(imagePushedToClipboard(QPixmap)));
+    connect(&cleapboardService, SIGNAL(hasImage(QString)), mainWindow, SLOT(imagePushedToClipboard(QString)));
+
 }
 
 void Controller::initUDPService()

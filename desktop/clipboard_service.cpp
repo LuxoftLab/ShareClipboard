@@ -20,6 +20,7 @@ void ClipboardService::onClipboardChanged()
 
     if (mimeData->hasUrls()) {
         qDebug() << "has url: " << mimeData->text();
+        clipboardData.prepend(mimeData->text());
         if(mimeData->urls().first().isLocalFile()) {
             emit hasFile(mimeData->urls().first().toLocalFile());
         } else {
@@ -28,13 +29,17 @@ void ClipboardService::onClipboardChanged()
         return;
     }
     if (mimeData->hasImage()) {
-        emit hasImage(qvariant_cast<QPixmap>(mimeData->imageData()));
-        qDebug() << "has image";
+//        qsrand(10000);
+        QString imageName = "image #" + QString::number(qrand());
+        clipboardData.prepend(imageName);
+        qDebug() << "has image: " << imageName;
+        emit hasImage(imageName); //qvariant_cast<QPixmap>(mimeData->imageData())); // temporary replace pixmap to text
         return;
     }
     if (mimeData->hasText()) {
-        emit hasText(mimeData->text());
+        clipboardData.prepend(mimeData->text());
         qDebug() << "has text: " << mimeData->text();
+        emit hasText(mimeData->text());
         return;
     }
 }
