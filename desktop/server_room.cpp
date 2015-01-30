@@ -57,11 +57,11 @@ bool ServerRoom::verifyPass(QString pass, ClientConnection * conn)
     verified.insert(ip, conn);
     return true;
 }
-
+/*
 QHostAddress ServerRoom::getAddr()
 {
     return server->getLocalAddress();
 }
-
+*/
 
 
