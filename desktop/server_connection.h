@@ -24,7 +24,6 @@ private:
     void getSocketState(QTcpSocket*);
 private slots:
     void emitRemoveMember(char*);
-    void throwSocketError(QAbstractSocket::SocketError);
     void connected();
 
 
