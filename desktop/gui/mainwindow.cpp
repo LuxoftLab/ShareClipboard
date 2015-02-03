@@ -68,6 +68,24 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::textPushedToClipboard(qint32 id, QString text)
 {
+    textData data;
+    data.id = id;
+    int index = text.indexOf('\n');
+    int size = text.size();
+    if( index >= 0 && size > 50)
+    {
+        if(index < 3 )
+            index = text.indexOf('\n',3);
+        text = text.mid(1, index);
+        text.append(" ... ");
+    }
+    else if(text.size() > 50)
+    {
+        text = text.mid(1,50);
+        text.append("\n ... ");
+    }
+    data.shortText = text;
+    dataList.insert(0,data);
     dataIdsVector.prepend(id);
     ui->clipboardText->insertItem(0, text);
 }
