@@ -24,7 +24,7 @@ private:
     ClientRoom* clientRoom = NULL;
     QMap <qint32, ClientRoom*> rooms;
     MainWindow * mainWindow;
-    ClipboardService cleapboardService;
+    ClipboardService clipboardService;
 public:
     Controller(MainWindow * mainWindow);
     ~Controller();

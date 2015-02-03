@@ -22,15 +22,15 @@ signals:
 //    void hasFile(QString);
     void hasText(qint32, QString);
 //    void hasImage(QString);
+    void deleteDataFromStorage(qint32);
 public slots:
     void onClipboardChanged();
 
     void pushDataToClipboard(ClipboardData data);
-    // void deleteDataFromStorage(qint32 dataId);
 private:
     QClipboard* clipboard;
-    QList<ClipboardData>clipboardData;
-    int itemsNumber = 5;   // TODO : write setting it from MainMenu
+    QVector<ClipboardData>clipboardData;
+    int clipboardOpacity = 2;   // TODO : write setting it from MainMenu
 };
 
 #endif // CLIPBOARDSERVICE_H

@@ -18,6 +18,11 @@ void ClipboardService::onClipboardChanged()
 {
     const QMimeData* mimeData = clipboard->mimeData();
     ClipboardData data;
+
+    if(clipboardData.size() == clipboardOpacity) {
+        emit deleteDataFromStorage(clipboardData.at(clipboardData.size() - 1).dataID);
+        clipboardData.remove(clipboardData.size()- 1);
+    }
 //    if (mimeData->hasUrls()) {
 //        qDebug() << "has url: " << mimeData->text();
 //        qint32 dataId = (qint32)qrand();

@@ -77,6 +77,21 @@ void MainWindow::imagePushedToClipboard(QString imageName)//QPixmap image)
     ui->clipboardText->insertItem(0, imageName);
 }
 
+void MainWindow::deleteItemFromList(qint32 id)
+{
+    qDebug() << "on delete " << id;
+
+    for(int i = 0; i < dataIdsVector.size(); i++) {
+        qDebug() << dataIdsVector.at(i);
+    }
+
+    qDebug() << "index: " << dataIdsVector.indexOf(id);
+
+    QListWidgetItem * item = ui->listWidget->item(dataIdsVector.indexOf(id));
+    qDebug() << item;
+    delete item;
+}
+
 void MainWindow::createTrayIcon()
 {
     if(!trayIcon->isSystemTrayAvailable())
