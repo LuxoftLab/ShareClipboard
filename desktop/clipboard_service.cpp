@@ -17,36 +17,47 @@ ClipboardService::~ClipboardService()
 void ClipboardService::onClipboardChanged()
 {
     const QMimeData* mimeData = clipboard->mimeData();
-
-    if (mimeData->hasUrls()) {
-        qDebug() << "has url: " << mimeData->text();
-        clipboardData.prepend(mimeData->text());
-        if(mimeData->urls().first().isLocalFile()) {
-            emit hasFile(mimeData->urls().first().toLocalFile());
-        } else {
-            emit hasText(mimeData->text());
-        }
-        return;
-    }
-    if (mimeData->hasImage()) {
+    ClipboardData data;
+//    if (mimeData->hasUrls()) {
+//        qDebug() << "has url: " << mimeData->text();
+//        qint32 dataId = (qint32)qrand();
+//        clipboardData.insert(dataId, mimeData->text());
+//        if(mimeData->urls().first().isLocalFile()) {
+//            emit hasFile(mimeData->urls().first().toLocalFile());
+//        } else {
+//            emit hasText(mimeData->text(),);
+//        }
+//        return;
+//    }
+//    if (mimeData->hasImage()) {
 //        qsrand(10000);
-        QString imageName = "image #" + QString::number(qrand());
-        clipboardData.prepend(imageName);
-        qDebug() << "has image: " << imageName;
-        emit hasImage(imageName); //qvariant_cast<QPixmap>(mimeData->imageData())); // temporary replace pixmap to text
-        return;
-    }
+//        QString imageName = "copied image #" + QString::number(qrand());
+//        clipboardData.prepend(imageName);
+//        qDebug() << "has image: " << imageName;
+//        emit hasImage(imageName); //qvariant_cast<QPixmap>(mimeData->imageData())); // temporary replace pixmap to text
+//        return;
+//    }
     if (mimeData->hasText()) {
-        clipboardData.prepend(mimeData->text());
+//        qDebug() << "has text: " << mimeData->text();
+//        qint32 dataId = (qint32)qrand();
+//        clipboardData.insert(dataId, mimeData->text());
+//        emit hasText(dataId, mimeData->text());
+//        //return;
         qDebug() << "has text: " << mimeData->text();
-        emit hasText(mimeData->text());
-        return;
+        data.dataID = (qint32)qrand();
+        data.type = "text/plain";
+        data.data = mimeData->data(data.type);
+        clipboardData.prepend(data);
+
+        // TODO add split method
+
+        emit hasText(data.dataID, mimeData->text());
     }
 }
 
-void ClipboardService::pushDataToClipboard(QString stringData) // todo : change to mime data
+void ClipboardService::pushDataToClipboard(ClipboardData data)
 {
     QMimeData * mimeData = new QMimeData();
-    mimeData->setText(stringData);
+    mimeData->setData(data.type, data.data);
     clipboard->setMimeData(mimeData);
 }

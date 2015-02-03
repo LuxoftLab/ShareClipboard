@@ -106,7 +106,7 @@ void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
 
 void Controller::initClipboardToGuiConnection()
 {
-    connect(&cleapboardService, SIGNAL(hasText(QString)), mainWindow, SLOT(textPushedToClipboard(QString)));
+    connect(&cleapboardService, SIGNAL(hasText(qint32, QString)), mainWindow, SLOT(textPushedToClipboard(qint32, QString)));
    // connect(&cleapboardService, SIGNAL(hasImage(QPixmap)), mainWindow, SLOT(imagePushedToClipboard(QPixmap)));
     connect(&cleapboardService, SIGNAL(hasImage(QString)), mainWindow, SLOT(imagePushedToClipboard(QString)));
     connect(mainWindow, SIGNAL(pushDataChoosed(QString)), &cleapboardService, SLOT(pushDataToClipboard(QString)));

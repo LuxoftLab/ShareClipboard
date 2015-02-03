@@ -66,8 +66,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void MainWindow::textPushedToClipboard(QString text)
+void MainWindow::textPushedToClipboard(qint32 id, QString text)
 {
+    dataIdsVector.prepend(id);
     ui->clipboardText->insertItem(0, text);
 }
 

@@ -5,6 +5,8 @@
 #include <QSystemTrayIcon>
 #include <QCloseEvent>
 #include <QPixmap>
+#include <QVector>
+
 #include "gui/roomslistdialog.h"
 
 namespace Ui {
@@ -30,7 +32,7 @@ protected:
     void closeEvent(QCloseEvent * event);
 
 public slots:
-    void textPushedToClipboard(QString text);
+    void textPushedToClipboard(qint32 id, QString text);
     void imagePushedToClipboard(QString imageName);//QPixmap image);
 
     void newDevicePluged(QString deviceName);
@@ -48,6 +50,8 @@ private slots:
 private:
     Ui::MainWindow * ui;
     QSystemTrayIcon * trayIcon;
+
+    QVector<qint32> dataIdsVector;
 
     void createTrayIcon();
     bool askForFileDownload(QString fileName);
