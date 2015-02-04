@@ -23,31 +23,30 @@ void ClipboardService::onClipboardChanged()
         emit deleteDataFromStorage(clipboardData.at(clipboardData.size() - 1).dataID);
         clipboardData.remove(clipboardData.size()- 1);
     }
-//    if (mimeData->hasUrls()) {
-//        qDebug() << "has url: " << mimeData->text();
-//        qint32 dataId = (qint32)qrand();
-//        clipboardData.insert(dataId, mimeData->text());
-//        if(mimeData->urls().first().isLocalFile()) {
-//            emit hasFile(mimeData->urls().first().toLocalFile());
-//        } else {
-//            emit hasText(mimeData->text(),);
-//        }
-//        return;
-//    }
-//    if (mimeData->hasImage()) {
-//        qsrand(10000);
-//        QString imageName = "copied image #" + QString::number(qrand());
-//        clipboardData.prepend(imageName);
-//        qDebug() << "has image: " << imageName;
-//        emit hasImage(imageName); //qvariant_cast<QPixmap>(mimeData->imageData())); // temporary replace pixmap to text
-//        return;
-//    }
+    if (mimeData->hasUrls()) {
+        qDebug() << "has url: " << mimeData->text();
+        data.dataID = (qint32)qrand();
+        data.type = "text/uri-list";
+        data.data = mimeData->data(data.type);
+        clipboardData.prepend(data);
+        if(mimeData->urls().first().isLocalFile()) {
+            emit hasFile(data.dataID, mimeData->urls().first().toLocalFile());
+        } else {
+            emit hasText(data.dataID, mimeData->text());
+        }
+        return;
+    }
+    if (mimeData->hasImage()) {
+        QString imageName = "copied image #" + QString::number(qrand());
+        data.dataID = (qint32)qrand();
+        data.type = "image/ *";
+        data.data = mimeData->data(data.type);
+        clipboardData.prepend(data);
+        qDebug() << "has image: " << imageName;
+        emit hasImage(data.dataID, imageName); //qvariant_cast<QPixmap>(mimeData->imageData())); // temporary replace pixmap to text
+        return;
+    }
     if (mimeData->hasText()) {
-//        qDebug() << "has text: " << mimeData->text();
-//        qint32 dataId = (qint32)qrand();
-//        clipboardData.insert(dataId, mimeData->text());
-//        emit hasText(dataId, mimeData->text());
-//        //return;
         qDebug() << "has text: " << mimeData->text();
         data.dataID = (qint32)qrand();
         data.type = "text/plain";
@@ -64,6 +63,8 @@ void ClipboardService::onClipboardChanged()
 
 void ClipboardService::pushDataToClipboard(qint32 dataId)
 {
+        qDebug() << "on item dbclick";
+
     for(int i = 0; i < clipboardData.size(); i++) {
         if(clipboardData.at(i).dataID == dataId) {
             QMimeData * data = new QMimeData();

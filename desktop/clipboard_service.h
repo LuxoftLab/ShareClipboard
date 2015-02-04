@@ -19,9 +19,9 @@ public:
     ClipboardService();
     ~ClipboardService();
 signals:
-//    void hasFile(QString);
+    void hasFile(qint32, QString);
     void hasText(qint32, QString);
-//    void hasImage(QString);
+    void hasImage(qint32, QString);
     void deleteDataFromStorage(qint32);
 public slots:
     void onClipboardChanged();

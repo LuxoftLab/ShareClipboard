@@ -72,8 +72,9 @@ void MainWindow::textPushedToClipboard(qint32 id, QString text)
     ui->clipboardText->insertItem(0, text);
 }
 
-void MainWindow::imagePushedToClipboard(QString imageName)//QPixmap image)
+void MainWindow::imagePushedToClipboard(qint32 id, QString imageName)//QPixmap image)
 {
+    dataIdsVector.prepend(id);
     ui->clipboardText->insertItem(0, imageName);
 }
 
