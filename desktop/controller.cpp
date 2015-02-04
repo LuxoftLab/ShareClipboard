@@ -110,8 +110,8 @@ void Controller::initClipboardToGuiConnection()
     connect(&clipboardService, SIGNAL(deleteDataFromStorage(qint32)), mainWindow, SLOT(deleteItemFromList(qint32)));
 
    // connect(&clipboardService, SIGNAL(hasImage(QPixmap)), mainWindow, SLOT(imagePushedToClipboard(QPixmap)));
-    connect(&clipboardService, SIGNAL(hasImage(QString)), mainWindow, SLOT(imagePushedToClipboard(QString)));
-    connect(mainWindow, SIGNAL(pushDataChoosed(QString)), &clipboardService, SLOT(pushDataToClipboard(QString)));
+   // connect(&clipboardService, SIGNAL(hasImage(QString)), mainWindow, SLOT(imagePushedToClipboard(QString)));
+    connect(mainWindow, SIGNAL(pushDataChoosed(qint32)), &clipboardService, SLOT(pushDataToClipboard(qint32)));
 
 }
 

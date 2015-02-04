@@ -27,7 +27,7 @@ signals:
     void downloadFile();
     void changeName(QString name);
     void roomListOpened(RoomsListDialog *);
-    void pushDataChoosed(QString);
+    void pushDataChoosed(qint32);
 protected:
     void closeEvent(QCloseEvent * event);
 

@@ -58,11 +58,18 @@ void ClipboardService::onClipboardChanged()
 
         emit hasText(data.dataID, mimeData->text());
     }
+
+    qDebug() << clipboardData.size();
 }
 
-void ClipboardService::pushDataToClipboard(ClipboardData data)
+void ClipboardService::pushDataToClipboard(qint32 dataId)
 {
-    QMimeData * mimeData = new QMimeData();
-    mimeData->setData(data.type, data.data);
-    clipboard->setMimeData(mimeData);
+    for(int i = 0; i < clipboardData.size(); i++) {
+        if(clipboardData.at(i).dataID == dataId) {
+            QMimeData * data = new QMimeData();
+            data->setData(clipboardData.at(i).type, clipboardData.at(i).data);
+            clipboard->setMimeData(data);
+            return;
+        }
+    }
 }

@@ -79,17 +79,9 @@ void MainWindow::imagePushedToClipboard(QString imageName)//QPixmap image)
 
 void MainWindow::deleteItemFromList(qint32 id)
 {
-    qDebug() << "on delete " << id;
-
-    for(int i = 0; i < dataIdsVector.size(); i++) {
-        qDebug() << dataIdsVector.at(i);
-    }
-
-    qDebug() << "index: " << dataIdsVector.indexOf(id);
-
-    QListWidgetItem * item = ui->listWidget->item(dataIdsVector.indexOf(id));
-    qDebug() << item;
+    QListWidgetItem * item = ui->clipboardText->takeItem(dataIdsVector.indexOf(id));
     delete item;
+    dataIdsVector.erase(dataIdsVector.end() - 1);
 }
 
 void MainWindow::createTrayIcon()
@@ -170,7 +162,7 @@ void MainWindow::trayMessageClicked()
 
 void MainWindow::clipboardDataListItemDBClicked(QListWidgetItem * listItem)
 {
-    emit pushDataChoosed(listItem->text());
+    emit pushDataChoosed(dataIdsVector.at(ui->clipboardText->row(listItem)));
 }
 
 
