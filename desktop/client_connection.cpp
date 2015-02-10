@@ -1,40 +1,5 @@
 #include "client_connection.h"
 
-QByteArray ClientConnection::makeBinaryPack(pckg_t type, char* dat, int datsize)
-{
-    char* d;
-    d = dat;
-    TcpPackageHeader head = TcpPackageHeader(type, datsize);
-    TcpPackage pack = TcpPackage(head, d);
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out << pack;
-    return block;
-}
-
-QByteArray ClientConnection::makeBinaryPack(pckg_t type, QString str){
-    TcpPackageHeader head = TcpPackageHeader(type, str.size());
-    char* dat;
-    dat = str.toUtf8().data();
-    TcpPackage pack = TcpPackage(head, dat);
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out << pack;
-    return block;
-}
-
-QByteArray ClientConnection::makeBinaryPack(pckg_t type, qint32 num)
-{
-    TcpPackageHeader head = TcpPackageHeader(type, 4);
-    char* dat;
-    sprintf(dat, "%d", num);
-    TcpPackage pack = TcpPackage(head, dat);
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out << pack;
-    return block;
-}
-
 void ClientConnection::makePass(QDataStream& in)
 {
     qint32 pwdsz;
@@ -49,23 +14,6 @@ void ClientConnection::makePass(QDataStream& in)
     emit(verifyPass(QString::fromUtf8(pwd, pwdsz), this));
 }
 
-void ClientConnection::makePass(char *block)
-{
-    int passSize, loginSize;
-    QString pass;
-    QString login;
-    QDataStream in(block);
-    in >> passSize;
-    char* rawPass = new char[passSize];
-    in >> loginSize;
-    char* rawLogin = new char[loginSize];
-    in >> rawLogin;
-    pass = QString::fromUtf8(rawPass);
-    login = QString::fromUtf8(rawLogin);
-    emit(verifyPass(pass, this));
->>>>>>> 13f5d3c1bcd91c3afeef7079f49483801ad181af
-}
-
 ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
@@ -75,7 +23,7 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 
 void ClientConnection::sendFail()
 {
-    socket->write(makeBinaryPack(INVALID_PASS, NULL, 0));
+
 }
 
 void ClientConnection::sendMember(QString login, QHostAddress addr)
@@ -83,13 +31,13 @@ void ClientConnection::sendMember(QString login, QHostAddress addr)
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
     out << login.size() << login << addr.toString().size() << addr.toString();
-    socket->write(makeBinaryPack(MEMBER, dat.data(), dat.size()));
+
 
 }
 
 void ClientConnection::removeMember(QHostAddress addr)
 {
-    socket->write(makeBinaryPack(REMOVE, addr.toIPv4Address()));
+
 }
 
 QString ClientConnection::getLogin() {

@@ -46,6 +46,7 @@ HEADERS  += \
     gui/roomslistdialog.h \
     gui/createroomdialog.h \
     gui/changenamedialog.h \
+    tcp_package.h
 
 
 RESOURCES += \

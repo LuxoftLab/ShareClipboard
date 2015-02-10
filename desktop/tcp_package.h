@@ -1,0 +1,6 @@
+#ifndef TCP_PACKAGE_H
+#define TCP_PACKAGE_H
+
+enum pckg_t{TEXT, PASS, MEMBER, RAW, INVALID_PASS, ADRESS, REMOVE};
+
+#endif // TCP_PACKAGE_H

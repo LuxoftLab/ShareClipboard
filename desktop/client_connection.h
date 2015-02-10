@@ -2,6 +2,7 @@
 #define CLIENT_CONNECTION_H
 
 #include "connection.h"
+#include "tcp_package.h"
 #include <assert.h>
 
 class ClientConnection : public Connection
@@ -21,9 +22,6 @@ private slots:
     void onData();
     void emitDeleteMember();
 private:
-    QByteArray makeBinaryPack(pckg_t, char*, int);
-    QByteArray makeBinaryPack(pckg_t, QString);
-    QByteArray makeBinaryPack(pckg_t, qint32);
     void makeMember(QDataStream&);
     void makePass(QDataStream&);
     QHostAddress makeHostAdress(char*);
