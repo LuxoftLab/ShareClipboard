@@ -127,17 +127,17 @@ void UDPService::listener(){
 
         switch (packet.type){
 
-            case ROOM:
-                emit roomReceived(packet.name, sender_adr);
+        case ROOM:
+            emit roomReceived(packet.name, sender_adr);
             break;
 
-            case GET_ROOM:
-                if(!localhost_ip.contains(sender_adr))
-                    emit roomRequested(sender_adr);
+        case GET_ROOM:
+            if(!localhost_ip.contains(sender_adr))
+                emit roomRequested(sender_adr);
             break;
 
-            case DELETE_ROOM:
-                emit roomDeleted(sender_adr);
+        case DELETE_ROOM:
+            emit roomDeleted(sender_adr);
             break;
         }
     }

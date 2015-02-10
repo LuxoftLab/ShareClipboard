@@ -76,7 +76,7 @@ void MainWindow::textPushedToClipboard(qint32 id, QString text)
     {
         if(index < 3 )
             index = text.indexOf('\n',3);
-        text = text.mid(1, index);
+        text = text.mid(0, index);
         text.append(" ... ");
     }
     else if(text.size() > 50)

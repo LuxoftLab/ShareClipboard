@@ -24,8 +24,8 @@ QHostAddress TCPServer::getLocalAddress()
         }
     }
     // if we did not find one, use IPv4 localhost
-    if (ipAddress.isNull())
-        ipAddress = QHostAddress(QHostAddress::LocalHost);
+//    if (ipAddress.isNull())
+//        ipAddress = QHostAddress(QHostAddress::LocalHost);
     return ipAddress;
 }
 

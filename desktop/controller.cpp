@@ -59,7 +59,7 @@ void Controller::createServerRoom(QString name, QString pass)
     qDebug() << serverRoom->getAddr();
 
     QString login = "login";
-    //joinRoom(serverRoom->getAddr().toIPv4Address(), pass);
+    joinRoom(serverRoom->getAddr().toIPv4Address(), pass);
 }
 
 void Controller::deleteServerRoom()
@@ -78,20 +78,20 @@ void Controller::deleteServerRoom()
 
 void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
 {
-    QMap<QString, qint32> roomsForGui;
-    QMapIterator<qint32, ClientRoom*> i(rooms);
-    while (i.hasNext())
-    {
-        i.next();
-        roomsForGui.insert(i.value()->getName(), i.key());
-    }
+//    QMap<QString, qint32> roomsForGui;
+//    QMapIterator<qint32, ClientRoom*> i(rooms);
+//    while (i.hasNext())
+//    {
+//        i.next();
+//        roomsForGui.insert(i.value()->getName(), i.key());
+//    }
 
-    if(serverRoom == NULL)
-    {
-        roomsDialog->setRoomsHash(roomsForGui, QString::null);
-    } else {
-        roomsDialog->setRoomsHash(roomsForGui, serverRoom->getName());
-    }
+//    if(serverRoom == NULL)
+//    {
+//        roomsDialog->setRoomsHash(roomsForGui, QString::null);
+//    } else {
+//        roomsDialog->setRoomsHash(roomsForGui, serverRoom->getName());
+//    }
 
     connect(roomsDialog, SIGNAL(newRoomCreated(QString,QString)), this, SLOT(createServerRoom(QString,QString)));
     connect(this, SIGNAL(roomAdded(QString,qint32)), roomsDialog, SLOT(addRoom(QString,qint32)));
