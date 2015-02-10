@@ -49,6 +49,23 @@ void ClientConnection::makePass(QDataStream& in)
     emit(verifyPass(QString::fromUtf8(pwd, pwdsz), this));
 }
 
+void ClientConnection::makePass(char *block)
+{
+    int passSize, loginSize;
+    QString pass;
+    QString login;
+    QDataStream in(block);
+    in >> passSize;
+    char* rawPass = new char[passSize];
+    in >> loginSize;
+    char* rawLogin = new char[loginSize];
+    in >> rawLogin;
+    pass = QString::fromUtf8(rawPass);
+    login = QString::fromUtf8(rawLogin);
+    emit(verifyPass(pass, this));
+>>>>>>> 13f5d3c1bcd91c3afeef7079f49483801ad181af
+}
+
 ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
@@ -91,6 +108,11 @@ void ClientConnection::onData(){
             break;
         default: throw packt;
     }
+}
+
+void ClientConnection::emitDeleteMember()
+{
+
 }
 
 QHostAddress ClientConnection::makeHostAdress(char* block){

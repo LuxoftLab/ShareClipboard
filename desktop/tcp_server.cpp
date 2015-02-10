@@ -8,13 +8,13 @@ TCPServer::TCPServer()
     connect(server, SIGNAL(newConnection()), this, SLOT(newMember()));
 
 }
-
+/*
 QHostAddress TCPServer::getLocalAddress()
 {
 
     return QHostAddress::LocalHost;
 }
-
+*/
 void TCPServer::newMember(){
     if(newConnection = server->nextPendingConnection()){
         connect(newConnection, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));

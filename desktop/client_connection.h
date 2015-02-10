@@ -19,6 +19,7 @@ signals:
     void deleteMember(QHostAddress addr);
 private slots:
     void onData();
+    void emitDeleteMember();
 private:
     QByteArray makeBinaryPack(pckg_t, char*, int);
     QByteArray makeBinaryPack(pckg_t, QString);
