@@ -2,6 +2,7 @@
 #define CLIENT_CONNECTION_H
 
 #include "connection.h"
+#include <assert.h>
 
 class ClientConnection : public Connection
 {
@@ -14,7 +15,7 @@ public:
     void removeMember(QHostAddress addr);
     QString getLogin();
 signals:
-    void verifyPass(QString pass, QString login, ClientConnection * conn);
+    void verifyPass(QString pass, ClientConnection * const);
     void deleteMember(QHostAddress addr);
 private slots:
     void onData();
@@ -22,8 +23,8 @@ private:
     QByteArray makeBinaryPack(pckg_t, char*, int);
     QByteArray makeBinaryPack(pckg_t, QString);
     QByteArray makeBinaryPack(pckg_t, qint32);
-    void makeMember(char*);
-    void makePass(char*);
+    void makeMember(QDataStream&);
+    void makePass(QDataStream&);
     QHostAddress makeHostAdress(char*);
 
 };

@@ -17,8 +17,8 @@ ServerRoom::~ServerRoom()
 void ServerRoom::addMember(QTcpSocket * socket)
 {
     ClientConnection *t = new ClientConnection(socket);
-    connect(t, SIGNAL(ClientConnection::verifyPass()),
-            this, SLOT(verifyPass()));
+    connect(t, SIGNAL(verifyPass(QString, ClientConnection* const)),
+            this, SLOT(verifyPass(QString, ClientConnection* const)));
     notVerified.insert(socket->peerAddress().toIPv4Address(), t);
 }
 
@@ -62,6 +62,3 @@ QHostAddress ServerRoom::getAddr()
 {
     return server->getLocalAddress();
 }
-
-
-

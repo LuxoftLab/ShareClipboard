@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = clipboard
 TEMPLATE = app
 
-
 SOURCES += main.cpp \
     client_connection.cpp \
     client_room.cpp \
@@ -20,7 +19,6 @@ SOURCES += main.cpp \
     room.cpp \
     server_connection.cpp \
     server_room.cpp \
-    tcp_package.cpp \
     tcp_server.cpp \
     udp_packet.cpp \
     udp_service.cpp \
@@ -40,7 +38,6 @@ HEADERS  += \
     room.h \
     server_connection.h \
     server_room.h \
-    tcp_package.h \
     tcp_server.h \
     udp_packet.h \
     udp_service.h \

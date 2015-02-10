@@ -1,8 +1,9 @@
 #include "client_connection.h"
 
-QByteArray ClientConnection::makeBinaryPack(pckg_t type, char* dat, int datsize){
-    Data d;
-    d.rawData = dat;
+QByteArray ClientConnection::makeBinaryPack(pckg_t type, char* dat, int datsize)
+{
+    char* d;
+    d = dat;
     TcpPackageHeader head = TcpPackageHeader(type, datsize);
     TcpPackage pack = TcpPackage(head, d);
     QByteArray block;
@@ -13,8 +14,8 @@ QByteArray ClientConnection::makeBinaryPack(pckg_t type, char* dat, int datsize)
 
 QByteArray ClientConnection::makeBinaryPack(pckg_t type, QString str){
     TcpPackageHeader head = TcpPackageHeader(type, str.size());
-    Data dat;
-    dat.strData = &str;
+    char* dat;
+    dat = str.toUtf8().data();
     TcpPackage pack = TcpPackage(head, dat);
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -25,8 +26,8 @@ QByteArray ClientConnection::makeBinaryPack(pckg_t type, QString str){
 QByteArray ClientConnection::makeBinaryPack(pckg_t type, qint32 num)
 {
     TcpPackageHeader head = TcpPackageHeader(type, 4);
-    Data dat;
-    sprintf(dat.rawData, "%d", num);
+    char* dat;
+    sprintf(dat, "%d", num);
     TcpPackage pack = TcpPackage(head, dat);
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
@@ -34,34 +35,18 @@ QByteArray ClientConnection::makeBinaryPack(pckg_t type, qint32 num)
     return block;
 }
 
-void ClientConnection::makeMember(char* block)
+void ClientConnection::makePass(QDataStream& in)
 {
-    QDataStream in(block);
-    int loginSize, pwdSize;
-    in >> loginSize;
-    char* login = new char[loginSize];
-    in >> login;
-    in >> pwdSize;
-    char* pwd = new char[pwdSize];
+    qint32 pwdsz;
+    in >> pwdsz;
+    char* pwd = new char[pwdsz];
     in >> pwd;
-
-    //emit verifyPass(pwd, login, this);
-}
-
-void ClientConnection::makePass(char *block)
-{
-    int passSize, loginSize;
-    QString pass;
-    QString login;
-    QDataStream in(block);
-    in >> passSize;
-    char* rawPass = new char[passSize];
-    in >> loginSize;
-    char* rawLogin = new char[loginSize];
-    in >> rawLogin;
-    pass = QString::fromUtf8(rawPass);
-    login = QString::fromUtf8(rawLogin);
-    emit(verifyPass(pass, login, this));
+    qint32 lgnsz;
+    in >> lgnsz;
+    char* lgn = new char[lgnsz];
+    in >> lgn;
+    qDebug() << pwd << lgn;
+    emit(verifyPass(QString::fromUtf8(pwd, pwdsz), this));
 }
 
 ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
@@ -96,17 +81,15 @@ QString ClientConnection::getLogin() {
 
 void ClientConnection::onData(){
     QDataStream in(socket);
-    TcpPackage pack;
-    in >> pack;
-
-    //make something sane here instead switch
-    switch(pack.getHeader()->type){
-        //case TEXT:      {emit gotText(*pack.getData()->strData); break;}
-        case PASS:      {makePass(pack.getData()->rawData); break;}
-        //case RAW: {emit gotRawData(pack.getData()->rawData, pack.getHeader()->length); break;}
-        //case ADRESS: {emit gotAdress(*pack.getData()->strData); break;}
-        //case REMOVE: {emit deleteMember(makeHostAdress(pack.getData()->rawData)); break;}
-    default: throw pack.getHeader()->type;
+    qint32 packt;
+    in >> packt;
+    if(packt == 0)
+        qDebug() << "No data delivered";
+    switch(packt){
+        case PASS:
+            makePass(in);
+            break;
+        default: throw packt;
     }
 }
 
