@@ -40,6 +40,9 @@ void ServerConnection::onData()
         case MEMBER:
             makeMember(in);
             break;
+        case REMOVE:
+            removeMember(in);
+            break;
         default: throw packt;
     }
 }
@@ -62,4 +65,11 @@ void ServerConnection::makeMember(QDataStream & in)
     in >> login;    
     in >> address;
     emit addMember(QString::fromUtf8(login), QHostAddress(address));
+}
+
+void ServerConnection::removeMember(QDataStream & in)
+{
+    int addr;
+    in >> addr;
+    emit(deleteMember(QHostAddress(addr)));
 }

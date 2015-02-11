@@ -24,6 +24,7 @@ signals:
     void gotPass(QString);
 private:
     void makeMember(QDataStream&);
+    void removeMember(QDataStream&);
 private slots:
     void connected();
 };

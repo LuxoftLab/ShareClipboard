@@ -31,7 +31,6 @@ void ClientConnection::sendMember(QString login, QHostAddress addr)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    int sz = login.toUtf8().size();
     out << MEMBER << login.toUtf8().size() << login.toUtf8().data() << addr.toIPv4Address();
 
     if(socket->write(dat) == 0)
@@ -42,7 +41,14 @@ void ClientConnection::sendMember(QString login, QHostAddress addr)
 
 void ClientConnection::removeMember(QHostAddress addr)
 {
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << REMOVE << addr.toIPv4Address();
 
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
 }
 
 QString ClientConnection::getLogin() {
