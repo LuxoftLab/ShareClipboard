@@ -13,6 +13,11 @@ namespace Ui {
 class MainWindow;
 }
 
+struct textData {
+    qint32 id;
+    QString shortText;
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -51,8 +56,9 @@ private slots:
 private:
     Ui::MainWindow * ui;
     QSystemTrayIcon * trayIcon;
-
+    QList<textData> dataList;
     QVector<qint32> dataIdsVector;
+
 
     void createTrayIcon();
     bool askForFileDownload(QString fileName);
