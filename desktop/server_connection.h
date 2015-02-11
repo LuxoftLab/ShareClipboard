@@ -25,7 +25,6 @@ signals:
 private:
     void makeMember(char *);
 private slots:
-    void emitRemoveMember(char*);
     void connected();
 };
 

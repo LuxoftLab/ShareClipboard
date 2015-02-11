@@ -8,8 +8,6 @@
 class Connection : public QObject
 {
     Q_OBJECT
-private:
-    QPair<QString, QString> makeMember(char*);
 protected:
     QTcpSocket* socket;
 public:
