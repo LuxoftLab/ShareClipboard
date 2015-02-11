@@ -4,12 +4,19 @@
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 #include <QCloseEvent>
-#include <QMimeData>
-#include <QHash>
+#include <QPixmap>
+#include <QVector>
+
+#include "gui/roomslistdialog.h"
 
 namespace Ui {
 class MainWindow;
 }
+
+struct textData {
+    qint32 id;
+    QString shortText;
+};
 
 class MainWindow : public QMainWindow
 {
@@ -24,12 +31,17 @@ public:
 signals:
     void downloadFile();
     void changeName(QString name);
-
+    void roomListOpened(RoomsListDialog *);
+    void pushDataChoosed(QString);
 protected:
     void closeEvent(QCloseEvent * event);
 
 public slots:
-    void clipboardChanged(QMimeData * mimeData);
+    void textPushedToClipboard(qint32 id, QString text);
+    void imagePushedToClipboard(QString imageName);//QPixmap image);
+    void deleteItemFromList(qint32 id);
+
+
     void newDevicePluged(QString deviceName);
     void newNameVerified(QString newName);
 
@@ -40,9 +52,14 @@ private slots:
     void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
     void trayMessageClicked();
 
+    void clipboardDataListItemDBClicked(QListWidgetItem *listItem);
+
 private:
     Ui::MainWindow * ui;
     QSystemTrayIcon * trayIcon;
+    QList<textData> dataList;
+    QVector<qint32> dataIdsVector;
+
 
     void createTrayIcon();
     bool askForFileDownload(QString fileName);

@@ -8,11 +8,15 @@
 class Connection : public QObject
 {
     Q_OBJECT
+private:
+    QPair<QString, QString> makeMember(char*);
 protected:
     QTcpSocket* socket;
 public:
     Connection(QTcpSocket * socket);
     QHostAddress getIpv4();
+public slots:
+    virtual void sendText(QString text) = 0;
 };
 
 #endif // CONNECTION_H

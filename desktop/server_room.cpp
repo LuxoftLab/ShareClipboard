@@ -17,8 +17,13 @@ ServerRoom::~ServerRoom()
 void ServerRoom::addMember(QTcpSocket * socket)
 {
     ClientConnection *t = new ClientConnection(socket);
+<<<<<<< HEAD
     connect(t, SIGNAL(verifyPass(QString, ClientConnection* const)),
             this, SLOT(verifyPass(QString, ClientConnection* const)));
+=======
+    connect(t, SIGNAL(verifyPass(QString, ClientConnection*)),
+            this, SLOT(verifyPass(QString, ClientConnection*)));
+>>>>>>> origin/leonid
     notVerified.insert(socket->peerAddress().toIPv4Address(), t);
 }
 
@@ -26,14 +31,17 @@ void ServerRoom::deleteMember(QHostAddress addr)
 {
     qint32 ip = addr.toIPv4Address();
     ClientConnection *t = notVerified.value(ip, NULL);
-    if(t != NULL) {
+    if(t != NULL)
+    {
         notVerified.remove(ip);
         return;
     }
     t = verified.value(ip, NULL);
-    if(t != NULL) {
+    if(t != NULL)
+    {
         verified.remove(ip);
-        for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++) {
+        for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
+        {
             ClientConnection* c = it.value();
             c->removeMember(addr);
         }
@@ -43,13 +51,15 @@ void ServerRoom::deleteMember(QHostAddress addr)
 
 bool ServerRoom::verifyPass(QString pass, ClientConnection * conn)
 {
-    if(this->pass != pass) {
+    if(this->pass != pass)
+    {
         conn->sendFail();
         return false;
     }
     qint32 ip = conn->getIpv4().toIPv4Address();
     notVerified.remove(ip);
-    for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++) {
+    for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
+    {
         ClientConnection* t = it.value();
         t->sendMember(conn->getLogin(), conn->getIpv4());
         conn->sendMember(t->getLogin(), t->getIpv4());

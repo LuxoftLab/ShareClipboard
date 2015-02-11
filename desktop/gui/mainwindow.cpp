@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->changeNamePushButton, SIGNAL(clicked()), this, SLOT(changeNameClicked()));
     connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
-
+    connect(ui->clipboardText, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(clipboardDataListItemDBClicked(QListWidgetItem*)));
 }
 
 MainWindow::~MainWindow()
@@ -37,8 +37,12 @@ bool MainWindow::askForFileDownload(QString fileName)
 
 void MainWindow::chooseRoomClicked()
 {
-    RoomsListDialog dialog;
-    dialog.exec();
+    RoomsListDialog * dialog = new RoomsListDialog();
+    emit roomListOpened(dialog);
+    dialog->exec();
+
+    // TODO implement changing of room after connection
+   // ui->pushButton_3->setEnabled(false);
 }
 
 void MainWindow::changeNameClicked()
@@ -46,22 +50,6 @@ void MainWindow::changeNameClicked()
     ChangeNameDialog dialog;
     connect(&dialog, SIGNAL(nameChoosed(QString)), this, SIGNAL(changeName(QString)));
     dialog.exec();
-}
-
-void MainWindow::clipboardChanged(QMimeData * mimeData)
-{
-    if (mimeData->hasImage()) {
-        ui->clipboardText->setPixmap(qvariant_cast<QPixmap>(mimeData->imageData()));
-    } else if (mimeData->hasUrls()) {
-        ui->clipboardText->setText("url: " + mimeData->text());
-        if(askForFileDownload(mimeData->text())) {
-            emit downloadFile();
-        }
-    } else if (mimeData->hasText()) {
-        ui->clipboardText->setText(mimeData->text());
-    }  else {
-        ui->clipboardText->setText(tr("Cannot display data"));
-    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -76,6 +64,50 @@ void MainWindow::closeEvent(QCloseEvent *event)
         hide();
         event->ignore();
     }
+}
+
+void MainWindow::textPushedToClipboard(qint32 id, QString text)
+{
+    textData data;
+    data.id = id;
+    int index = text.indexOf('\n');
+    int size = text.size();
+    if( index >= 0 && size > 50)
+    {
+        if(index < 3 )
+            index = text.indexOf('\n',3);
+        text = text.mid(0, index);
+        text.append(" ... ");
+    }
+    else if(text.size() > 50)
+    {
+        text = text.mid(1,50);
+        text.append("\n ... ");
+    }
+    data.shortText = text;
+    dataList.insert(0,data);
+    dataIdsVector.prepend(id);
+    ui->clipboardText->insertItem(0, text);
+}
+
+void MainWindow::imagePushedToClipboard(QString imageName)//QPixmap image)
+{
+    ui->clipboardText->insertItem(0, imageName);
+}
+
+void MainWindow::deleteItemFromList(qint32 id)
+{
+    qDebug() << "on delete " << id;
+
+    for(int i = 0; i < dataIdsVector.size(); i++) {
+        qDebug() << dataIdsVector.at(i);
+    }
+
+    qDebug() << "index: " << dataIdsVector.indexOf(id);
+
+    QListWidgetItem * item = ui->listWidget->item(dataIdsVector.indexOf(id));
+    qDebug() << item;
+    delete item;
 }
 
 void MainWindow::createTrayIcon()
@@ -152,6 +184,11 @@ void MainWindow::trayMessageClicked()
     show();
     raise();
     activateWindow();
+}
+
+void MainWindow::clipboardDataListItemDBClicked(QListWidgetItem * listItem)
+{
+    emit pushDataChoosed(listItem->text());
 }
 
 

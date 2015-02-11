@@ -5,6 +5,8 @@
 
 #include "QDebug"
 
+#include <QHostAddress>
+
 RoomsListDialog::RoomsListDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::RoomsListDialog)
@@ -22,7 +24,7 @@ RoomsListDialog::~RoomsListDialog()
     delete ui;
 }
 
-void RoomsListDialog::setRoomsHash(QHash<QString, qint32> rooms)
+void RoomsListDialog::setRoomsHash(QMap<QString, qint32> rooms, QString serverName)
 {
     QList<QString> roomsList = rooms.keys();
     QList<QString>::iterator i;
@@ -30,11 +32,21 @@ void RoomsListDialog::setRoomsHash(QHash<QString, qint32> rooms)
     {
         ui->listWidget->addItem(*i);
     }
+
+//    localServer = serverName;
+//    if(localServer == QString::null)
+//    {
+//        ui->pushButton->setText("New room");
+//    } else {
+//        ui->pushButton->setText("Delete your room");
+//    }
 }
 
 void RoomsListDialog::onPasswordTyped(QString password)
 {
     QString name = ui->listWidget->selectedItems()[0]->text();
+    qDebug() << "selected item name: " << name;
+    qDebug() << "Selected ip " <<  QHostAddress(rooms[name]);
     emit roomChoosed(rooms[name], password);
     close();
 }

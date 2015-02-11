@@ -31,8 +31,6 @@ void ClientConnection::sendMember(QString login, QHostAddress addr)
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
     out << login.size() << login << addr.toString().size() << addr.toString();
-
-
 }
 
 void ClientConnection::removeMember(QHostAddress addr)
@@ -58,9 +56,9 @@ void ClientConnection::onData(){
     }
 }
 
-void ClientConnection::emitDeleteMember()
+void ClientConnection::sendText(QString text)
 {
-
+    //nothing to do here?
 }
 
 QHostAddress ClientConnection::makeHostAdress(char* block){

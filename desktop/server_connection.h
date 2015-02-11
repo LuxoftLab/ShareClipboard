@@ -14,11 +14,14 @@ class ServerConnection : public Connection
 public:
     ServerConnection(QHostAddress host);
     int sendPassAndLogin(QString password, QString login);
+    void sendText(QString text);
 public slots:
     void onData();
 signals:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
+    void gotInvalidPass();
+    void gotPass(QString);
 private:
     void makeMember(char *);
 private slots:

@@ -15,13 +15,11 @@ public:
     void sendMember(QString login, QHostAddress addr);
     void removeMember(QHostAddress addr);
     QString getLogin();
+    void sendText(QString text);
+public slots:
+    void onData();
 signals:
     void verifyPass(QString pass, ClientConnection * const);
-    void deleteMember(QHostAddress addr);
-private slots:
-    void onData();
-    void emitDeleteMember();
-private:
     void makeMember(QDataStream&);
     void makePass(QDataStream&);
     QHostAddress makeHostAdress(char*);
