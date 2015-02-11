@@ -17,6 +17,7 @@ void ClientConnection::makePass(QDataStream& in)
 ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
+    this->login = "login";
     connect(socket, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
 }
@@ -30,7 +31,13 @@ void ClientConnection::sendMember(QString login, QHostAddress addr)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out << login.size() << login << addr.toString().size() << addr.toString();
+    int sz = login.toUtf8().size();
+    out << MEMBER << login.toUtf8().size() << login.toUtf8().data() << addr.toIPv4Address();
+
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
 }
 
 void ClientConnection::removeMember(QHostAddress addr)

@@ -53,13 +53,13 @@ bool ServerRoom::verifyPass(QString pass, ClientConnection * conn)
     }
     qint32 ip = conn->getIpv4().toIPv4Address();
     notVerified.remove(ip);
+    verified.insert(ip, conn);
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
         t->sendMember(conn->getLogin(), conn->getIpv4());
         conn->sendMember(t->getLogin(), t->getIpv4());
     }
-    verified.insert(ip, conn);
     return true;
 }
 

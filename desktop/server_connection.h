@@ -23,7 +23,7 @@ signals:
     void gotInvalidPass();
     void gotPass(QString);
 private:
-    void makeMember(char *);
+    void makeMember(QDataStream&);
 private slots:
     void connected();
 };
