@@ -17,13 +17,8 @@ ServerRoom::~ServerRoom()
 void ServerRoom::addMember(QTcpSocket * socket)
 {
     ClientConnection *t = new ClientConnection(socket);
-<<<<<<< HEAD
     connect(t, SIGNAL(verifyPass(QString, ClientConnection* const)),
             this, SLOT(verifyPass(QString, ClientConnection* const)));
-=======
-    connect(t, SIGNAL(verifyPass(QString, ClientConnection*)),
-            this, SLOT(verifyPass(QString, ClientConnection*)));
->>>>>>> origin/leonid
     notVerified.insert(socket->peerAddress().toIPv4Address(), t);
 }
 
