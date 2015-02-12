@@ -9,19 +9,23 @@ class ClientConnection : public Connection
 {
     Q_OBJECT
     QString login;
+signals:
+    void verifyPass(QString pass, ClientConnection * const);
+    void onText(QString, ClientConnection * const);
 public:
     ClientConnection(QTcpSocket * socket);
+    ~ClientConnection();
     void sendFail();
     void sendMember(QString login, QHostAddress addr);
     void removeMember(QHostAddress addr);
     QString getLogin();
-    void sendText(QString text);
-    void makePass(QDataStream&);
     QHostAddress makeHostAdress(char*);
+    void sendText(QString);
 public slots:
     void onData();
-signals:
-    void verifyPass(QString pass, ClientConnection * const);
+    void emitText(QDataStream&);
+private:
+    void makePass(QDataStream&);
 };
 
 #endif // CLIENT_CONNECTION_H

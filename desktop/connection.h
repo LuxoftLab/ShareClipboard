@@ -14,7 +14,7 @@ public:
     Connection(QTcpSocket * socket);
     QHostAddress getIpv4();
 public slots:
-    virtual void sendText(QString text) = 0;
+    //virtual void sendText(QString text) = 0;
 };
 
 #endif // CONNECTION_H

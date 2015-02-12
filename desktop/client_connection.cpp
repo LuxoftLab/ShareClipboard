@@ -1,19 +1,5 @@
 #include "client_connection.h"
 
-void ClientConnection::makePass(QDataStream& in)
-{
-    qint32 pwdsz;
-    in >> pwdsz;
-    char* pwd = new char[pwdsz];
-    in >> pwd;
-    qint32 lgnsz;
-    in >> lgnsz;
-    char* lgn = new char[lgnsz];
-    in >> lgn;
-    qDebug() << pwd << lgn;
-    emit(verifyPass(QString::fromUtf8(pwd, pwdsz), this));
-}
-
 ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
@@ -22,9 +8,21 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
 }
 
-void ClientConnection::sendFail()
+ClientConnection::~ClientConnection()
 {
 
+}
+
+void ClientConnection::sendFail()
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << INVALID_PASS;
+
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
 }
 
 void ClientConnection::sendMember(QString login, QHostAddress addr)
@@ -65,16 +63,49 @@ void ClientConnection::onData(){
         case PASS:
             makePass(in);
             break;
+        case TEXT:
+            emitText(in);
         default: throw packt;
     }
-}
-
-void ClientConnection::sendText(QString text)
-{
-    //nothing to do here?
 }
 
 QHostAddress ClientConnection::makeHostAdress(char* block){
     QHostAddress* address = new QHostAddress;
     return *address;
+}
+
+void ClientConnection::sendText(QString s)
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << TEXT << s.toUtf8().size() << s.toUtf8();
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
+}
+
+//----------------- case handlers --------------------
+
+void ClientConnection::makePass(QDataStream& in)
+{
+    qint32 pwdsz;
+    in >> pwdsz;
+    char* pwd = new char[pwdsz];
+    in >> pwd;
+    qint32 lgnsz;
+    in >> lgnsz;
+    char* lgn = new char[lgnsz];
+    in >> lgn;
+    qDebug() << pwd << lgn;
+    emit(verifyPass(QString::fromUtf8(pwd, pwdsz), this));
+}
+
+void ClientConnection::emitText(QDataStream& in)
+{
+    qint32 size;
+    in >> size;
+    char* text = new char[size];
+    in >> text;
+    emit(onText(QString::fromUtf8(text), this));
 }

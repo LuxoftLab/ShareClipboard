@@ -22,9 +22,11 @@ signals:
     void deleteMember(QHostAddress addr);
     void gotInvalidPass();
     void gotPass(QString);
+    void gotText(QString);
 private:
     void makeMember(QDataStream&);
     void removeMember(QDataStream&);
+    void makeText(QDataStream&);
 private slots:
     void connected();
 };

@@ -43,6 +43,11 @@ void ServerConnection::onData()
         case REMOVE:
             removeMember(in);
             break;
+        case INVALID_PASS:
+            emit(gotInvalidPass());
+            break;
+        case TEXT:
+            makeText(in);
         default: throw packt;
     }
 }
@@ -50,7 +55,7 @@ void ServerConnection::sendText(QString text)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out << text.size() << text;
+    out << TEXT << text.toUtf8().size() << text.toUtf8();
 
 }
 
@@ -72,4 +77,13 @@ void ServerConnection::removeMember(QDataStream & in)
     int addr;
     in >> addr;
     emit(deleteMember(QHostAddress(addr)));
+}
+
+void ServerConnection::makeText(QDataStream & in)
+{
+    int size;
+    in >> size;
+    char * text = new char[size];
+    in >> text;
+    emit gotText(QString::fromUtf8(text));
 }
