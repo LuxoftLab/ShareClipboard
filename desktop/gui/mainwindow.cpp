@@ -40,8 +40,8 @@ void MainWindow::chooseRoomClicked()
 {
     if(roomDialog == NULL) //need to be checked on 2 devices
         roomDialog = new RoomsListDialog();
-    emit roomListOpened(dialog);
-    dialog->exec();
+    emit roomListOpened(roomDialog);
+    roomDialog->exec();
 
     // TODO implement changing of room after connection
    // ui->pushButton_3->setEnabled(false);
