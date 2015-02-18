@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete roomDialog;
     delete ui;
 }
 
@@ -37,7 +38,8 @@ bool MainWindow::askForFileDownload(QString fileName)
 
 void MainWindow::chooseRoomClicked()
 {
-    RoomsListDialog * dialog = new RoomsListDialog();
+    if(roomDialog == NULL) //need to be checked on 2 devices
+        roomDialog = new RoomsListDialog();
     emit roomListOpened(dialog);
     dialog->exec();
 

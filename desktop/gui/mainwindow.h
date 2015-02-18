@@ -60,6 +60,7 @@ private:
     QSystemTrayIcon * trayIcon;
     QList<textData> dataList;
     QVector<qint32> dataIdsVector;
+    RoomsListDialog *roomDialog;
 
 
     void createTrayIcon();
