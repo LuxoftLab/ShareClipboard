@@ -70,20 +70,15 @@ void MainWindow::textPushedToClipboard(qint32 id, QString text)
 {
     textData data;
     data.id = id;
-    int index = text.indexOf('\n');
-    int size = text.size();
-    if( index >= 0 && size > 50)
-    {
-        if(index < 3 )
-            index = text.indexOf('\n',3);
-        text = text.mid(0, index);
-        text.append(" ... ");
-    }
-    else if(text.size() > 50)
-    {
-        text = text.mid(1,50);
-        text.append("\n ... ");
-    }
+    data.text = text;
+    text = text.trimmed(); //FIXME: deleting whitespaces in text [trimmed doesn't work?]
+    //may be for-cycle?
+    int index = text.indexOf('\n'); //trying to find first string of Text
+    if(index < 3 )
+        index = text.indexOf('\n',3);
+
+    text = text.mid(0, index);
+    text.append("\n ... ");
     data.shortText = text;
     dataList.insert(0,data);
     dataIdsVector.prepend(id);
@@ -188,7 +183,14 @@ void MainWindow::trayMessageClicked()
 
 void MainWindow::clipboardDataListItemDBClicked(QListWidgetItem * listItem)
 {
-    emit pushDataChoosed(listItem->text());
+    for(QList::Iterator i = dataList.begin();i < dataList.end(); i++)
+    {
+        if( dataList.at(i).shortText == listItem->text)
+        {
+            emit pushDataChoosed(dataList.at(i).text);
+            break;
+        }
+    }
 }
 
 

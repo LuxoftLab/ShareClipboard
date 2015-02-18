@@ -13,9 +13,10 @@ namespace Ui {
 class MainWindow;
 }
 
-struct textData {
+struct textData { //FIXME: way to get data from ClipboardService
     qint32 id;
     QString shortText;
+    QString text;
 };
 
 class MainWindow : public QMainWindow
