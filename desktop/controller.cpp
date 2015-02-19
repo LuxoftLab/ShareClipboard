@@ -53,7 +53,7 @@ void Controller::createServerRoom(QString name, QString pass)
     udpService->notifyAboutRoom(name);
     emit serverIsUp(name);
 
-    addRoom(name, serverRoom->getAddr());
+    //addRoom(name, serverRoom->getAddr());
     qDebug() << serverRoom->getAddr();
     QString login = "login";
     joinRoom(serverRoom->getAddr().toIPv4Address(), pass);
