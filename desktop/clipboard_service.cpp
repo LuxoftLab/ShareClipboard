@@ -4,14 +4,10 @@
 #include <QUrl>
 
 
-ClipboardService::ClipboardService()
+ClipboardService::ClipboardService() : QObject()
 {
     this->clipboard = QApplication::clipboard();
     connect(clipboard, SIGNAL(dataChanged()), this, SLOT(onClipboardChanged()));
-}
-
-ClipboardService::~ClipboardService()
-{
 }
 
 void ClipboardService::onClipboardChanged()

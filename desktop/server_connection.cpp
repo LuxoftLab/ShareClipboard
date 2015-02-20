@@ -1,5 +1,5 @@
 #include "server_connection.h"
-#include <iostream>
+
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
     socket = new QTcpSocket(this);
@@ -11,16 +11,17 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
         qDebug() << socket->error();
 }
 
-int ServerConnection::sendPassAndLogin(QString password, QString login){
-    QByteArray dat;
-    QDataStream out(&dat, QIODevice::WriteOnly);
-    out << PASS << password.toUtf8().size() << password.toUtf8().data()
-        << login.toUtf8().size() << login.toUtf8().data();
+int ServerConnection::sendPassAndLogin(QString password, QString login)
+{
+   QByteArray dat;
+   QDataStream out(&dat, QIODevice::WriteOnly);
+   out << PASS << password.toUtf8().size() << password.toUtf8().data()
+       << login.toUtf8().size() << login.toUtf8().data();
 
-    if(socket->write(dat) == 0)
-    {
-        qDebug() << "No data written";
-    }
+   if(socket->write(dat) == 0)
+   {
+       qDebug() << "No data written";
+   }
 }
 
 void ServerConnection::connected()
@@ -36,21 +37,20 @@ void ServerConnection::onData()
     if(packt == 0)
         qDebug() << "No data delivered";
     switch(packt){
-    case MEMBER:
-        makeMember(in);
-        break;
-    case REMOVE:
-        removeMember(in);
-        break;
-    case INVALID_PASS:
-        emit(gotInvalidPass());
-        break;
-    case TEXT:
-        makeText(in);
-    default: throw packt;
+        case MEMBER:
+            makeMember(in);
+            break;
+        case REMOVE:
+            removeMember(in);
+            break;
+        case INVALID_PASS:
+            emit(gotInvalidPass());
+            break;
+        case TEXT:
+            makeText(in);
+        default: throw packt;
     }
 }
-
 void ServerConnection::sendText(QString text)
 {
     QByteArray dat;
@@ -67,7 +67,7 @@ void ServerConnection::makeMember(QDataStream & in)
     qint32 address;
     in >> size;
     char * login = new char[size];
-    in >> login;
+    in >> login;    
     in >> address;
     emit addMember(QString::fromUtf8(login), QHostAddress(address));
 }

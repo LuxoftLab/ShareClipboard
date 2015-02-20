@@ -21,7 +21,7 @@ public:
 public slots:
     void addMember(QTcpSocket * socket);
     void deleteMember(QHostAddress addr);
-    bool verifyPass(QString pass, ClientConnection * conn);
+    bool verifyPass(QString pass, ClientConnection * const);
     void onText(QString);
 private:
     void saveText();
