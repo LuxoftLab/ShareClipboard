@@ -40,7 +40,6 @@ void Controller::deleteRoom(QHostAddress host)
     qDebug() << "room deleted";
     QString name = rooms.value(host.toIPv4Address())->getName();
     rooms.remove(host.toIPv4Address());
-    emit roomDeleted(name);
 }
 
 void Controller::createServerRoom(QString name, QString pass)
@@ -55,9 +54,7 @@ void Controller::createServerRoom(QString name, QString pass)
     emit serverIsUp(name);
 
     //addRoom(name, serverRoom->getAddr());
-
     qDebug() << serverRoom->getAddr();
-
     QString login = "login";
     joinRoom(serverRoom->getAddr().toIPv4Address(), pass);
 }

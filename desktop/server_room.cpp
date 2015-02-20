@@ -17,8 +17,9 @@ ServerRoom::~ServerRoom()
 void ServerRoom::addMember(QTcpSocket * socket)
 {
     ClientConnection *t = new ClientConnection(socket);
-    connect(t, SIGNAL(verifyPass(QString, ClientConnection*)),
-            this, SLOT(verifyPass(QString, ClientConnection*)));
+    connect(t, SIGNAL(verifyPass(QString, ClientConnection* const)),
+            this, SLOT(verifyPass(QString, ClientConnection* const)));
+    connect(t, SIGNAL(onText(QString)), this, SLOT(onText(QString)));
     notVerified.insert(socket->peerAddress().toIPv4Address(), t);
 }
 
@@ -53,20 +54,37 @@ bool ServerRoom::verifyPass(QString pass, ClientConnection * conn)
     }
     qint32 ip = conn->getIpv4().toIPv4Address();
     notVerified.remove(ip);
+    verified.insert(ip, conn);
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
         t->sendMember(conn->getLogin(), conn->getIpv4());
         conn->sendMember(t->getLogin(), t->getIpv4());
     }
-    verified.insert(ip, conn);
     return true;
+}
+
+void ServerRoom::onText(QString s)
+{
+    saveText();
+    sendText(s);
+}
+
+void ServerRoom::saveText()
+{
+
+}
+
+void ServerRoom::sendText(QString s)
+{
+    for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
+    {
+        ClientConnection* t = it.value();
+        t->sendText(s);
+    }
 }
 
 QHostAddress ServerRoom::getAddr()
 {
     return server->getLocalAddress();
 }
-
-
-
