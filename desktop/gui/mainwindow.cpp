@@ -140,9 +140,12 @@ void MainWindow::createTrayIcon()
     trayIconMenu->addAction(quitAction);
 
     trayIcon = new QSystemTrayIcon(this);
+
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->setToolTip("Shared clipboard");
-    trayIcon->setIcon(QIcon(":images/communities.svg"));
+    trayIcon->setIcon(QIcon(":/images/colorful.svg"));
+    //trayIcon->setIcon(QIcon(":/images/communities.svg"));
+    //trayIcon->setIcon(QIcon::fromTheme("edit-undo"));
     trayIcon->show();
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
