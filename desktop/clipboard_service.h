@@ -23,13 +23,14 @@ signals:
     void deleteDataFromStorage(qint32);
 public slots:
     void onClipboardChanged();
-    void pushDataToClipboard(qint32 dataId);
+    void pushDataToClipboardFromGui(qint32 dataId);
+    void pushDataToClipboardFromHosts(QByteArray data, QString type);
 private:
     QClipboard* clipboard;
     QVector<ClipboardData>clipboardData;
     int clipboardOpacity = 2;   // TODO : write setting it from MainMenu
 
-    QString minimizeText(QString);
+    QString minimizeText(QString text);
 };
 
 #endif // CLIPBOARDSERVICE_H

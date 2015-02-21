@@ -44,6 +44,14 @@ void ClipboardService::onClipboardChanged()
 
 }
 
+void ClipboardService::pushDataToClipboardFromHosts(QByteArray data, QString type)
+{
+    qDebug() << "on text from outer host";
+    QMimeData * data = new QMimeData();
+    data->setData(type, data);
+    clipboard->setMimeData(data);
+}
+
 void ClipboardService::pushDataToClipboard(qint32 dataId)
 {
     qDebug() << "on item dbclick";
