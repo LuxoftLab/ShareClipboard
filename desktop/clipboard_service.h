@@ -18,13 +18,11 @@ class ClipboardService : public QObject
 public:
     ClipboardService();
 signals:
-    void hasFile(qint32, QString);
-    void hasText(qint32, QString);
-    void hasImage(qint32, QString);
+    void hasDataToText(QString, qint32);
+    void hasData(QByteArray, QString);
     void deleteDataFromStorage(qint32);
 public slots:
     void onClipboardChanged();
-
     void pushDataToClipboard(qint32 dataId);
 private:
     QClipboard* clipboard;

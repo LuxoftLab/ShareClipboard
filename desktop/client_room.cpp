@@ -24,9 +24,9 @@ void ClientRoom::deleteMember(QHostAddress addr) {
     members.remove(addr.toIPv4Address());
 }
 
-void ClientRoom::sendText(QString text)
+void ClientRoom::sendText(QByteArray data, QString text)
 {
-    connection->sendText(text);
+    connection->sendText(QString(data));
 }
 
 ClientRoom::~ClientRoom()

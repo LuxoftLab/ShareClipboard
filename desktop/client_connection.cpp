@@ -65,6 +65,7 @@ void ClientConnection::onData(){
             break;
         case TEXT:
             emitText(in);
+            break;
         default: throw packt;
     }
 }

@@ -69,53 +69,62 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void MainWindow::textPushedToClipboard(qint32 id, QString text)
-{
-    textData data;
-    data.id = id;
+//void MainWindow::textPushedToClipboard(QString text)
+//{
+//    textData data;
+//    data.id = id;
 
-    int index = text.indexOf('\n');
-    int size = text.size();
-    if( index >= 0 && size > 50)
-    {
-        if(index < 3 )
-            index = text.indexOf('\n',3);
-        text = text.mid(1, index);
-        text.append(" ... ");
-    }
-    else if(text.size() > 50)
-    {
-        text = text.mid(1,50);
-        text.append("\n ... ");
-    }
-//    data.text = text;
-//    text = text.trimmed(); //FIXME: deleting whitespaces in text [trimmed doesn't work?]
-//    //may be for-cycle?
-//    int index = text.indexOf('\n'); //trying to find first string of Text
-//    if(index < 3 )
-//        index = text.indexOf('\n',3);
+//    int index = text.indexOf('\n');
+//    int size = text.size();
+//    if( index >= 0 && size > 50)
+//    {
+//        if(index < 3 )
+//            index = text.indexOf('\n',3);
+//        text = text.mid(1, index);
+//        text.append(" ... ");
+//    }
+//    else if(text.size() > 50)
+//    {
+//        text = text.mid(1,50);
+//        text.append("\n ... ");
+//    }
+////    data.text = text;
+////    text = text.trimmed(); //FIXME: deleting whitespaces in text [trimmed doesn't work?]
+////    //may be for-cycle?
+////    int index = text.indexOf('\n'); //trying to find first string of Text
+////    if(index < 3 )
+////        index = text.indexOf('\n',3);
 
-//    text = text.mid(0, index);
-//    text.append("\n ... ");
+////    text = text.mid(0, index);
+////    text.append("\n ... ");
 
-    data.shortText = text;
-    dataList.insert(0,data);
-    dataIdsVector.prepend(id);
+////    //data.id = id;
+////    data.text = text;
+////    text = text.trimmed(); //FIXME: deleting whitespaces in text [trimmed doesn't work?]
+////    //may be for-cycle?
+////    int index = text.indexOf('\n'); //trying to find first string of Text
+////    if(index < 3 )
+////        index = text.indexOf('\n',3);
+
+////    text = text.mid(0, index);
+////    text.append("\n ... ");
+
+//    data.shortText = text;
+//    dataList.insert(0,data);
+//    dataIdsVector.prepend((qint32)qrand());
+//    ui->clipboardText->insertItem(0, text);
+//}
+
+void MainWindow::dataPushedToClipboard(QString text, qint32 id) {
     ui->clipboardText->insertItem(0, text);
 }
 
-void MainWindow::imagePushedToClipboard(qint32 id, QString imageName)//QPixmap image)
-{
-    dataIdsVector.prepend(id);
-    ui->clipboardText->insertItem(0, imageName);
-}
-
-void MainWindow::deleteItemFromList(qint32 id)
-{
-    QListWidgetItem * item = ui->clipboardText->takeItem(dataIdsVector.indexOf(id));
-    delete item;
-    dataIdsVector.erase(dataIdsVector.end() - 1);
-}
+//void MainWindow::deleteItemFromList(qint32 id)
+//{
+//    QListWidgetItem * item = ui->clipboardText->takeItem(dataIdsVector.indexOf(id));
+//    delete item;
+//    dataIdsVector.erase(dataIdsVector.end() - 1);
+//}
 
 void MainWindow::createTrayIcon()
 {
@@ -149,9 +158,12 @@ void MainWindow::createTrayIcon()
     trayIconMenu->addAction(quitAction);
 
     trayIcon = new QSystemTrayIcon(this);
+
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->setToolTip("Shared clipboard");
-    trayIcon->setIcon(QIcon(":images/communities.svg"));
+    trayIcon->setIcon(QIcon(":/images/colorful.svg"));
+    //trayIcon->setIcon(QIcon(":/images/communities.svg"));
+    //trayIcon->setIcon(QIcon::fromTheme("edit-undo"));
     trayIcon->show();
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),

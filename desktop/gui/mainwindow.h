@@ -13,14 +13,6 @@ namespace Ui {
 class MainWindow;
 }
 
-
-struct textData { //FIXME: way to get data from ClipboardService
-    qint32 id;
-    QString shortText;
-//    QString text;
-
-};
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -40,10 +32,7 @@ protected:
     void closeEvent(QCloseEvent * event);
 
 public slots:
-    void textPushedToClipboard(qint32 id, QString text);
-    void imagePushedToClipboard(qint32 id, QString imageName);
-    void deleteItemFromList(qint32 id);
-
+    void dataPushedToClipboard(QString text, qint32 id);
     void newDevicePluged(QString deviceName);
     void newNameVerified(QString newName);
 
@@ -59,7 +48,7 @@ private slots:
 private:
     Ui::MainWindow * ui;
     QSystemTrayIcon * trayIcon;
-    QList<textData> dataList;
+//    QList<textData> dataList;
     QVector<qint32> dataIdsVector;
     RoomsListDialog *roomDialog;
 

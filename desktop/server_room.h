@@ -22,10 +22,10 @@ public slots:
     void addMember(QTcpSocket * socket);
     void deleteMember(QHostAddress addr);
     bool verifyPass(QString pass, ClientConnection * const);
-    void onText(QString);
+    void onText(QString, ClientConnection * const);
 private:
     void saveText();
-    void sendText(QString);
+    void sendText(QString, ClientConnection *);
 };
 
 #endif // SERVER_ROOM_H

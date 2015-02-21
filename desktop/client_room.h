@@ -27,7 +27,7 @@ public:
 public slots:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
-    void sendText(QString text);
+    void sendText(QByteArray data, QString text);
 };
 
 #endif // CLIENT_ROOM_H

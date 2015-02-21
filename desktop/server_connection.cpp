@@ -48,6 +48,7 @@ void ServerConnection::onData()
             break;
         case TEXT:
             makeText(in);
+            break;
         default: throw packt;
     }
 }
@@ -57,6 +58,10 @@ void ServerConnection::sendText(QString text)
     QDataStream out(&dat, QIODevice::WriteOnly);
     out << TEXT << text.toUtf8().size() << text.toUtf8();
 
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
 }
 
 //---------------------- case handlers ------------------
