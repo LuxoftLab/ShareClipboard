@@ -103,16 +103,7 @@ void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
 void Controller::initClipboardToGuiConnection()
 {
     connect(&clipboardService, SIGNAL(hasDataToText(QString, qint32)), mainWindow, SLOT(dataPushedToClipboard(QString, qint32)));
-    //connect(&clipboardService, SIGNAL(deleteDataFromStorage(qint32)), mainWindow, SLOT(deleteItemFromList(qint32)));
-
-//    connect(&clipboardService, SIGNAL(hasFile(qint32,QString)), mainWindow, SLOT(textPushedToClipboard(qint32, QString)));
-//    connect(&clipboardService, SIGNAL(hasImage(qint32, QString)), mainWindow, SLOT(imagePushedToClipboard(qint32, QString)));
     connect(mainWindow, SIGNAL(pushDataChoosed(qint32)), &clipboardService, SLOT(pushDataToClipboard(qint32)));
-//   // connect(&clipboardService, SIGNAL(hasImage(QPixmap)), mainWindow, SLOT(imagePushedToClipboard(QPixmap)));
-//    connect(&clipboardService, SIGNAL(hasImage(QString)), mainWindow, SLOT(imagePushedToClipboard(QString)));
-//    connect(mainWindow, SIGNAL(pushDataChoosed(QString)), &clipboardService, SLOT(pushDataToClipboard(QString)));
-
-
 }
 
 void Controller::initUDPService()
