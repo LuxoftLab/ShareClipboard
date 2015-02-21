@@ -29,7 +29,7 @@ void ClipboardService::onClipboardChanged()
     }
     if (mimeData->hasImage()) {
         text = "copied image #" + QString::number(qrand());
-        qDebug() << "has image: " << imageName;
+        qDebug() << "has image: " << text;
         data.type = "image/ *";
     }
     if (mimeData->hasText()) {
@@ -47,12 +47,12 @@ void ClipboardService::onClipboardChanged()
 void ClipboardService::pushDataToClipboardFromHosts(QByteArray data, QString type)
 {
     qDebug() << "on text from outer host";
-    QMimeData * data = new QMimeData();
-    data->setData(type, data);
-    clipboard->setMimeData(data);
+    QMimeData * mimeData = new QMimeData();
+    mimeData->setData(type, data);
+    clipboard->setMimeData(mimeData);
 }
 
-void ClipboardService::pushDataToClipboard(qint32 dataId)
+void ClipboardService::pushDataToClipboardFromGui(qint32 dataId)
 {
     qDebug() << "on item dbclick";
 
