@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    roomDialog = NULL;
     ui->setupUi(this);
     createTrayIcon();
 
@@ -21,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete roomDialog;
     delete ui;
 }
 
@@ -37,9 +39,10 @@ bool MainWindow::askForFileDownload(QString fileName)
 
 void MainWindow::chooseRoomClicked()
 {
-    RoomsListDialog * dialog = new RoomsListDialog();
-    emit roomListOpened(dialog);
-    dialog->exec();
+    if(roomDialog == NULL) //need to be checked on 2 devices
+        roomDialog = new RoomsListDialog();
+    emit roomListOpened(roomDialog);
+    roomDialog->exec();
 
     // TODO implement changing of room after connection
    // ui->pushButton_3->setEnabled(false);
@@ -70,6 +73,7 @@ void MainWindow::textPushedToClipboard(qint32 id, QString text)
 {
     textData data;
     data.id = id;
+
     int index = text.indexOf('\n');
     int size = text.size();
     if( index >= 0 && size > 50)
@@ -84,6 +88,16 @@ void MainWindow::textPushedToClipboard(qint32 id, QString text)
         text = text.mid(1,50);
         text.append("\n ... ");
     }
+//    data.text = text;
+//    text = text.trimmed(); //FIXME: deleting whitespaces in text [trimmed doesn't work?]
+//    //may be for-cycle?
+//    int index = text.indexOf('\n'); //trying to find first string of Text
+//    if(index < 3 )
+//        index = text.indexOf('\n',3);
+
+//    text = text.mid(0, index);
+//    text.append("\n ... ");
+
     data.shortText = text;
     dataList.insert(0,data);
     dataIdsVector.prepend(id);
@@ -182,6 +196,15 @@ void MainWindow::trayMessageClicked()
 void MainWindow::clipboardDataListItemDBClicked(QListWidgetItem * listItem)
 {
     emit pushDataChoosed(dataIdsVector.at(ui->clipboardText->row(listItem)));
+//    QString t = listItem->text();
+//    foreach(textData i, dataList)
+//    {
+//        if( i.shortText == t)
+//        {
+//            emit pushDataChoosed(i.text);
+//            break;
+//        }
+//    }
 }
 
 

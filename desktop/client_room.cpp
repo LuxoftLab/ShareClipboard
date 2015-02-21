@@ -29,12 +29,13 @@ void ClientRoom::sendText(QString text)
     connection->sendText(text);
 }
 
-ClientRoom::~ClientRoom() {
+ClientRoom::~ClientRoom()
+{
     delete connection;
-
 }
 
-Member::Member(QString login, QHostAddress addr) {
+Member::Member(QString login, QHostAddress addr)
+{
     this->login = login;
     this->addr = addr;
 }

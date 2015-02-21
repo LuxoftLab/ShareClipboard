@@ -17,7 +17,6 @@ class ClipboardService : public QObject
     Q_OBJECT
 public:
     ClipboardService();
-    ~ClipboardService();
 signals:
     void hasFile(qint32, QString);
     void hasText(qint32, QString);

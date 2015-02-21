@@ -1,93 +1,52 @@
 #include "client_connection.h"
 
-QByteArray ClientConnection::makeBinaryPack(pckg_t type, char* dat, int datsize){
-    Data d;
-    d.rawData = dat;
-    TcpPackageHeader head = TcpPackageHeader(type, datsize);
-    TcpPackage pack = TcpPackage(head, d);
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out << pack;
-    return block;
-}
-
-QByteArray ClientConnection::makeBinaryPack(pckg_t type, QString str){
-    TcpPackageHeader head = TcpPackageHeader(type, str.size());
-    Data dat;
-    dat.strData = &str;
-    TcpPackage pack = TcpPackage(head, dat);
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out << pack;
-    return block;
-}
-
-QByteArray ClientConnection::makeBinaryPack(pckg_t type, qint32 num)
-{
-    TcpPackageHeader head = TcpPackageHeader(type, 4);
-    Data dat;
-    sprintf(dat.rawData, "%d", num);
-    TcpPackage pack = TcpPackage(head, dat);
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out << pack;
-    return block;
-}
-
-void ClientConnection::makeMember(char* block)
-{
-    QDataStream in(block);
-    int loginSize, pwdSize;
-    in >> loginSize;
-    char* login = new char[loginSize];
-    in >> login;
-    in >> pwdSize;
-    char* pwd = new char[pwdSize];
-    in >> pwd;
-
-    //emit verifyPass(pwd, login, this);
-}
-
-void ClientConnection::makePass(char *block)
-{
-    int passSize, loginSize;
-    QString pass;
-    QString login;
-    QDataStream in(block);
-    in >> passSize;
-    char* rawPass = new char[passSize];
-    in >> loginSize;
-    char* rawLogin = new char[loginSize];
-    in >> rawLogin;
-    pass = QString::fromUtf8(rawPass);
-    login = QString::fromUtf8(rawLogin);
-    emit(verifyPass(pass, this));
-}
-
 ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
+    this->login = "login";
     connect(socket, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
-//    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
+    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
+}
+
+ClientConnection::~ClientConnection()
+{
+
 }
 
 void ClientConnection::sendFail()
 {
-    socket->write(makeBinaryPack(INVALID_PASS, NULL, 0));
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << INVALID_PASS;
+
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
 }
 
 void ClientConnection::sendMember(QString login, QHostAddress addr)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out << login.size() << login << addr.toString().size() << addr.toString();
-    socket->write(makeBinaryPack(MEMBER, dat.data(), dat.size()));
+    out << MEMBER << login.toUtf8().size() << login.toUtf8().data() << addr.toIPv4Address();
 
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
 }
 
 void ClientConnection::removeMember(QHostAddress addr)
 {
-    socket->write(makeBinaryPack(REMOVE, addr.toIPv4Address()));
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << REMOVE << addr.toIPv4Address();
+
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
 }
 
 QString ClientConnection::getLogin() {
@@ -96,23 +55,18 @@ QString ClientConnection::getLogin() {
 
 void ClientConnection::onData(){
     QDataStream in(socket);
-    TcpPackage pack;
-    in >> pack;
-
-    //make something sane here instead switch
-    switch(pack.getHeader()->type){
-        //case TEXT:      {emit gotText(*pack.getData()->strData); break;}
-        case PASS:      {makePass(pack.getData()->rawData); break;}
-        //case RAW: {emit gotRawData(pack.getData()->rawData, pack.getHeader()->length); break;}
-        //case ADRESS: {emit gotAdress(*pack.getData()->strData); break;}
-        //case REMOVE: {emit deleteMember(makeHostAdress(pack.getData()->rawData)); break;}
-    default: throw pack.getHeader()->type;
+    qint32 packt;
+    in >> packt;
+    if(packt == 0)
+        qDebug() << "No data delivered";
+    switch(packt){
+        case PASS:
+            makePass(in);
+            break;
+        case TEXT:
+            emitText(in);
+        default: throw packt;
     }
-}
-
-void ClientConnection::emitDeleteMember()
-{
-
 }
 
 QHostAddress ClientConnection::makeHostAdress(char* block){
@@ -120,9 +74,38 @@ QHostAddress ClientConnection::makeHostAdress(char* block){
     return *address;
 }
 
-
-void ClientConnection::sendText(QString text)
+void ClientConnection::sendText(QString s)
 {
-    //nothing to do here?
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << TEXT << s.toUtf8().size() << s.toUtf8();
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
 }
 
+//----------------- case handlers --------------------
+
+void ClientConnection::makePass(QDataStream& in)
+{
+    qint32 pwdsz;
+    in >> pwdsz;
+    char* pwd = new char[pwdsz];
+    in >> pwd;
+    qint32 lgnsz;
+    in >> lgnsz;
+    char* lgn = new char[lgnsz];
+    in >> lgn;
+    qDebug() << pwd << lgn;
+    emit(verifyPass(QString::fromUtf8(pwd, pwdsz), this));
+}
+
+void ClientConnection::emitText(QDataStream& in)
+{
+    qint32 size;
+    in >> size;
+    char* text = new char[size];
+    in >> text;
+    emit(onText(QString::fromUtf8(text), this));
+}

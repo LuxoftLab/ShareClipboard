@@ -23,7 +23,6 @@ private:
     QTcpSocket* newConnection;
 private slots:
     void newMember();
-    void emitDeleteMember();
 };
 
 #endif // TCP_SERVER_H

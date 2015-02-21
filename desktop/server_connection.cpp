@@ -1,97 +1,89 @@
 #include "server_connection.h"
-#include <iostream>
+
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
     socket = new QTcpSocket(this);
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
+    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
     socket->abort();
     socket->connectToHost(host, PORT_NUMBER);
-
     if(!socket->waitForConnected(3000))
         qDebug() << socket->error();
-//    //getSocketState(socket);
-    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
-              SLOT(throwSocketError(QAbstractSocket::SocketError)));
-    //#todo error handlers
-    //connect(socket, SIGNAL(readyRead()), this, SLOT(connectToServer()));
-    //  connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(onData(qint64)));
 }
 
-
-int ServerConnection::sendPassAndLogin(QString password, QString login){
+int ServerConnection::sendPassAndLogin(QString password, QString login)
+{
    QByteArray dat;
    QDataStream out(&dat, QIODevice::WriteOnly);
-   out << login.toUtf8().size() << login.toUtf8() << password.toUtf8().size() << password.toUtf8();
-   if(socket->write(makeBinaryPack(PASS, dat.data(), dat.size())) == 0){
+   out << PASS << password.toUtf8().size() << password.toUtf8().data()
+       << login.toUtf8().size() << login.toUtf8().data();
+
+   if(socket->write(dat) == 0)
+   {
        qDebug() << "No data written";
-       std::cout << "No data written";
    }
-}
-
-/*void ServerConnection::deleteMe(QHostAddress address){
-    QByteArray dat;
-    QDataStream out(&dat, QIODevice::WriteOnly);
-    out << address.toIPv4Address();
-    socket->write(makeBinaryPack(REMOVE, dat.data(), dat.size()))   ;
-}*/
-
-void ServerConnection::onData()
-{
-    QDataStream in(socket);
-    TcpPackage pack;
-    in >> pack;
-
-    //make something sane here instead switch
-    switch(pack.getHeader()->type){
-//        case TEXT:      {emit gotText(*pack.getData()->strData); break;}
-        case PASS:      {emit gotPass(*pack.getData()->strData); break;}
-        case MEMBER:    {makeMember(pack.getData()->rawData); break;}
-//        case RAW: {emit gotRawData(pack.getData()->rawData, pack.getHeader()->length); break;}
-        case INVALID_PASS: {emit gotInvalidPass(); break;}
-//        case ADRESS: {emit gotAdress(*pack.getData()->strData); break;}
-        case REMOVE: {emitRemoveMember(pack.getData()->rawData); break;}
-    default: throw pack.getHeader()->type;
-    }
-}
-
-void ServerConnection::makeMember(char *block)
-{
-    QString login;
-    QHostAddress addr;
-    QDataStream in(block);
-    int loginSize, addressRaw;
-    char* loginRaw;
-    in >> loginSize;
-    loginRaw = new char[loginSize];
-    in >> addressRaw;
-    addr = QHostAddress(addressRaw);
-    emit addMember(login, addr);
-}
-
-void ServerConnection::emitRemoveMember(char* block){
-    QDataStream in(block);
-    qint32 address;
-    QHostAddress addr;
-    in >> address;
-    addr = QHostAddress(address);
-    emit(deleteMember(addr));
-}
-
-void ServerConnection::throwSocketError(QAbstractSocket::SocketError err)
-{
-    qDebug() << err;
 }
 
 void ServerConnection::connected()
 {
     qDebug() << "connected";
-    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
 }
 
+void ServerConnection::onData()
+{
+    QDataStream in(socket);
+    qint32 packt;
+    in >> packt;
+    if(packt == 0)
+        qDebug() << "No data delivered";
+    switch(packt){
+        case MEMBER:
+            makeMember(in);
+            break;
+        case REMOVE:
+            removeMember(in);
+            break;
+        case INVALID_PASS:
+            emit(gotInvalidPass());
+            break;
+        case TEXT:
+            makeText(in);
+        default: throw packt;
+    }
+}
 void ServerConnection::sendText(QString text)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out << text.size() << text;
-    socket->write(makeBinaryPack(TEXT, dat.data(), dat.size()));
+    out << TEXT << text.toUtf8().size() << text.toUtf8();
+
+}
+
+//---------------------- case handlers ------------------
+
+void ServerConnection::makeMember(QDataStream & in)
+{
+    int size;
+    qint32 address;
+    in >> size;
+    char * login = new char[size];
+    in >> login;    
+    in >> address;
+    emit addMember(QString::fromUtf8(login), QHostAddress(address));
+}
+
+void ServerConnection::removeMember(QDataStream & in)
+{
+    int addr;
+    in >> addr;
+    emit(deleteMember(QHostAddress(addr)));
+}
+
+void ServerConnection::makeText(QDataStream & in)
+{
+    int size;
+    in >> size;
+    char * text = new char[size];
+    in >> text;
+    emit gotText(QString::fromUtf8(text));
 }

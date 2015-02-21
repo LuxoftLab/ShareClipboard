@@ -13,9 +13,12 @@ namespace Ui {
 class MainWindow;
 }
 
-struct textData {
+
+struct textData { //FIXME: way to get data from ClipboardService
     qint32 id;
     QString shortText;
+//    QString text;
+
 };
 
 class MainWindow : public QMainWindow
@@ -58,6 +61,8 @@ private:
     QSystemTrayIcon * trayIcon;
     QList<textData> dataList;
     QVector<qint32> dataIdsVector;
+    RoomsListDialog *roomDialog;
+
 
 
     void createTrayIcon();
