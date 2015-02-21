@@ -69,10 +69,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void MainWindow::textPushedToClipboard(qint32 id, QString text)
+void MainWindow::textPushedToClipboard(QString text)
 {
     textData data;
-    data.id = id;
+    //data.id = id;
     data.text = text;
     text = text.trimmed(); //FIXME: deleting whitespaces in text [trimmed doesn't work?]
     //may be for-cycle?
@@ -84,7 +84,7 @@ void MainWindow::textPushedToClipboard(qint32 id, QString text)
     text.append("\n ... ");
     data.shortText = text;
     dataList.insert(0,data);
-    dataIdsVector.prepend(id);
+    dataIdsVector.prepend((qint32)qrand());
     ui->clipboardText->insertItem(0, text);
 }
 

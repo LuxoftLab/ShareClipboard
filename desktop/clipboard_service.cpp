@@ -45,14 +45,14 @@ void ClipboardService::onClipboardChanged()
 //        emit hasText(dataId, mimeData->text());
 //        //return;
         qDebug() << "has text: " << mimeData->text();
-        data.dataID = (qint32)qrand();
+        //data.dataID = (qint32)qrand();
         data.type = "text/plain";
         data.data = mimeData->data(data.type);
         clipboardData.prepend(data);
 
         // TODO add split method
 
-        emit hasText(data.dataID, mimeData->text());
+        emit hasText(mimeData->text());
     }
 }
 

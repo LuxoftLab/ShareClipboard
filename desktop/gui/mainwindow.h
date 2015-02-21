@@ -38,7 +38,7 @@ protected:
     void closeEvent(QCloseEvent * event);
 
 public slots:
-    void textPushedToClipboard(qint32 id, QString text);
+    void textPushedToClipboard(QString text);
     void imagePushedToClipboard(QString imageName);//QPixmap image);
     void deleteItemFromList(qint32 id);
 

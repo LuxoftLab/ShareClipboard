@@ -7,7 +7,6 @@ Controller::Controller(MainWindow *mainWindow) : QObject(0)
 {
     this->mainWindow = mainWindow;
     connect(mainWindow, SIGNAL(roomListOpened(RoomsListDialog*)), this, SLOT(onRoomsListOpen(RoomsListDialog*)));
-
     initClipboardToGuiConnection();
     initUDPService();
 }
@@ -103,9 +102,8 @@ void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
 
 void Controller::initClipboardToGuiConnection()
 {
-    connect(&clipboardService, SIGNAL(hasText(qint32, QString)), mainWindow, SLOT(textPushedToClipboard(qint32, QString)));
+    connect(&clipboardService, SIGNAL(hasText(QString)), mainWindow, SLOT(textPushedToClipboard(QString)));
     connect(&clipboardService, SIGNAL(deleteDataFromStorage(qint32)), mainWindow, SLOT(deleteItemFromList(qint32)));
-
    // connect(&clipboardService, SIGNAL(hasImage(QPixmap)), mainWindow, SLOT(imagePushedToClipboard(QPixmap)));
     connect(&clipboardService, SIGNAL(hasImage(QString)), mainWindow, SLOT(imagePushedToClipboard(QString)));
     connect(mainWindow, SIGNAL(pushDataChoosed(QString)), &clipboardService, SLOT(pushDataToClipboard(QString)));
@@ -135,12 +133,12 @@ void Controller::joinRoom(qint32 addr, QString pass)
         return;
 
     clientRoom = rooms.value(addr, NULL);
-    //QObject::connect(&cservice, SIGNAL(pasteText(QString)), clientRoom, SLOT(sendText(QString)));
     if(clientRoom == NULL)
         return;
     qDebug() << "joined";
 
     QString login = "login";
+    connect(&clipboardService, SIGNAL(hasText(QString)), clientRoom, SLOT(sendText(QString)));
     clientRoom->connectToHost(login, pass);
 
     MainWindow().show();

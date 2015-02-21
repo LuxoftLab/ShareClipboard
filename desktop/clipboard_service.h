@@ -19,7 +19,7 @@ public:
     ClipboardService();
 signals:
 //    void hasFile(QString);
-    void hasText(qint32, QString);
+    void hasText(QString);
 //    void hasImage(QString);
     void deleteDataFromStorage(qint32);
 public slots:
