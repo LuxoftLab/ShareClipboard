@@ -30,6 +30,8 @@ protected:
     void closeEvent(QCloseEvent * event);
 public slots:
     void dataPushedToClipboard(QString text, qint32 id);
+    void deleteItemFromList(qint32 id);
+
     void newDevicePluged(QString deviceName);
     void newNameVerified(QString newName);
 private slots:

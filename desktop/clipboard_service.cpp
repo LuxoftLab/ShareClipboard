@@ -16,10 +16,10 @@ void ClipboardService::onClipboardChanged()
     ClipboardData data;
     data.dataID = (qint32)qrand();
 
-    //    if(clipboardData.size() == clipboardOpacity) {
-    //        emit deleteDataFromStorage(clipboardData.at(clipboardData.size() - 1).dataID);
-    //        clipboardData.remove(clipboardData.size()- 1);
-    //    }
+    if(clipboardData.size() == clipboardOpacity) {
+        qDebug() << clipboardData.last().dataID;
+        emit deleteDataFromStorage(clipboardData.takeLast().dataID);
+    }
 
 
     //    if (mimeData->hasUrls()) {
