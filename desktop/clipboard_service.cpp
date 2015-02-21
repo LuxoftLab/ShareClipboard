@@ -14,6 +14,7 @@ void ClipboardService::onClipboardChanged()
 {
     const QMimeData * mimeData = clipboard->mimeData();
     ClipboardData data;
+    QString text;
     data.dataID = (qint32)qrand();
 
     if(clipboardData.size() == clipboardOpacity) {
@@ -21,58 +22,26 @@ void ClipboardService::onClipboardChanged()
         emit deleteDataFromStorage(clipboardData.takeLast().dataID);
     }
 
-
-    //    if (mimeData->hasUrls()) {
-    //        qDebug() << "has url: " << mimeData->text();
-    //        data.dataID = (qint32)qrand();
-    //        data.type = "text/uri-list";
-    //        data.data = mimeData->data(data.type);
-    //        clipboardData.prepend(data);
-    //        if(mimeData->urls().first().isLocalFile()) {
-    //            emit hasFile(data.dataID, mimeData->urls().first().toLocalFile());
-    //        } else {
-    //            emit hasText(data.dataID, mimeData->text());
-    //        }
-    //        return;
-    //    }
-    //    if (mimeData->hasImage()) {
-    //        QString imageName = "copied image #" + QString::number(qrand());
-    //        data.dataID = (qint32)qrand();
-    //        data.type = "image/ *";
-    //        data.data = mimeData->data(data.type);
-    //        clipboardData.prepend(data);
-    //        qDebug() << "has image: " << imageName;
-    //        emit hasImage(data.dataID, imageName); //qvariant_cast<QPixmap>(mimeData->imageData())); // temporary replace pixmap to text
-    //        return;
-    //    }
+    if (mimeData->hasUrls()) {
+        qDebug() << "has url: " << mimeData->text();
+        data.type = "text/uri-list";
+        text = mimeData->urls().first().toString();
+    }
+    if (mimeData->hasImage()) {
+        text = "copied image #" + QString::number(qrand());
+        qDebug() << "has image: " << imageName;
+        data.type = "image/ *";
+    }
     if (mimeData->hasText()) {
-        const int MAX_STR_LEN = 50;
-
         qDebug() << "has text: " << mimeData->text();
         data.type = "text/plain";
-        data.data = mimeData->data(data.type);
-
-        QString text = mimeData->text();
-        int index = text.indexOf('\n');
-        int size = text.size();
-
-        if( index >= 0 && index < MAX_STR_LEN)
-        {
-            if(index < 3 ) { index = text.indexOf('\n',3); }
-            text = text.mid(0, index);
-            text.append("...");
-        }
-        else if(text.size() > MAX_STR_LEN)
-        {
-            text = text.mid(0, MAX_STR_LEN);
-            text.append("...");
-        }
-        emit hasDataToText(text, data.dataID);
-        emit hasData(data.data, data.type);
+        text = mimeData->text();
     }
+    data.data = mimeData->data(data.type);
     clipboardData.prepend(data);
+    emit hasDataToText(minimizeText(text), data.dataID);
+    emit hasData(data.data, data.type);
 
-    // qDebug() << clipboardData.size();
 }
 
 void ClipboardService::pushDataToClipboard(qint32 dataId)
@@ -87,4 +56,25 @@ void ClipboardService::pushDataToClipboard(qint32 dataId)
             return;
         }
     }
+}
+
+QString ClipboardService::minimizeText(QString text)
+{
+    const int MAX_STR_LEN = 50;
+
+    int index = text.indexOf('\n');
+    int size = text.size();
+
+    if( index >= 0 && index < MAX_STR_LEN)
+    {
+        if(index < 3 ) { index = text.indexOf('\n',3); }
+        text = text.mid(0, index);
+        text.append("...");
+    }
+    else if(text.size() > MAX_STR_LEN)
+    {
+        text = text.mid(0, MAX_STR_LEN);
+        text.append("...");
+    }
+    return text;
 }

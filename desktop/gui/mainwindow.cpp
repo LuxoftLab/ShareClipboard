@@ -162,15 +162,6 @@ void MainWindow::trayMessageClicked()
 void MainWindow::clipboardDataListItemDBClicked(QListWidgetItem * listItem)
 {
     emit pushDataChoosed(dataIdsVector.at(ui->clipboardText->row(listItem)));
-//    QString t = listItem->text();
-//    foreach(textData i, dataList)
-//    {
-//        if( i.shortText == t)
-//        {
-//            emit pushDataChoosed(i.text);
-//            break;
-//        }
-//    }
 }
 
 

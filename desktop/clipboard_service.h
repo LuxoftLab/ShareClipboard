@@ -28,6 +28,8 @@ private:
     QClipboard* clipboard;
     QVector<ClipboardData>clipboardData;
     int clipboardOpacity = 2;   // TODO : write setting it from MainMenu
+
+    QString minimizeText(QString);
 };
 
 #endif // CLIPBOARDSERVICE_H
