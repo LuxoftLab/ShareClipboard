@@ -23,12 +23,14 @@ signals:
     void deleteDataFromStorage(qint32);
 public slots:
     void onClipboardChanged();
+    void onSettingsChoosed(int value, bool isInKB);
     void pushDataToClipboardFromGui(qint32 dataId);
     void pushDataToClipboardFromHosts(QByteArray data, QString type);
 private:
     QClipboard* clipboard;
     QVector<ClipboardData>clipboardData;
-    int clipboardOpacity = 2;   // TODO : write setting it from MainMenu
+    int clipboardOpacity = 10;
+    bool isInKB;
 
     QString minimizeText(QString text);
 };

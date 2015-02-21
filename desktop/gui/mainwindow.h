@@ -26,6 +26,7 @@ signals:
     void changeName(QString name);
     void roomListOpened(RoomsListDialog *);
     void pushDataChoosed(qint32);
+    void settingsChoosed(int, bool);
 protected:
     void closeEvent(QCloseEvent * event);
 public slots:
@@ -37,6 +38,8 @@ public slots:
 private slots:
     void chooseRoomClicked();
     void changeNameClicked();
+    void onSettingsClicked();
+    void onSettingsAccepted(int value, bool isInKB);
 
     void trayIconClicked(QSystemTrayIcon::ActivationReason reason);
     void trayMessageClicked();

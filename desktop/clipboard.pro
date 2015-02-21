@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     gui/roomslistdialog.cpp \
     gui/createroomdialog.cpp \
     gui/changenamedialog.cpp \
-    clipboard_service.cpp
+    clipboard_service.cpp \
+    gui/settingsdialog.cpp
 
 HEADERS  += \
     client_connection.h \
@@ -48,7 +49,8 @@ HEADERS  += \
     gui/createroomdialog.h \
     gui/changenamedialog.h \
     tcp_package.h \
-    clipboard_service.h
+    clipboard_service.h \
+    gui/settingsdialog.h
 
 RESOURCES += \
     gui/images.qrc
@@ -58,4 +60,5 @@ FORMS += \
     gui/passworddialog.ui \
     gui/roomslistdialog.ui \
     gui/createroomdialog.ui \
-    gui/changenamedialog.ui
+    gui/changenamedialog.ui \
+    gui/settingsdialog.ui

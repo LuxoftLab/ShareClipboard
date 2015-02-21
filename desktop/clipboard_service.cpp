@@ -18,30 +18,39 @@ void ClipboardService::onClipboardChanged()
     data.dataID = (qint32)qrand();
 
     if(clipboardData.size() == clipboardOpacity) {
-        qDebug() << clipboardData.last().dataID;
+        qDebug() << "vector overflow";
         emit deleteDataFromStorage(clipboardData.takeLast().dataID);
     }
 
     if (mimeData->hasUrls()) {
         qDebug() << "has url: " << mimeData->text();
         data.type = "text/uri-list";
+        data.data = mimeData->data(data.type);
         text = mimeData->urls().first().toString();
     }
     if (mimeData->hasImage()) {
         text = "copied image #" + QString::number(qrand());
         qDebug() << "has image: " << text;
         data.type = "image/ *";
+        data.data = qvariant_cast<QByteArray>(mimeData->imageData());   // TODO investigate converting of image to byte array
     }
     if (mimeData->hasText()) {
         qDebug() << "has text: " << mimeData->text();
         data.type = "text/plain";
+        data.data = mimeData->data(data.type);
         text = mimeData->text();
     }
-    data.data = mimeData->data(data.type);
     clipboardData.prepend(data);
     emit hasDataToText(minimizeText(text), data.dataID);
     emit hasData(data.data, data.type);
 
+}
+
+void ClipboardService::onSettingsChoosed(int value, bool isInKB)
+{
+    this->clipboardOpacity = value;
+    this->isInKB = isInKB;
+    this->clipboardData.resize(value);
 }
 
 void ClipboardService::pushDataToClipboardFromHosts(QByteArray data, QString type)
@@ -55,7 +64,6 @@ void ClipboardService::pushDataToClipboardFromHosts(QByteArray data, QString typ
 void ClipboardService::pushDataToClipboardFromGui(qint32 dataId)
 {
     qDebug() << "on item dbclick";
-
     for(int i = 0; i < clipboardData.size(); i++) {
         if(clipboardData.at(i).dataID == dataId) {
             QMimeData * data = new QMimeData();

@@ -4,6 +4,7 @@
 #include "roomslistdialog.h"
 #include "ui_mainwindow.h"
 #include "changenamedialog.h"
+#include "settingsdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->changeNamePushButton, SIGNAL(clicked()), this, SLOT(changeNameClicked()));
     connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
     connect(ui->clipboardText, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(clipboardDataListItemDBClicked(QListWidgetItem*)));
+    connect(ui->actionOpen_Settings_2, SIGNAL(triggered()), this, SLOT(onSettingsClicked()));
 }
 
 MainWindow::~MainWindow()
@@ -53,6 +55,23 @@ void MainWindow::changeNameClicked()
     ChangeNameDialog dialog;
     connect(&dialog, SIGNAL(nameChoosed(QString)), this, SIGNAL(changeName(QString)));
     dialog.exec();
+}
+
+void MainWindow::onSettingsClicked()
+{
+    SettingsDialog settingsDialog;
+    connect(&settingsDialog, SIGNAL(settingsAccepted(int,bool)), this, SLOT(onSettingsAccepted(int,bool)));
+    settingsDialog.exec();
+}
+
+void MainWindow::onSettingsAccepted(int value, bool isInKB)
+{
+    while(ui->listWidget->count() > value) {
+        delete ui->clipboardText->takeItem(ui->listWidget->count() - 1);
+    }
+    qDebug() << "asdfasdf";
+    dataIdsVector.resize(value);
+    emit onSettingsAccepted(value, isInKB);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

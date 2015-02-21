@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>372</width>
+    <width>423</width>
     <height>428</height>
    </rect>
   </property>
@@ -119,7 +119,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>372</width>
+     <width>423</width>
      <height>22</height>
     </rect>
    </property>
@@ -133,6 +133,7 @@
     <property name="title">
      <string>Settings</string>
     </property>
+    <addaction name="actionOpen_Settings_2"/>
    </widget>
    <addaction name="menuSettings"/>
   </widget>
@@ -145,6 +146,16 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpen_Settings">
+   <property name="text">
+    <string>Open Settings</string>
+   </property>
+  </action>
+  <action name="actionOpen_Settings_2">
+   <property name="text">
+    <string>Open Settings</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
