@@ -14,7 +14,6 @@ signals:
     void onText(QString, ClientConnection * const);
 public:
     ClientConnection(QTcpSocket * socket);
-    ~ClientConnection();
     void sendFail();
     void sendMember(QString login, QHostAddress addr);
     void removeMember(QHostAddress addr);

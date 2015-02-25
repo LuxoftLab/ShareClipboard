@@ -10,6 +10,12 @@ TCPServer::TCPServer()
 
 }
 
+TCPServer::~TCPServer()
+{
+    delete newConnection;
+    delete server;
+}
+
 QHostAddress TCPServer::getLocalAddress()
 {
     return QHostAddress::LocalHost;

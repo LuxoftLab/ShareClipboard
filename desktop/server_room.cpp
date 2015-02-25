@@ -11,7 +11,11 @@ ServerRoom::ServerRoom(QString name, QString pass) : Room(name, pass)
 
 ServerRoom::~ServerRoom()
 {
-
+    for(QMap<qint32, ClientConnection*>::iterator it = verified.begin(); it != verified.end(); ++it)
+        delete it.value();
+    for(QMap<qint32, ClientConnection*>::iterator it = notVerified.begin(); it != notVerified.end(); ++it)
+        delete it.value();
+    delete server;
 }
 
 void ServerRoom::addMember(QTcpSocket * socket)
