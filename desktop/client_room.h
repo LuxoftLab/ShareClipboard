@@ -28,6 +28,8 @@ public slots:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
     void sendText(QByteArray data, QString text);
+signals:
+    void gotData(QByteArray, QString);
 };
 
 #endif // CLIENT_ROOM_H

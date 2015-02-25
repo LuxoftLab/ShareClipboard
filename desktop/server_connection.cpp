@@ -90,5 +90,5 @@ void ServerConnection::makeText(QDataStream & in)
     in >> size;
     char * text = new char[size];
     in >> text;
-    emit gotText(QString::fromUtf8(text));
+    emit gotData(QString::fromUtf8(text).toUtf8(), "text/plain");
 }

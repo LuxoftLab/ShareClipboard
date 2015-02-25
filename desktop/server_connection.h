@@ -23,6 +23,7 @@ signals:
     void gotInvalidPass();
     void gotPass(QString);
     void gotText(QString);
+    void gotData(QByteArray, QString);
 private:
     void makeMember(QDataStream&);
     void removeMember(QDataStream&);

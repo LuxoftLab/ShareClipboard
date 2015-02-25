@@ -136,6 +136,8 @@ void Controller::joinRoom(qint32 addr, QString pass)
 
     QString login = "login";
     connect(&clipboardService, SIGNAL(hasData(QByteArray, QString)), clientRoom, SLOT(sendText(QByteArray, QString)));
+    connect(clientRoom, SIGNAL(gotData(QByteArray, QString)),
+            &clipboardService, SLOT(pushDataToClipboardFromHosts(QByteArray,QString)));
     clientRoom->connectToHost(login, pass);
 
     MainWindow().show();
