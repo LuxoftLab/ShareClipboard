@@ -56,6 +56,12 @@ void ClipboardService::onSettingsChoosed(int value, bool isInKB)
 void ClipboardService::pushDataToClipboardFromHosts(QByteArray data, QString type)
 {
     qDebug() << "on text from outer host";
+    const QMimeData * existingData = clipboard->mimeData();
+
+    //check if we already have the data
+
+    if (existingData->hasText() && existingData->text() == QString(data))
+        return;
     QMimeData * mimeData = new QMimeData();
     mimeData->setData(type, data);
     clipboard->setMimeData(mimeData);
