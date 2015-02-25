@@ -8,11 +8,6 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
 }
 
-ClientConnection::~ClientConnection()
-{
-
-}
-
 void ClientConnection::sendFail()
 {
     QByteArray dat;
