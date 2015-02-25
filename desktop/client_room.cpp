@@ -33,6 +33,8 @@ void ClientRoom::sendText(QByteArray data, QString text)
 
 ClientRoom::~ClientRoom()
 {
+    for(QMap<qint32, Member*>::iterator it = members.begin(); it != members.end(); ++it)
+        delete it.value();
     delete connection;
 }
 

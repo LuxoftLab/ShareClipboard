@@ -59,9 +59,9 @@ void ClipboardService::pushDataToClipboardFromHosts(QByteArray data, QString typ
     const QMimeData * existingData = clipboard->mimeData();
 
     //check if we already have the data
-
     if (existingData->hasText() && existingData->text() == QString(data))
         return;
+
     QMimeData * mimeData = new QMimeData();
     mimeData->setData(type, data);
     clipboard->setMimeData(mimeData);
