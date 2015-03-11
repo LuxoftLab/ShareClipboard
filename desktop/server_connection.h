@@ -16,6 +16,8 @@ public:
     int sendPassAndLogin(QString password, QString login);
     void sendText(QString text);
     void sendImage(QByteArray);
+
+    ServerConnectionHandler* hand;
 public slots:
     void onData();
 signals:

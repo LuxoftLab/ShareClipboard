@@ -18,7 +18,7 @@ class ServerConnectionHandler : public PackageHandler
 {
     Q_OBJECT
 public:
-    void decode(QDataStream &in);
+    virtual void decode(QDataStream &in) = 0;
 signals:
     void gotText(QString);
     void addMember(QString, QHostAddress);
@@ -29,8 +29,6 @@ class ServerConnectionHandlerText : public ServerConnectionHandler
     Q_OBJECT
 public:
     void decode(QDataStream &in);
-signals:
-    void gotText(QString);
 };
 
 class ServerConnectionHandlerMember : public ServerConnectionHandler
@@ -38,8 +36,6 @@ class ServerConnectionHandlerMember : public ServerConnectionHandler
     Q_OBJECT
 public:
     void decode(QDataStream &in);
-signals:
-    void addMember(QString, QHostAddress);
 };
 
 class ClientConnectionHandler : public PackageHandler
@@ -50,7 +46,7 @@ class ClientConnectionHandler : public PackageHandler
 class Factory
 {
 public:
-    static PackageHandler* getHandler(pckg_t type);
+    PackageHandler* getHandler(pckg_t type);
 };
 
 class ServerConnectionFactory : public Factory

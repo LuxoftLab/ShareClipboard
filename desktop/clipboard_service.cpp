@@ -69,6 +69,20 @@ void ClipboardService::pushDataToClipboardFromHosts(QByteArray data, QString typ
     clipboard->setMimeData(mimeData);
 }
 
+void ClipboardService::pushText(QString text)
+{
+    qDebug() << "on text from outer host";
+    const QMimeData * existingData = clipboard->mimeData();
+
+    //check if we already have the data
+    if (existingData->hasText() && existingData->text() == text)
+        return;
+
+    QMimeData * mimeData = new QMimeData();
+    mimeData->setData("text\plain", text.toUtf8());
+    clipboard->setMimeData(mimeData);
+}
+
 void ClipboardService::pushDataToClipboardFromGui(qint32 dataId)
 {
     qDebug() << "on item dbclick";

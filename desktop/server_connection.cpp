@@ -3,6 +3,7 @@
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
     socket = new QTcpSocket(this);
+    hand = (new ServerConnectionFactory())->getHandler((pckg_t)0);
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
     socket->abort();
@@ -34,7 +35,8 @@ void ServerConnection::onData()
     QDataStream in(socket);
     qint32 packt;
     in >> packt;
-    ServerConnectionHandler* hand = (new ServerConnectionFactory())->getHandler((pckg_t)packt);
+    hand = (new ServerConnectionFactory())->getHandler((pckg_t)packt);
+    connect(hand, SIGNAL(gotText(QString)), this, SIGNAL(gotText(QString)));
     hand->decode(in);
 //    if(packt == 0)
 //        qDebug() << "No data delivered";

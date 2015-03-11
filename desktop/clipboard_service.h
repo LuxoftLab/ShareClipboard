@@ -28,6 +28,7 @@ public slots:
     void onSettingsChoosed(int value, bool isInKB);
     void pushDataToClipboardFromGui(qint32 dataId);
     void pushDataToClipboardFromHosts(QByteArray data, QString type);
+    void pushText(QString);
 private:
     QClipboard* clipboard;
     QVector<ClipboardData>clipboardData;
