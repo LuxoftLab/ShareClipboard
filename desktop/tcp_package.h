@@ -6,8 +6,9 @@
 
 enum pckg_t{TEXT, IMAGE, PASS, MEMBER, RAW, INVALID_PASS, ADRESS, REMOVE};
 
-class PackageHandler
+class PackageHandler : public QObject
 {
+    Q_OBJECT
 public:
     void decode(QDataStream& in);
     void encode();
@@ -15,6 +16,7 @@ public:
 
 class ServerConnectionHandler : public PackageHandler
 {
+    Q_OBJECT
 public:
     void decode(QDataStream &in);
 signals:
@@ -24,6 +26,7 @@ signals:
 
 class ServerConnectionHandlerText : public ServerConnectionHandler
 {
+    Q_OBJECT
 public:
     void decode(QDataStream &in);
 signals:
@@ -32,6 +35,7 @@ signals:
 
 class ServerConnectionHandlerMember : public ServerConnectionHandler
 {
+    Q_OBJECT
 public:
     void decode(QDataStream &in);
 signals:
