@@ -13,8 +13,9 @@ void ClientRoom::connectToHost(QString login, QString pass)
             this, SLOT(addMember(QString, QHostAddress)));
     connect(connection, SIGNAL(deleteMember(QHostAddress)),
             this, SLOT(deleteMember(QHostAddress)));
-    connect(connection, SIGNAL(gotData(QByteArray,QString)),
-            this, SIGNAL(gotData(QByteArray, QString)));
+    connect(connection, SIGNAL(gotText(QByteArray,QString)),
+            this, SIGNAL(gotText(QByteArray, QString)));
+
     connection->sendPassAndLogin(pass, login);
 }
 
@@ -29,6 +30,11 @@ void ClientRoom::deleteMember(QHostAddress addr) {
 void ClientRoom::sendText(QByteArray data, QString text)
 {
     connection->sendText(QString(data));
+}
+
+void ClientRoom::sendImage(QByteArray)
+{
+//    /connection->send
 }
 
 ClientRoom::~ClientRoom()

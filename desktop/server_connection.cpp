@@ -1,4 +1,4 @@
-#include "server_connection.h"
+ #include "server_connection.h"
 
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
@@ -34,29 +34,46 @@ void ServerConnection::onData()
     QDataStream in(socket);
     qint32 packt;
     in >> packt;
-    if(packt == 0)
-        qDebug() << "No data delivered";
-    switch(packt){
-        case MEMBER:
-            makeMember(in);
-            break;
-        case REMOVE:
-            removeMember(in);
-            break;
-        case INVALID_PASS:
-            emit(gotInvalidPass());
-            break;
-        case TEXT:
-            makeText(in);
-            break;
-        default: throw packt;
-    }
+    ServerConnectionHandler* hand = (new ServerConnectionFactory())->getHandler((pckg_t)packt);
+    hand->decode(in);
+//    if(packt == 0)
+//        qDebug() << "No data delivered";
+//    switch(packt){
+//        case MEMBER:
+//            makeMember(in);
+//            break;
+//        case REMOVE:
+//            removeMember(in);
+//            break;
+//        case INVALID_PASS:
+//            emit(gotInvalidPass());
+//            break;
+//        case TEXT:
+//            makeText(in);
+//            break;
+//        case IMAGE:
+//            makeImage(in);
+//            break;
+//        default: throw packt;
+//    }
 }
 void ServerConnection::sendText(QString text)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
     out << TEXT << text.toUtf8().size() << text.toUtf8();
+
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
+}
+
+void ServerConnection::sendImage(QByteArray image)
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << IMAGE <<  (qint32)image.size() << image.constData();
 
     if(socket->write(dat) == 0)
     {
@@ -90,5 +107,14 @@ void ServerConnection::makeText(QDataStream & in)
     in >> size;
     char * text = new char[size];
     in >> text;
-    emit gotData(QString::fromUtf8(text).toUtf8(), "text/plain");
+    emit gotText(QString::fromUtf8(text).toUtf8());
+}
+
+void ServerConnection::makeImage(QDataStream & in)
+{
+    int size;
+    in >> size;
+    char * image = new char[size];
+    in >> image;
+    //emit gotImage(QByteArray, "text/plain");
 }

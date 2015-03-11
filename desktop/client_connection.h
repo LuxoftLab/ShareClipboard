@@ -12,6 +12,7 @@ class ClientConnection : public Connection
 signals:
     void verifyPass(QString pass, ClientConnection * const);
     void onText(QString, ClientConnection * const);
+    void onImage(QByteArray, ClientConnection * const);
 public:
     ClientConnection(QTcpSocket * socket);
     void sendFail();
@@ -20,9 +21,11 @@ public:
     QString getLogin();
     QHostAddress makeHostAdress(char*);
     void sendText(QString);
+    void sendImage(QByteArray);
 public slots:
     void onData();
     void emitText(QDataStream&);
+    void emitImage(QDataStream&);
 private:
     void makePass(QDataStream&);
 };

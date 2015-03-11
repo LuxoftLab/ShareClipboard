@@ -25,6 +25,8 @@ void ServerRoom::addMember(QTcpSocket * socket)
             this, SLOT(verifyPass(QString, ClientConnection* const)));
     connect(t, SIGNAL(onText(QString, ClientConnection * const)),
             this, SLOT(onText(QString, ClientConnection * const)));
+    connect(t, SIGNAL(onImage(QByteArray, ClientConnection * const)),
+            this, SLOT(onImage(QByteArray, ClientConnection * const)));
     notVerified.insert(socket->peerAddress().toIPv4Address(), t);
 }
 
@@ -74,6 +76,17 @@ void ServerRoom::onText(QString s, ClientConnection * owner)
     saveText();
     sendText(s, owner);
 }
+
+void ServerRoom::onImage(QByteArray im, ClientConnection * const)
+{
+    for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
+    {
+        ClientConnection* t = it.value();
+        t->sendImage(im);
+    }
+}
+
+
 
 void ServerRoom::saveText()
 {

@@ -23,6 +23,7 @@ public slots:
     void deleteMember(QHostAddress addr);
     bool verifyPass(QString pass, ClientConnection * const);
     void onText(QString, ClientConnection * const);
+    void onImage(QByteArray, ClientConnection * const);
 private:
     void saveText();
     void sendText(QString, ClientConnection *);

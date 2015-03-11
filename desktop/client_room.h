@@ -28,6 +28,7 @@ public slots:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
     void sendText(QByteArray data, QString text);
+    void sendImage(QByteArray);
 signals:
     void gotData(QByteArray, QString);
 };

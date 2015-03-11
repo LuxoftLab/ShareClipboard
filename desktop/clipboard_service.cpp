@@ -33,12 +33,14 @@ void ClipboardService::onClipboardChanged()
         qDebug() << "has image: " << text;
         data.type = "image/ *";
         data.data = qvariant_cast<QByteArray>(mimeData->imageData());   // TODO investigate converting of image to byte array
+        emit(hasImage(data.data));
     }
     if (mimeData->hasText()) {
         qDebug() << "has text: " << mimeData->text();
         data.type = "text/plain";
         data.data = mimeData->data(data.type);
         text = mimeData->text();
+        emit(hasText(text));
     }
     clipboardData.prepend(data);
     emit hasDataToText(minimizeText(text), data.dataID);

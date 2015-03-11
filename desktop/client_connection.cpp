@@ -61,6 +61,9 @@ void ClientConnection::onData(){
         case TEXT:
             emitText(in);
             break;
+        case IMAGE:
+            emitImage(in);
+            break;
         default: throw packt;
     }
 }
@@ -75,6 +78,17 @@ void ClientConnection::sendText(QString s)
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
     out << TEXT << s.toUtf8().size() << s.toUtf8();
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
+}
+
+void ClientConnection::sendImage(QByteArray im)
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << IMAGE << im.size() << im.constData();
     if(socket->write(dat) == 0)
     {
         qDebug() << "No data written";
@@ -104,4 +118,13 @@ void ClientConnection::emitText(QDataStream& in)
     char* text = new char[size];
     in >> text;
     emit(onText(QString::fromUtf8(text), this));
+}
+
+void ClientConnection::emitImage(QDataStream& in)
+{
+    qint32 size;
+    in >> size;
+    char* image = new char[size];
+    in >> image;
+//    emit(onImage(QByteArray(image)));
 }

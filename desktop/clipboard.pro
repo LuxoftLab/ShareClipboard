@@ -28,7 +28,8 @@ SOURCES += main.cpp \
     gui/createroomdialog.cpp \
     gui/changenamedialog.cpp \
     clipboard_service.cpp \
-    gui/settingsdialog.cpp
+    gui/settingsdialog.cpp \
+    tcp_package.cpp
 
 HEADERS  += \
     client_connection.h \
