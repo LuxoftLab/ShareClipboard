@@ -79,7 +79,7 @@ void ClipboardService::pushText(QString text)
         return;
 
     QMimeData * mimeData = new QMimeData();
-    mimeData->setData("text\plain", text.toUtf8());
+    mimeData->setData("text/plain", text.toUtf8());
     clipboard->setMimeData(mimeData);
 }
 

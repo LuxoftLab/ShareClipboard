@@ -13,8 +13,8 @@ void ClientRoom::connectToHost(QString login, QString pass)
             this, SLOT(addMember(QString, QHostAddress)));
     connect(connection, SIGNAL(deleteMember(QHostAddress)),
             this, SLOT(deleteMember(QHostAddress)));
-    connect(connection->hand, SIGNAL(gotText(QByteArray,QString)),
-            this, SIGNAL(gotText(QByteArray, QString)));
+    connect(connection, SIGNAL(gotText(QString)),
+            this, SIGNAL(gotText(QString)));
 
     connection->sendPassAndLogin(pass, login);
 }
