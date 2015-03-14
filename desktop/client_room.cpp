@@ -32,9 +32,9 @@ void ClientRoom::sendText(QString text)
     connection->sendText(text);
 }
 
-void ClientRoom::sendImage(QByteArray)
+void ClientRoom::sendImage(QByteArray image)
 {
-//    /connection->send
+    connection->sendImage(image);
 }
 
 ClientRoom::~ClientRoom()
