@@ -1,28 +1,21 @@
 #include "tcp_package.h"
 
-
-
 void ServerConnectionHandlerText::decode(QDataStream &in)
 {
-    int size;
     in >> size;
-    char * text = new char[size];
+    text = new char[size];
     in >> text;
     emit gotText(QString::fromUtf8(text).toUtf8());
 }
 
-
 void ServerConnectionHandlerMember::decode(QDataStream &in)
 {
-    int size;
-    qint32 address;
     in >> size;
-    char * login = new char[size];
+    login = new char[size];
     in >> login;
     in >> address;
     emit addMember(QString::fromUtf8(login), QHostAddress(address));
 }
-
 
 ServerConnectionHandler *ServerConnectionFactory::getHandler(pckg_t packt)
 {
@@ -33,12 +26,14 @@ ServerConnectionHandler *ServerConnectionFactory::getHandler(pckg_t packt)
             return new ServerConnectionHandlerMember();
        case TEXT:
             return new ServerConnectionHandlerText();
+       case REMOVE:
+            return new ServerConnectionHandlerRemoveMember();
        default: throw packt;
     }
 }
 
-
-void ServerConnectionHandler::decode(QDataStream &in)
+void ServerConnectionHandlerRemoveMember::decode(QDataStream &in)
 {
-
+    in >> address;
+    emit(deleteMember(QHostAddress(address)));
 }

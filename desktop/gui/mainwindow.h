@@ -45,6 +45,7 @@ private slots:
     void trayMessageClicked();
 
     void clipboardDataListItemDBClicked(QListWidgetItem *listItem);
+
 private:
     Ui::MainWindow * ui;
     QSystemTrayIcon * trayIcon;
