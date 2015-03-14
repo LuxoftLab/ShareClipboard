@@ -28,6 +28,8 @@ ServerConnectionHandler *ServerConnectionFactory::getHandler(pckg_t packt)
             return new ServerConnectionHandlerText();
        case REMOVE:
             return new ServerConnectionHandlerRemoveMember();
+       case IMAGE:
+            return new ServerConnectionHandlerImage();
        default: throw packt;
     }
 }
@@ -36,4 +38,13 @@ void ServerConnectionHandlerRemoveMember::decode(QDataStream &in)
 {
     in >> address;
     emit(deleteMember(QHostAddress(address)));
+}
+
+
+void ServerConnectionHandlerImage::decode(QDataStream &in)
+{
+    in >> size;
+    image = new char[size];
+    in >> image;
+    emit gotImage(QByteArray(image));
 }

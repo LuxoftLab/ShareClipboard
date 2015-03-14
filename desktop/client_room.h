@@ -3,6 +3,8 @@
 
 #include <QHostAddress>
 #include <QMap>
+#include <QImage>
+#include <QBuffer>
 
 #include "room.h"
 #include "server_connection.h"
@@ -28,10 +30,11 @@ public slots:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
     void sendText(QString text);
-    void sendImage(QByteArray);
+    void sendImage(QImage);
 signals:
     void gotData(QByteArray, QString);
     void gotText(QString);
+    void gotImage(QByteArray);
 };
 
 #endif // CLIENT_ROOM_H

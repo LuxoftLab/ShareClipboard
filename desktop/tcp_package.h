@@ -22,6 +22,7 @@ protected:
     int size;
     char* text;
     char* login;
+    char* image;
 public:
     virtual void decode(QDataStream& in) = 0;
     void encode();
@@ -32,6 +33,7 @@ class ServerConnectionHandler : public PackageHandler
     Q_OBJECT
 signals:
     void gotText(QString);
+    void gotImage(QByteArray);
     void addMember(QString, QHostAddress);
     void deleteMember(QHostAddress);
 };
@@ -51,6 +53,13 @@ public:
 };
 
 class ServerConnectionHandlerMember : public ServerConnectionHandler
+{
+    Q_OBJECT
+public:
+    void decode(QDataStream &in);
+};
+
+class ServerConnectionHandlerImage : public ServerConnectionHandler
 {
     Q_OBJECT
 public:

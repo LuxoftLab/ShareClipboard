@@ -5,6 +5,7 @@
 #include <QMimeData>
 #include <QPixmap>
 #include <QList>
+#include <QImage>
 
 struct ClipboardData {
     qint32 dataID;
@@ -22,13 +23,14 @@ signals:
     void hasData(QByteArray, QString);
     void deleteDataFromStorage(qint32);
     void hasText(QString);
-    void hasImage(QByteArray);
+    void hasImage(QImage);
 public slots:
     void onClipboardChanged();
     void onSettingsChoosed(int value, bool isInKB);
     void pushDataToClipboardFromGui(qint32 dataId);
     void pushDataToClipboardFromHosts(QByteArray data, QString type);
     void pushText(QString);
+    void pushImage(QByteArray);
 private:
     QClipboard* clipboard;
     QVector<ClipboardData>clipboardData;

@@ -33,7 +33,10 @@ void ClipboardService::onClipboardChanged()
         qDebug() << "has image: " << text;
         data.type = "image/ *";
         data.data = qvariant_cast<QByteArray>(mimeData->imageData());   // TODO investigate converting of image to byte array
-        emit(hasImage(data.data));
+        QImage image = qvariant_cast<QImage>(mimeData->imageData());
+        int s = data.data.size();
+        int z = image.byteCount();
+        emit(hasImage(image));
     }
     if (mimeData->hasText()) {
         qDebug() << "has text: " << mimeData->text();
@@ -80,6 +83,20 @@ void ClipboardService::pushText(QString text)
 
     QMimeData * mimeData = new QMimeData();
     mimeData->setData("text/plain", text.toUtf8());
+    clipboard->setMimeData(mimeData);
+}
+
+void ClipboardService::pushImage(QByteArray image)
+{
+    qDebug() << "on image from outer host";
+    const QMimeData * existingData = clipboard->mimeData();
+
+    //check if we already have the data
+    if (existingData->hasImage() && qvariant_cast<QByteArray>(existingData->imageData()) == image)
+        return;
+
+    QMimeData * mimeData = new QMimeData();
+    mimeData->setData("image/ *", image);
     clipboard->setMimeData(mimeData);
 }
 

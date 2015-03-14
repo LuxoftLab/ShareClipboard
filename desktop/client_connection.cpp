@@ -126,5 +126,5 @@ void ClientConnection::emitImage(QDataStream& in)
     in >> size;
     char* image = new char[size];
     in >> image;
-//    emit(onImage(QByteArray(image)));
+    emit onImage(QByteArray(image), this);
 }

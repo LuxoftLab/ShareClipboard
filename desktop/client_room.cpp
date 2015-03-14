@@ -15,6 +15,8 @@ void ClientRoom::connectToHost(QString login, QString pass)
             this, SLOT(deleteMember(QHostAddress)));
     connect(connection, SIGNAL(gotText(QString)),
             this, SIGNAL(gotText(QString)));
+    connect(connection, SIGNAL(gotImage(QByteArray)),
+            this, SIGNAL(gotImage(QByteArray)));
 
     connection->sendPassAndLogin(pass, login);
 }
@@ -32,9 +34,13 @@ void ClientRoom::sendText(QString text)
     connection->sendText(text);
 }
 
-void ClientRoom::sendImage(QByteArray image)
+void ClientRoom::sendImage(QImage image)
 {
-    connection->sendImage(image);
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    image.save(&buffer, "PNG");
+    connection->sendImage(ba);
 }
 
 ClientRoom::~ClientRoom()

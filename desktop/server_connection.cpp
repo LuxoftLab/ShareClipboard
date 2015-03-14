@@ -37,6 +37,8 @@ void ServerConnection::onData()
     in >> packt;
     hand = (new ServerConnectionFactory())->getHandler((pckg_t)packt);
     connect(hand, SIGNAL(gotText(QString)), this, SIGNAL(gotText(QString)));
+    connect(hand, SIGNAL(gotImage(QByteArray)),
+            this, SIGNAL(gotImage(QByteArray)));
     connect(hand, SIGNAL(addMember(QString,QHostAddress)),
             this, SIGNAL(addMember(QString,QHostAddress)));
     connect(hand, SIGNAL(deleteMember(QHostAddress)),
@@ -59,7 +61,8 @@ void ServerConnection::sendImage(QByteArray image)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out << IMAGE <<  (qint32)image.size() << image.constData();
+    int s = image.size();
+    out << IMAGE <<  image.size() << image;
 
     if(socket->write(dat) == 0)
     {
