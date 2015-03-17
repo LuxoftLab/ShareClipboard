@@ -118,7 +118,7 @@ void UDPService::listener(){
 
         packet = unpackPackage(stream);
 
-        if (received_id.contains(packet.id))
+        if (received_id.contains(packet.id)||localhost_ip.contains(sender_adr))
             continue;
 
         received_id.push_back(packet.id);
@@ -132,7 +132,7 @@ void UDPService::listener(){
             break;
 
         case GET_ROOM:
-            if(!localhost_ip.contains(sender_adr))
+            //if(!localhost_ip.contains(sender_adr))
                 emit roomRequested(sender_adr);
             break;
 
