@@ -44,7 +44,9 @@ void ServerConnectionHandlerRemoveMember::decode(QDataStream &in)
 void ServerConnectionHandlerImage::decode(QDataStream &in)
 {
     in >> size;
-    image = new char[size];
+    //image = new char[size];
+    QByteArray image;
     in >> image;
-    emit gotImage(QByteArray(image));
+    //emit gotImage(QByteArray::fromRawData(image, size));
+    emit gotImage(image);
 }

@@ -88,7 +88,8 @@ void ClientConnection::sendImage(QByteArray im)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out << IMAGE << im.size() << im.constData();
+
+    out << IMAGE << (qint32)im.size() << im;
     if(socket->write(dat) == 0)
     {
         qDebug() << "No data written";
@@ -124,7 +125,9 @@ void ClientConnection::emitImage(QDataStream& in)
 {
     qint32 size;
     in >> size;
-    char* image = new char[size];
+    //char* image = new char[size];
+    QByteArray image;
     in >> image;
-    emit onImage(QByteArray(image), this);
+    //emit onImage(QByteArray::fromRawData(image, size), this);
+    emit onImage(image, this);
 }

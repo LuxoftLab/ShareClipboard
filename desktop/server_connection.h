@@ -7,6 +7,11 @@
 
 #include <assert.h>
 #include <QByteArray>
+#include <QBuffer>
+#include <QImage>
+#include <QApplication>
+#include <QClipboard>
+#include <QMimeData>
 
 class ServerConnection : public Connection
 {
@@ -15,7 +20,7 @@ public:
     ServerConnection(QHostAddress host);
     int sendPassAndLogin(QString password, QString login);
     void sendText(QString text);
-    void sendImage(QByteArray);
+    void sendImage(QImage);
 
     ServerConnectionHandler* hand;
 public slots:

@@ -36,11 +36,8 @@ void ClientRoom::sendText(QString text)
 
 void ClientRoom::sendImage(QImage image)
 {
-    QByteArray ba;
-    QBuffer buffer(&ba);
-    buffer.open(QIODevice::WriteOnly);
-    image.save(&buffer, "PNG");
-    connection->sendImage(ba);
+    connection->sendImage(image);
+    qDebug() << image.height() << image.width();
 }
 
 ClientRoom::~ClientRoom()

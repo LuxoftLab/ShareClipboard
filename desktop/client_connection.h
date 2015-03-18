@@ -4,7 +4,11 @@
 #include "connection.h"
 #include "tcp_package.h"
 #include <assert.h>
-
+#include <QMimeData>
+#include <QApplication>
+#include <QClipboard>
+#include <QImage>
+#include <QBuffer>
 class ClientConnection : public Connection
 {
     Q_OBJECT

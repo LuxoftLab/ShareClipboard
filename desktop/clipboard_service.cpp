@@ -34,8 +34,6 @@ void ClipboardService::onClipboardChanged()
         data.type = "image/ *";
         data.data = qvariant_cast<QByteArray>(mimeData->imageData());   // TODO investigate converting of image to byte array
         QImage image = qvariant_cast<QImage>(mimeData->imageData());
-        int s = data.data.size();
-        int z = image.byteCount();
         emit(hasImage(image));
     }
     if (mimeData->hasText()) {
@@ -92,11 +90,14 @@ void ClipboardService::pushImage(QByteArray image)
     const QMimeData * existingData = clipboard->mimeData();
 
     //check if we already have the data
-    if (existingData->hasImage() && qvariant_cast<QByteArray>(existingData->imageData()) == image)
+    if (existingData->hasImage() &&
+            memcmp(image.constData(),
+            existingData->imageData().toByteArray().constData(), image.size()) == 0){
+        qDebug() << "same img"; //###
         return;
-
+    }
     QMimeData * mimeData = new QMimeData();
-    mimeData->setData("image/ *", image);
+    mimeData->setData("image/png", image);
     clipboard->setMimeData(mimeData);
 }
 

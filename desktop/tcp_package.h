@@ -1,6 +1,3 @@
-#include <QDataStream>
-#include <QHostAddress>
-
 #ifndef TCP_PACKAGE_H
 #define TCP_PACKAGE_H
 

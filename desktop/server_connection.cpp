@@ -57,13 +57,17 @@ void ServerConnection::sendText(QString text)
     }
 }
 
-void ServerConnection::sendImage(QByteArray image)
+void ServerConnection::sendImage(QImage image)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    int s = image.size();
-    out << IMAGE <<  image.size() << image;
 
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    image.save(&buffer, "png");
+
+    out << IMAGE << ba.size() << ba;
     if(socket->write(dat) == 0)
     {
         qDebug() << "No data written";
