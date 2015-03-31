@@ -8,7 +8,14 @@ ClientRoom::ClientRoom(QString name, QHostAddress host) : Room(name, "")
 void ClientRoom::connectToHost(QString login, QString pass)
 {
     this->pass = pass;
+    try{
     connection = new ServerConnection(host);
+    }
+    catch(QAbstractSocket::SocketError)
+    {
+        throw;
+    }
+
     connect(connection, SIGNAL(addMember(QString, QHostAddress)),
             this, SLOT(addMember(QString, QHostAddress)));
     connect(connection, SIGNAL(deleteMember(QHostAddress)),

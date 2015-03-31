@@ -2,6 +2,9 @@
 #include <QDataStream>
 #include <QHostAddress>
 
+//#include "client_connection.h"
+//class ClientConnection;
+
 #ifndef TCP_PACKAGE_H
 #define TCP_PACKAGE_H
 
@@ -15,20 +18,24 @@ enum pckg_t
     REMOVE
 };
 
+//PackageHandler
 class PackageHandler : public QObject
 {
     Q_OBJECT
 protected:
     qint32 address;
     int size;
+    int size2;
     char* text;
     char* login;
     char* image;
+    char* password;
 public:
     virtual void decode(QDataStream& in) = 0;
     void encode();
 };
 
+//ServerCOnnectionHandler
 class ServerConnectionHandler : public PackageHandler
 {
     Q_OBJECT
@@ -67,8 +74,42 @@ public:
     void decode(QDataStream &in);
 };
 
-class ClientConnectionHandler : public PackageHandler{};
+//ClientConnection Handler
+class ClientConnectionHandler : public PackageHandler
+{
+    Q_OBJECT
+public:
+    //void decode(QDataStream&);
+signals:
+    //void onText(QString, ClientConnection * const);
+    //void onImage(QByteArray);
+    //void verifyPass(QString, ClientConnection * const);
+};
 
+
+//class ClientConnectionHandlerText : public ClientConnectionHandler
+//{
+//    Q_OBJECT
+//public:
+//    void decode(QDataStream &in);
+//};
+
+
+//class ClientConnectionHandlerVerifyPass : public ClientConnectionHandler
+//{
+//    Q_OBJECT
+//public:
+//    //void decode(QDataStream &in, ClientConnection * const);
+//};
+
+//class ClientConnectionHandlerImage : public ClientConnectionHandler
+//{
+//    Q_OBJECT
+//public:
+//    void decode(QDataStream &in);
+//};
+
+//Factory
 class Factory
 {
 public:

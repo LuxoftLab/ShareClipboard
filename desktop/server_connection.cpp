@@ -7,12 +7,20 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
     socket->abort();
-    socket->connectToHost(host, PORT_NUMBER);
+    try
+    {
+        socket->connectToHost(host, PORT_NUMBER);
+    }
+    catch(QAbstractSocket::SocketError)
+    {
+        throw;
+    }
+
     if(!socket->waitForConnected(3000))
         qDebug() << socket->error();
 }
 
-int ServerConnection::sendPassAndLogin(QString password, QString login)
+void ServerConnection::sendPassAndLogin(QString password, QString login)
 {
    QByteArray dat;
    QDataStream out(&dat, QIODevice::WriteOnly);

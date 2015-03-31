@@ -149,7 +149,15 @@ void Controller::joinRoom(qint32 addr, QString pass)
             &clipboardService, SLOT(pushText(QString)));
     connect(clientRoom, SIGNAL(gotImage(QByteArray)),
             &clipboardService, SLOT(pushImage(QByteArray)));
+    try{
     clientRoom->connectToHost(login, pass);
+    }
+    catch(QAbstractSocket::SocketError)
+    {
+        qDebug() << "Socket problem. You probably have your Wifi turned off";
+        QMessageBox* networkerrormsg = new QMessageBox();
+        networkerrormsg->setText("Socket problem. You probably have your Wifi turned off");
+    }
 
     MainWindow().show();
 }

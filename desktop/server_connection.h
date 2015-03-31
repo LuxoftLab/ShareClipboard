@@ -12,13 +12,14 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
+#include <QMessageBox>
 
 class ServerConnection : public Connection
 {
     Q_OBJECT
 public:
     ServerConnection(QHostAddress host);
-    int sendPassAndLogin(QString password, QString login);
+    void sendPassAndLogin(QString password, QString login);
     void sendText(QString text);
     void sendImage(QImage);
 
@@ -33,11 +34,6 @@ signals:
     void gotText(QString);
     void gotImage(QByteArray);
     void gotData(QByteArray, QString);
-private:
-    void makeMember(QDataStream&);
-    void removeMember(QDataStream&);
-    void makeText(QDataStream&);
-    void makeImage(QDataStream&);
 private slots:
     void connected();
 };

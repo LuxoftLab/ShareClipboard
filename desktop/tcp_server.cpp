@@ -12,7 +12,7 @@ TCPServer::TCPServer()
 
 TCPServer::~TCPServer()
 {
-    delete newConnection;
+    //delete newConnection;
     delete server;
 }
 

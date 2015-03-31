@@ -50,3 +50,24 @@ void ServerConnectionHandlerImage::decode(QDataStream &in)
     //emit gotImage(QByteArray::fromRawData(image, size));
     emit gotImage(image);
 }
+
+
+//void ClientConnectionHandlerText::decode(QDataStream &in)
+//{
+//    in >> size;
+//    text = new char[size];
+//    in >> text;
+//    //emit(onText(QString::fromUtf8(text), this));
+//}
+
+
+//void ClientConnectionHandlerVerifyPass::decode(QDataStream &in, ClientConnection * const c)
+//{
+//    in >> size;
+//    password = new char[size];
+//    in >> password;
+//    in >> size2;
+//    login = new char[size2];
+//    in >> login;
+//    emit(verifyPass(QString::fromUtf8(password, size), c));
+//}
