@@ -20,7 +20,7 @@ class ServerConnection : public Connection
 public:
     ServerConnection(QHostAddress host);
     void sendPassAndLogin(QString password, QString login);
-    void sendText(QString text);
+    void sendText(QString text, bool);
     void sendImage(QImage);
 
     ServerConnectionHandler* hand;
@@ -34,6 +34,7 @@ signals:
     void gotText(QString);
     void gotImage(QByteArray);
     void gotData(QByteArray, QString);
+    void setNotUpdated();
 private slots:
     void connected();
 };

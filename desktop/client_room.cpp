@@ -3,6 +3,7 @@
 ClientRoom::ClientRoom(QString name, QHostAddress host) : Room(name, "")
 {
     this->host = host;
+    updated = false;
 }
 
 void ClientRoom::connectToHost(QString login, QString pass)
@@ -24,6 +25,8 @@ void ClientRoom::connectToHost(QString login, QString pass)
             this, SIGNAL(gotText(QString)));
     connect(connection, SIGNAL(gotImage(QByteArray)),
             this, SIGNAL(gotImage(QByteArray)));
+    connect(connection, SIGNAL(setNotUpdated()),
+            this, SLOT(setNotUpdated()));
 
     connection->sendPassAndLogin(pass, login);
 }
@@ -38,13 +41,23 @@ void ClientRoom::deleteMember(QHostAddress addr) {
 
 void ClientRoom::sendText(QString text)
 {
-    connection->sendText(text);
+    connection->sendText(text, updated);
 }
 
 void ClientRoom::sendImage(QImage image)
 {
     connection->sendImage(image);
     qDebug() << image.height() << image.width();
+}
+
+void ClientRoom::updateBuffer()
+{
+    updated = true;
+}
+
+void ClientRoom::setNotUpdated()
+{
+    updated = false;
 }
 
 ClientRoom::~ClientRoom()

@@ -24,6 +24,7 @@ signals:
     void deleteDataFromStorage(qint32);
     void hasText(QString);
     void hasImage(QImage);
+    void setUpdatedBuffer();
 public slots:
     void onClipboardChanged();
     void onSettingsChoosed(int value, bool isInKB);

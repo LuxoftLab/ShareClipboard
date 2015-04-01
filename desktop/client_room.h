@@ -31,10 +31,14 @@ public slots:
     void deleteMember(QHostAddress addr);
     void sendText(QString text);
     void sendImage(QImage);
+    void updateBuffer();
+    void setNotUpdated();
 signals:
     void gotData(QByteArray, QString);
     void gotText(QString);
     void gotImage(QByteArray);
+private:
+    bool updated;
 };
 
 #endif // CLIENT_ROOM_H

@@ -53,16 +53,20 @@ void ServerConnection::onData()
             this, SIGNAL(deleteMember(QHostAddress)));
     hand->decode(in);
 }
-void ServerConnection::sendText(QString text)
+void ServerConnection::sendText(QString text, bool updated)
 {
-    QByteArray dat;
-    QDataStream out(&dat, QIODevice::WriteOnly);
-    out << TEXT << text.toUtf8().size() << text.toUtf8();
+    if(!updated){
+        QByteArray dat;
+        QDataStream out(&dat, QIODevice::WriteOnly);
+        out << TEXT << text.toUtf8().size() << text.toUtf8();
 
-    if(socket->write(dat) == 0)
-    {
-        qDebug() << "No data written";
+        if(socket->write(dat) == 0)
+        {
+            qDebug() << "No data written";
+        }
     }
+    else
+        emit setNotUpdated();
 }
 
 void ServerConnection::sendImage(QImage image)
