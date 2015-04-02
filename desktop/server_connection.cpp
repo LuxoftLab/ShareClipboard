@@ -85,3 +85,37 @@ void ServerConnection::sendImage(QImage image)
         qDebug() << "No data written";
     }
 }
+
+void ServerConnection::sendImage(QByteArray image)
+{
+//    if(!updated)
+//    {
+//        QByteArray dat;
+//        QDataStream out(&dat, QIODevice::WriteOnly);
+
+//        out << IMAGE << image.size() << image;
+//        if(socket->write(dat) == 0)
+//        {
+//            qDebug() << "No data written";
+//        }
+//    }
+//    else
+//        emit setNotUpdated();
+}
+
+void ServerConnection::sendData(QByteArray arr, bool& updated, pckg_t type)
+{
+    if(!updated)
+    {
+        QByteArray dat;
+        QDataStream out(&dat, QIODevice::WriteOnly);
+        out << type << arr.size() << arr.constData();
+
+        if(socket->write(dat) == 0)
+        {
+            qDebug() << "No data written";
+        }
+    }
+    else
+        updated = false;
+}

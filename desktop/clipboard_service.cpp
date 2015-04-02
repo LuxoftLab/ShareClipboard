@@ -31,22 +31,21 @@ void ClipboardService::onClipboardChanged()
     if (mimeData->hasImage()) {
         text = "copied image #" + QString::number(qrand());
         qDebug() << "has image: " << text;
-        data.type = "image/ *";
+        data.type = "image/png";
         data.data = qvariant_cast<QByteArray>(mimeData->imageData());   // TODO investigate converting of image to byte array
-        QImage image = qvariant_cast<QImage>(mimeData->imageData());
-        emit(hasImage(image));
+//        QImage image = qvariant_cast<QImage>(mimeData->imageData());
+//        emit(hasImage(image));##
     }
     if (mimeData->hasText()) {
         qDebug() << "has text: " << mimeData->text();
         data.type = "text/plain";
-        data.data = mimeData->data(data.type);
-        text = mimeData->text();
-        emit(hasText(text));
+        data.data = mimeData->text().toUtf8();
+//        text = mimeData->text();
+//        emit(hasText(text));##
     }
     clipboardData.prepend(data);
     emit hasDataToText(minimizeText(text), data.dataID);
     emit hasData(data.data, data.type);
-
 }
 
 void ClipboardService::onSettingsChoosed(int value, bool isInKB)
@@ -56,20 +55,18 @@ void ClipboardService::onSettingsChoosed(int value, bool isInKB)
     this->clipboardData.resize(value);
 }
 
-void ClipboardService::pushDataToClipboardFromHosts(QByteArray data, QString type)
+void ClipboardService::pushFromHosts(QByteArray data, QString type)
 {
-    qDebug() << "on text from outer host";
-    const QMimeData * existingData = clipboard->mimeData();
-
-    //check if we already have the data
-    if (existingData->hasText() && existingData->text() == QString(data))
-        return;
-
     QMimeData * mimeData = new QMimeData();
     mimeData->setData(type, data);
+    emit setUpdatedBuffer();
     clipboard->setMimeData(mimeData);
+
+    qDebug() << "on text from outer host";
+    const QMimeData * existingData = clipboard->mimeData();
 }
 
+//##
 void ClipboardService::pushText(QString text)
 {
     qDebug() << "on text from outer host";
@@ -81,6 +78,7 @@ void ClipboardService::pushText(QString text)
     clipboard->setMimeData(mimeData);
 }
 
+//##
 void ClipboardService::pushImage(QByteArray image)
 {
     qDebug() << "on image from outer host";

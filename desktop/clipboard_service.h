@@ -29,7 +29,7 @@ public slots:
     void onClipboardChanged();
     void onSettingsChoosed(int value, bool isInKB);
     void pushDataToClipboardFromGui(qint32 dataId);
-    void pushDataToClipboardFromHosts(QByteArray data, QString type);
+    void pushFromHosts(QByteArray data, QString type);
     void pushText(QString);
     void pushImage(QByteArray);
 private:

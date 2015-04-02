@@ -126,6 +126,12 @@ void Controller::initUDPService()
     udpService->getRooms();
 }
 
+void Controller::initClipboardToClientRoomConnection()
+{
+
+
+}
+
 void Controller::joinRoom(qint32 addr, QString pass)
 {
     QHostAddress host(addr);
@@ -140,17 +146,7 @@ void Controller::joinRoom(qint32 addr, QString pass)
     qDebug() << "joined";
 
     QString login = "login";
-    connect(&clipboardService, SIGNAL(hasText(QString)), clientRoom, SLOT(sendText(QString)));
-    connect(&clipboardService, SIGNAL(hasImage(QImage)),
-            clientRoom, SLOT(sendImage(QImage)));
-//    connect(clientRoom, SIGNAL(gotData(QByteArray, QString)),
-//            &clipboardService, SLOT(pushDataToClipboardFromHosts(QByteArray,QString)));
-    connect(clientRoom, SIGNAL(gotText(QString)),
-            &clipboardService, SLOT(pushText(QString)));
-    connect(clientRoom, SIGNAL(gotImage(QByteArray)),
-            &clipboardService, SLOT(pushImage(QByteArray)));
-    connect(&clipboardService, SIGNAL(setUpdatedBuffer()),
-            clientRoom, SLOT(updateBuffer()));
+
     try{
     clientRoom->connectToHost(login, pass);
     }
@@ -160,6 +156,20 @@ void Controller::joinRoom(qint32 addr, QString pass)
         QMessageBox* networkerrormsg = new QMessageBox();
         networkerrormsg->setText("Socket problem. You probably have your Wifi turned off");
     }
-
+    connect(&clipboardService, SIGNAL(hasData(QByteArray, QString)),
+            clientRoom, SLOT(sendData(QByteArray, QString)));
+    connect(&clipboardService, SIGNAL(hasData(QByteArray,QString)),
+            clientRoom, SLOT(test(QByteArray, QString)));
+//    connect(&clipboardService, SIGNAL(hasText(QString)), clientRoom, SLOT(sendText(QString)));
+//    connect(&clipboardService, SIGNAL(hasImage(QImage)),
+//            clientRoom, SLOT(sendImage(QImage)));##
+    connect(clientRoom, SIGNAL(gotData(QByteArray, QString)),
+            &clipboardService, SLOT(pushDataToClipboardFromHosts(QByteArray,QString)));
+    connect(clientRoom, SIGNAL(gotText(QString)),
+            &clipboardService, SLOT(pushText(QString)));
+    connect(clientRoom, SIGNAL(gotImage(QByteArray)),
+            &clipboardService, SLOT(pushImage(QByteArray)));
+    connect(&clipboardService, SIGNAL(setUpdatedBuffer()),
+            clientRoom, SLOT(updateBuffer()));
     MainWindow().show();
 }

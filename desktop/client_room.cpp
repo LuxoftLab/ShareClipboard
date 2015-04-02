@@ -44,6 +44,27 @@ void ClientRoom::sendText(QString text)
     connection->sendText(text, updated);
 }
 
+void ClientRoom::sendData(QByteArray data, QString type)
+{
+    pckg_t p_type;
+    if(type == "text/plain")
+    {
+         p_type = TEXT;
+        //connection->sendText(QString::fromUtf8(data), updated, type);##
+    }
+    else if(type == "image/png")
+        p_type = IMAGE;
+//        connection->sendImage(data, updated);##
+    else
+    {
+        qDebug() << "no such mime type available";
+        return;
+    }
+
+    connection->sendData(data, updated, p_type);
+}
+
+
 void ClientRoom::sendImage(QImage image)
 {
     connection->sendImage(image);

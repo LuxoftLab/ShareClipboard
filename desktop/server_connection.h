@@ -22,7 +22,8 @@ public:
     void sendPassAndLogin(QString password, QString login);
     void sendText(QString text, bool);
     void sendImage(QImage);
-
+    void sendImage(QByteArray);
+    void sendData(QByteArray, bool&, pckg_t);
     ServerConnectionHandler* hand;
 public slots:
     void onData();
