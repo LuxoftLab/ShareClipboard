@@ -5,7 +5,8 @@ void ServerConnectionHandlerText::decode(QDataStream &in)
     in >> size;
     text = new char[size];
     in >> text;
-    emit gotText(QString::fromUtf8(text).toUtf8());
+    //emit gotText(QString::fromUtf8(text).toUtf8());
+    emit gotData(QByteArray::fromRawData(text, size), "text/plain");
 }
 
 void ServerConnectionHandlerMember::decode(QDataStream &in)
@@ -48,7 +49,8 @@ void ServerConnectionHandlerImage::decode(QDataStream &in)
     QByteArray image;
     in >> image;
     //emit gotImage(QByteArray::fromRawData(image, size));
-    emit gotImage(image);
+    //emit gotImage(image);
+    emit gotData(image, "image/png");
 }
 
 

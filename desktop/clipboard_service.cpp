@@ -32,7 +32,12 @@ void ClipboardService::onClipboardChanged()
         text = "copied image #" + QString::number(qrand());
         qDebug() << "has image: " << text;
         data.type = "image/png";
-        data.data = qvariant_cast<QByteArray>(mimeData->imageData());   // TODO investigate converting of image to byte array
+//        if(mimeData->imageData().canConvert<QByteArray>())
+            //data.data = qvariant_cast<QByteArray>(mimeData->imageData());   // TODO investigate converting of image to byte array
+            data.data = mimeData->imageData().toByteArray();
+//        else
+//            qDebug() << "cannot convert to QBytearray :(";
+
 //        QImage image = qvariant_cast<QImage>(mimeData->imageData());
 //        emit(hasImage(image));##
     }
@@ -44,7 +49,7 @@ void ClipboardService::onClipboardChanged()
 //        emit(hasText(text));##
     }
     clipboardData.prepend(data);
-    emit hasDataToText(minimizeText(text), data.dataID);
+    emit     hasDataToText(minimizeText(text), data.dataID);
     emit hasData(data.data, data.type);
 }
 

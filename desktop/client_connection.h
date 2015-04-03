@@ -26,6 +26,7 @@ public:
     QHostAddress makeHostAdress(char*);
     void sendText(QString);
     void sendImage(QByteArray);
+    void sendData(QByteArray arr, pckg_t type);
 public slots:
     void onData();
     void emitText(QDataStream&);

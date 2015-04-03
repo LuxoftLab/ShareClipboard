@@ -42,6 +42,7 @@ class ServerConnectionHandler : public PackageHandler
 signals:
     void gotText(QString);
     void gotImage(QByteArray);
+    void gotData(QByteArray, QString);
     void addMember(QString, QHostAddress);
     void deleteMember(QHostAddress);
 };

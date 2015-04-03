@@ -82,7 +82,8 @@ void ServerRoom::onImage(QByteArray im, ClientConnection * const)
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
-        t->sendImage(im);
+        //t->sendImage(im);
+        t->sendData(im, IMAGE);
     }
 }
 
@@ -99,7 +100,8 @@ void ServerRoom::sendText(QString s, ClientConnection * owner)
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
-        t->sendText(s);
+        //t->sendText(s);
+        t->sendData(s.toUtf8(), TEXT);
     }
 }
 

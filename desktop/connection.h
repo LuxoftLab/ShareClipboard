@@ -5,6 +5,8 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 
+#include "tcp_package.h"
+
 class Connection : public QObject
 {
     Q_OBJECT
