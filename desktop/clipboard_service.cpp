@@ -34,12 +34,18 @@ void ClipboardService::onClipboardChanged()
         data.type = "image/png";
 //        if(mimeData->imageData().canConvert<QByteArray>())
             //data.data = qvariant_cast<QByteArray>(mimeData->imageData());   // TODO investigate converting of image to byte array
-            data.data = mimeData->imageData().toByteArray();
+            //data.data = mimeData->imageData().toByteArray();
+            //int size = mimeData->imageData();
 //        else
 //            qDebug() << "cannot convert to QBytearray :(";
 
-//        QImage image = qvariant_cast<QImage>(mimeData->imageData());
-//        emit(hasImage(image));##
+        QImage image = qvariant_cast<QImage>(mimeData->imageData());
+        QByteArray ba;
+        QBuffer buffer(&ba);
+        buffer.open(QIODevice::WriteOnly);
+        image.save(&buffer, "png");
+        data.data = ba;
+        //emit(hasImage(image));##
     }
     if (mimeData->hasText()) {
         qDebug() << "has text: " << mimeData->text();
@@ -49,8 +55,9 @@ void ClipboardService::onClipboardChanged()
 //        emit(hasText(text));##
     }
     clipboardData.prepend(data);
-    emit     hasDataToText(minimizeText(text), data.dataID);
+    emit hasDataToText(minimizeText(text), data.dataID);
     emit hasData(data.data, data.type);
+    int sz = data.data.size();//##
 }
 
 void ClipboardService::onSettingsChoosed(int value, bool isInKB)

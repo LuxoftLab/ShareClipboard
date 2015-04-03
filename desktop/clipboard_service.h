@@ -6,6 +6,7 @@
 #include <QPixmap>
 #include <QList>
 #include <QImage>
+#include <QBuffer>
 
 struct ClipboardData {
     qint32 dataID;

@@ -21,7 +21,9 @@ void ClientRoom::connectToHost(QString login, QString pass)
             this, SLOT(addMember(QString, QHostAddress)));
     connect(connection, SIGNAL(deleteMember(QHostAddress)),
             this, SLOT(deleteMember(QHostAddress)));
-    connect(connection, SIGNAL(gotText(QString)),
+    connect(connection, SIGNAL(gotData(QByteArray,QString)),
+            this, SIGNAL(gotData(QByteArray,QString)));
+    connect(connection, SIGNAL(gotText(QString)),//##
             this, SIGNAL(gotText(QString)));
     connect(connection, SIGNAL(gotImage(QByteArray)),
             this, SIGNAL(gotImage(QByteArray)));
@@ -60,7 +62,7 @@ void ClientRoom::sendData(QByteArray data, QString type)
         qDebug() << "no such mime type available";
         return;
     }
-
+    int sz = data.size(); //##
     connection->sendData(data, updated, p_type);
 }
 
