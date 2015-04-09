@@ -1,14 +1,14 @@
 #ifndef ROOMSLISTDIALOG_H
 #define ROOMSLISTDIALOG_H
 
+#include "ui_roomslistdialog.h"
+#include "passworddialog.h"
+#include "createroomdialog.h"
+
 #include <QDialog>
 #include <QMessageBox>
 #include <QListWidgetItem>
 #include <QHostAddress>
-
-#include "ui_roomslistdialog.h"
-#include "passworddialog.h"
-#include "createroomdialog.h"
 
 namespace Ui {
 class RoomsListDialog;
