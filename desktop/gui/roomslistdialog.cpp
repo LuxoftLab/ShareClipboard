@@ -1,11 +1,4 @@
 #include "roomslistdialog.h"
-#include "ui_roomslistdialog.h"
-#include "passworddialog.h"
-#include "createroomdialog.h"
-
-#include "QDebug"
-
-#include <QHostAddress>
 
 RoomsListDialog::RoomsListDialog(QWidget *parent) :
     QDialog(parent),
@@ -24,24 +17,6 @@ RoomsListDialog::~RoomsListDialog()
     delete ui;
 }
 
-void RoomsListDialog::setRoomsHash(QMap<QString, qint32> rooms, QString serverName)
-{
-    QList<QString> roomsList = rooms.keys();
-    QList<QString>::iterator i;
-    for(i = roomsList.begin(); i != roomsList.end(); ++i)
-    {
-        ui->listWidget->addItem(*i);
-    }
-
-//    localServer = serverName;
-//    if(localServer == QString::null)
-//    {
-//        ui->pushButton->setText("New room");
-//    } else {
-//        ui->pushButton->setText("Delete your room");
-//    }
-}
-
 void RoomsListDialog::onPasswordTyped(QString password)
 {
     QString name = ui->listWidget->selectedItems()[0]->text();
@@ -55,10 +30,9 @@ void RoomsListDialog::onNewRoomButtonClicked()
 {  
     if(localServer ==  NULL) {
         CreateRoomDialog dialog;
-        connect(&dialog, SIGNAL(createRoom(QString,QString)),
-                this, SIGNAL(newRoomCreated(QString,QString))); // Where is this used?!?
         dialog.exec();
-    } else {
+    }
+    else {
         emit deleteServerRoom();
     }
 }

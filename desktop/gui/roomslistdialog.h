@@ -4,6 +4,11 @@
 #include <QDialog>
 #include <QMessageBox>
 #include <QListWidgetItem>
+#include <QHostAddress>
+
+#include "ui_roomslistdialog.h"
+#include "passworddialog.h"
+#include "createroomdialog.h"
 
 namespace Ui {
 class RoomsListDialog;
@@ -17,11 +22,8 @@ public:
     explicit RoomsListDialog(QWidget * parent = 0);
     ~RoomsListDialog();
 
-    void setRoomsHash(QMap<QString, qint32> rooms, QString serverName);
-
 signals:
     void roomChoosed(qint32 roomIp, QString password);
-    void newRoomCreated(QString name, QString password);
     void deleteServerRoom();
 
 public slots:
@@ -29,6 +31,7 @@ public slots:
     void addRoom(QString name, qint32 id);
     void deleteRoom(QString name);
     void onServerIsUp(QString serverName);
+
 private slots:
     void onListItemDoubleClicked(QModelIndex index);
     void onPasswordTyped(QString password);
@@ -38,7 +41,6 @@ private:
     QMap<QString, qint32> rooms;
     Ui::RoomsListDialog *ui;
     QString localServer;
-
 };
 
 #endif // ROOMSLISTDIALOG_H
