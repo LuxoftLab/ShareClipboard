@@ -4,6 +4,7 @@
 #include "ui_roomslistdialog.h"
 #include "passworddialog.h"
 #include "createroomdialog.h"
+#include <assert.h>
 
 #include <QDialog>
 #include <QMessageBox>
@@ -36,6 +37,7 @@ private slots:
     void onListItemDoubleClicked(QModelIndex index);
     void onPasswordTyped(QString password);
     void onNewRoomButtonClicked();
+    void deleteServerRoomSlot();
 
 private:
     QMap<QString, qint32> rooms;

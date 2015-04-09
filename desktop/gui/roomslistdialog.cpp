@@ -8,6 +8,7 @@ RoomsListDialog::RoomsListDialog(QWidget *parent) :
 
     connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(onNewRoomButtonClicked()));
     connect(ui->listWidget, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onListItemDoubleClicked(QModelIndex)));
+    connect(this, SIGNAL(deleteServerRoom()), this, SLOT(deleteServerRoomSlot()));
 
     localServer = "";
 }
@@ -37,10 +38,16 @@ void RoomsListDialog::onNewRoomButtonClicked()
     }
 }
 
+void RoomsListDialog::deleteServerRoomSlot()
+{
+    emit deleteRoom(localServer);
+}
+
 void RoomsListDialog::onServerIsUp(QString serverName)
 {
     localServer = serverName;
     ui->pushButton->setText("Delete my room");
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(deleteServerRoomSlot()));
 }
 
 void RoomsListDialog::onListItemDoubleClicked(QModelIndex index)
@@ -70,12 +77,15 @@ void RoomsListDialog::deleteRoom(QString name)
         localServer = "";
         ui->pushButton->setText("New");
     }
-
+    qDebug() << name;
     rooms.remove(name);
 
     QList <QListWidgetItem*> list = ui->listWidget->findItems(name, Qt::MatchFixedString);
-    int row = ui->listWidget->row(list.first());
-    QListWidgetItem* item = ui->listWidget->takeItem(row);
+    for (QList<QListWidgetItem*>::iterator it = list.begin(); it < list.end(); ++it)
+        qDebug() << (*it)->text();
 
-    delete item;
+    qDebug() << list.empty();
+    int row = ui->listWidget->row(*list.begin());
+    QListWidgetItem* item = ui->listWidget->takeItem(row);
+    ui->listWidget->removeItemWidget(item);
 }
