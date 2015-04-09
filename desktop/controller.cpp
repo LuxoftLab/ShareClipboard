@@ -6,6 +6,7 @@ Controller::Controller(MainWindow *mainWindow) : QObject(0)
 {
     this->mainWindow = mainWindow;
     connect(mainWindow, SIGNAL(roomListOpened(RoomsListDialog*)), this, SLOT(onRoomsListOpen(RoomsListDialog*)));
+    this->mainWindow->connectRoomListDialog();
     initClipboardToGuiConnection();
     initUDPService();
 }

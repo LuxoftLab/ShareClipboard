@@ -10,7 +10,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    roomDialog = NULL;
+    roomDialog = new RoomsListDialog();
+
     ui->setupUi(this);
     createTrayIcon();
 
@@ -41,9 +42,10 @@ bool MainWindow::askForFileDownload(QString fileName)
 
 void MainWindow::chooseRoomClicked()
 {
-    if(roomDialog == NULL) //need to be checked on 2 devices
-        roomDialog = new RoomsListDialog();
-    emit roomListOpened(roomDialog);
+//    if(roomDialog == NULL) { //need to be checked on 2 devices
+//        roomDialog = new RoomsListDialog();
+//        emit roomListOpened(roomDialog);
+//    }
     roomDialog->exec();
 
     // TODO implement changing of room after connection
@@ -151,6 +153,11 @@ void MainWindow::fillDevicesList(QList<QString> list) {
     for(i = list.begin(); i != list.end(); i++) {
         ui->listWidget->addItem(*i);
     }
+}
+
+void MainWindow::connectRoomListDialog()
+{
+    emit roomListOpened(roomDialog);
 }
 
 void MainWindow::newDevicePluged(QString deviceName)

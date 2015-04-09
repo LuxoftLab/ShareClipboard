@@ -56,7 +56,7 @@ void RoomsListDialog::onNewRoomButtonClicked()
     if(localServer ==  NULL) {
         CreateRoomDialog dialog;
         connect(&dialog, SIGNAL(createRoom(QString,QString)),
-                this, SIGNAL(newRoomCreated(QString,QString)));
+                this, SIGNAL(newRoomCreated(QString,QString))); // Where is this used?!?
         dialog.exec();
     } else {
         emit deleteServerRoom();

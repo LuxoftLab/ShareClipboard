@@ -21,6 +21,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void fillDevicesList(QList<QString> list);
+    void connectRoomListDialog();
 signals:
     void downloadFile();
     void changeName(QString name);
