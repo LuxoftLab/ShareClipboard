@@ -1,29 +1,124 @@
-#include "server_connection.h"
-
-QByteArray ServerConnection::makeBinaryPack(pckg_t type, char* dat, int datsize){
-    Data d;
-    d.rawData = dat;
-    TcpPackageHeader head = TcpPackageHeader(type, datsize);
-    TcpPackage pack = TcpPackage(head, d);
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out << pack;
-    return block;
-}
+ #include "server_connection.h"
 
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
-    socket->connectToHost(host, PORT_NUMBER);
-    //connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
-              //SLOT(throwSocketError(QAbstractSocket::SocketError)));
-    //#todo error handlers
-    connect(socket, SIGNAL(readyRead()), this, SLOT(connectToServer()));
+    socket = new QTcpSocket(this);
+    hand = (new ServerConnectionFactory())->getHandler((pckg_t)0);
+    connect(socket, SIGNAL(connected()), this, SLOT(connected()));
+    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
+    socket->abort();
+    try
+    {
+        socket->connectToHost(host, PORT_NUMBER);
+    }
+    catch(QAbstractSocket::SocketError)
+    {
+        throw;
+    }
+
+    if(!socket->waitForConnected(3000))
+        qDebug() << socket->error();
 }
 
 void ServerConnection::sendPassAndLogin(QString password, QString login)
 {
    QByteArray dat;
    QDataStream out(&dat, QIODevice::WriteOnly);
-   out << login.size() << login << password.size() << password;
-   socket->write(makeBinaryPack(PASS, dat.data(), dat.size()));
+   out << PASS << password.toUtf8().size() << password.toUtf8().data()
+       << login.toUtf8().size() << login.toUtf8().data();
+
+   if(socket->write(dat) == 0)
+   {
+       qDebug() << "No data written";
+   }
+}
+
+void ServerConnection::connected()
+{
+    qDebug() << "connected";
+}
+
+void ServerConnection::onData()
+{
+    QDataStream in(socket);
+    qint32 packt;
+    in >> packt;
+    hand = (new ServerConnectionFactory())->getHandler((pckg_t)packt);
+    connect(hand, SIGNAL(gotText(QString)), this, SIGNAL(gotText(QString)));
+    connect(hand, SIGNAL(gotImage(QByteArray)),
+            this, SIGNAL(gotImage(QByteArray)));
+    connect(hand, SIGNAL(gotData(QByteArray,QString)),
+            this, SIGNAL(gotData(QByteArray,QString)));
+    connect(hand, SIGNAL(addMember(QString,QHostAddress)),
+            this, SIGNAL(addMember(QString,QHostAddress)));
+    connect(hand, SIGNAL(deleteMember(QHostAddress)),
+            this, SIGNAL(deleteMember(QHostAddress)));
+    hand->decode(in);
+}
+void ServerConnection::sendText(QString text, bool updated)
+{
+    if(!updated){
+        QByteArray dat;
+        QDataStream out(&dat, QIODevice::WriteOnly);
+        out << TEXT << text.toUtf8().size() << text.toUtf8();
+
+        if(socket->write(dat) == 0)
+        {
+            qDebug() << "No data written";
+        }
+    }
+    else
+        emit setNotUpdated();
+}
+
+void ServerConnection::sendImage(QImage image)
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    image.save(&buffer, "png");
+
+    out << IMAGE << ba.size() << ba;
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
+}
+
+void ServerConnection::sendImage(QByteArray image)
+{
+//    if(!updated)
+//    {
+//        QByteArray dat;
+//        QDataStream out(&dat, QIODevice::WriteOnly);
+
+//        out << IMAGE << image.size() << image;
+//        if(socket->write(dat) == 0)
+//        {
+//            qDebug() << "No data written";
+//        }
+//    }
+//    else
+//        emit setNotUpdated();
+}
+
+void ServerConnection::sendData(QByteArray arr, bool& updated, pckg_t type)
+{
+    if(!updated)
+    {
+        QByteArray dat;
+        QDataStream out(&dat, QIODevice::WriteOnly);
+        int s = arr.size();//##
+        out << type << arr.size() << arr.constData();
+
+        if(socket->write(dat) == 0)
+        {
+            qDebug() << "No data written";
+        }
+    }
+    else
+        updated = false;
 }

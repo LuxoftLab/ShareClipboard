@@ -1,15 +1,17 @@
-#ifndef PACKET_H
-#define PACKET_H
+#ifndef UDP_PACKET_H
+#define UDP_PACKET_H
 
-#define REPEAT 30
-#define UDP_PORT 12345
+#include <QDataStream>
+#include "constants.h"
 
-enum PacketType{ROOM=0,GET_ROOM=1,DELETE_ROOM=2};
+enum PacketType{ROOM = 0, GET_ROOM = 1, DELETE_ROOM = 2};
 
 struct DatagramPacket{
-  quint8 type;
-  qint32 id;
-  QString name;
+    quint8 type;
+    qint32 id;
+    QString name;
 };
+
+DatagramPacket unpackPackage(QDataStream& stream);
 
 #endif

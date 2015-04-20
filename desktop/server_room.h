@@ -10,6 +10,7 @@
 
 class ServerRoom : public Room
 {
+    Q_OBJECT
     TCPServer * server;
     QMap<qint32, ClientConnection*> notVerified;
     QMap<qint32, ClientConnection*> verified;
@@ -20,7 +21,12 @@ public:
 public slots:
     void addMember(QTcpSocket * socket);
     void deleteMember(QHostAddress addr);
-    bool verifyPass(QString pass, ClientConnection * conn);
+    bool verifyPass(QString pass, ClientConnection * const);
+    void onText(QString, ClientConnection * const);
+    void onImage(QByteArray, ClientConnection * const);
+private:
+    void saveText();
+    void sendText(QString, ClientConnection *);
 };
 
 #endif // SERVER_ROOM_H

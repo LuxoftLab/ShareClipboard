@@ -11,6 +11,9 @@
 #include "udp_service.h"
 #include "server_room.h"
 #include "client_room.h"
+#include "clipboard_service.h"
+#include "gui/mainwindow.h"
+#include "gui/roomslistdialog.h"
 
 class Controller : public QObject
 {
@@ -19,18 +22,30 @@ private:
     UDPService* udpService = NULL;
     ServerRoom* serverRoom = NULL;
     ClientRoom* clientRoom = NULL;
-    QMap<qint32, ClientRoom*> rooms;
+    QMap <qint32, ClientRoom*> rooms;
+    MainWindow * mainWindow;
+    ClipboardService clipboardService;
 public:
-    Controller();
+    Controller(MainWindow * mainWindow);
     ~Controller();
 signals:
     void roomAdded(QString name, qint32 ip);
+    void roomDeleted(QString name);
+    void serverIsUp(QString name);
 public slots:
-    void createRoom(QString name, QString pass);
+    void createServerRoom(QString name, QString pass);
     void joinRoom(qint32 addr, QString pass);
-    void getRoom();
+    void getRoom(QHostAddress sender_addr);
     void addRoom(QString name, QHostAddress host);
     void deleteRoom(QHostAddress host);
+    void deleteServerRoom();
+
+    void onRoomsListOpen(RoomsListDialog *roomsDialog);
+
+private:
+    void initClipboardToGuiConnection();
+    void initUDPService();
+    void initClipboardToClientRoomConnection();
 };
 
 #endif // CONTROLLER_H

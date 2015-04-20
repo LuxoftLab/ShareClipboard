@@ -1,48 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PasswordDialog</class>
- <widget class="QDialog" name="PasswordDialog">
+ <class>ChangeNameDialog</class>
+ <widget class="QDialog" name="ChangeNameDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>176</width>
-    <height>123</height>
+    <height>88</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Имя комнаты </string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Введите Пароль</string>
+        <string>Введите новое имя в комнате:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit">
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="lineEdit"/>
      </item>
      <item>
       <widget class="QDialogButtonBox" name="buttonBox">
@@ -63,7 +45,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>PasswordDialog</receiver>
+   <receiver>ChangeNameDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -79,7 +61,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>PasswordDialog</receiver>
+   <receiver>ChangeNameDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

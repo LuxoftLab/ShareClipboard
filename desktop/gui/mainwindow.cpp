@@ -1,20 +1,31 @@
 #include <QMessageBox>
+#include <QtNetwork/QHostInfo>
 #include "mainwindow.h"
 #include "roomslistdialog.h"
 #include "ui_mainwindow.h"
+#include "changenamedialog.h"
+#include "settingsdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    roomDialog = new RoomsListDialog();
+
     ui->setupUi(this);
     createTrayIcon();
 
+    ui->nameLabel->setText("Имя устройства: " + QHostInfo::localHostName());
+
+    connect(ui->changeNamePushButton, SIGNAL(clicked()), this, SLOT(changeNameClicked()));
     connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
+    connect(ui->clipboardText, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(clipboardDataListItemDBClicked(QListWidgetItem*)));
+    connect(ui->actionOpen_Settings_2, SIGNAL(triggered()), this, SLOT(onSettingsClicked()));
 }
 
 MainWindow::~MainWindow()
 {
+    delete roomDialog;
     delete ui;
 }
 
@@ -31,24 +42,38 @@ bool MainWindow::askForFileDownload(QString fileName)
 
 void MainWindow::chooseRoomClicked()
 {
-    RoomsListDialog dialog;
+//    if(roomDialog == NULL) { //need to be checked on 2 devices
+//        roomDialog = new RoomsListDialog();
+//        emit roomListOpened(roomDialog);
+//    }
+    roomDialog->exec();
+
+    // TODO implement changing of room after connection
+   // ui->pushButton_3->setEnabled(false);
+}
+
+void MainWindow::changeNameClicked()
+{
+    ChangeNameDialog dialog;
+    connect(&dialog, SIGNAL(nameChoosed(QString)), this, SIGNAL(changeName(QString)));
     dialog.exec();
 }
 
-void MainWindow::cleapboardChanged(QMimeData * mimeData)
+void MainWindow::onSettingsClicked()
 {
-    if (mimeData->hasImage()) {
-        ui->cleapboardText->setPixmap(qvariant_cast<QPixmap>(mimeData->imageData()));
-    } else if (mimeData->hasUrls()) {
-        ui->cleapboardText->setText("url: " + mimeData->text());
-        if(askForFileDownload(mimeData->text())) {
-            emit downloadFile();
-        }
-    } else if (mimeData->hasText()) {
-        ui->cleapboardText->setText(mimeData->text());
-    }  else {
-        ui->cleapboardText->setText(tr("Cannot display data"));
+    SettingsDialog settingsDialog;
+    connect(&settingsDialog, SIGNAL(settingsAccepted(int,bool)), this, SLOT(onSettingsAccepted(int,bool)));
+    settingsDialog.exec();
+}
+
+void MainWindow::onSettingsAccepted(int value, bool isInKB)
+{
+    while(ui->listWidget->count() > value) {
+        delete ui->clipboardText->takeItem(ui->listWidget->count() - 1);
     }
+    qDebug() << "asdfasdf";
+    dataIdsVector.resize(value);
+    emit onSettingsAccepted(value, isInKB);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -63,6 +88,17 @@ void MainWindow::closeEvent(QCloseEvent *event)
         hide();
         event->ignore();
     }
+}
+
+void MainWindow::dataPushedToClipboard(QString text, qint32 id) {
+    dataIdsVector.prepend(id);
+    ui->clipboardText->insertItem(0, text);
+}
+
+void MainWindow::deleteItemFromList(qint32 id)
+{
+    delete ui->clipboardText->takeItem(dataIdsVector.indexOf(id));
+    dataIdsVector.removeLast();
 }
 
 void MainWindow::createTrayIcon()
@@ -97,16 +133,19 @@ void MainWindow::createTrayIcon()
     trayIconMenu->addAction(quitAction);
 
     trayIcon = new QSystemTrayIcon(this);
+
     trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setToolTip("Shared cleapboard");
-    trayIcon->setIcon(QIcon(":images/communities.svg"));
+    trayIcon->setToolTip("Shared clipboard");
+    trayIcon->setIcon(QIcon(":/images/colorful.svg"));
+    //trayIcon->setIcon(QIcon(":/images/communities.svg"));
+    //trayIcon->setIcon(QIcon::fromTheme("edit-undo"));
     trayIcon->show();
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
     connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(trayMessageClicked()));
 
-    trayIcon->showMessage("Shared Cleapboard run", "Click to open main window");
+    trayIcon->showMessage("Shared Clipboard run", "Click to open main window");
 }
 
 void MainWindow::fillDevicesList(QList<QString> list) {
@@ -116,9 +155,19 @@ void MainWindow::fillDevicesList(QList<QString> list) {
     }
 }
 
+void MainWindow::connectRoomListDialog()
+{
+    emit roomListOpened(roomDialog);
+}
+
 void MainWindow::newDevicePluged(QString deviceName)
 {
-    trayIcon->showMessage(deviceName + tr("& connected to room"), "Shared cleapboard");
+    trayIcon->showMessage(deviceName + tr("& connected to room"), "Shared clipboard");
+}
+
+void MainWindow::newNameVerified(QString newName)
+{
+    ui->nameLabel->setText("Имя устройства: " + newName);
 }
 
 void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
@@ -134,6 +183,11 @@ void MainWindow::trayMessageClicked()
     show();
     raise();
     activateWindow();
+}
+
+void MainWindow::clipboardDataListItemDBClicked(QListWidgetItem * listItem)
+{
+    emit pushDataChoosed(dataIdsVector.at(ui->clipboardText->row(listItem)));
 }
 
 

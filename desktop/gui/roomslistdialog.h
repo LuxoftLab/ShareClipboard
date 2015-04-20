@@ -1,8 +1,15 @@
 #ifndef ROOMSLISTDIALOG_H
 #define ROOMSLISTDIALOG_H
 
+#include "ui_roomslistdialog.h"
+#include "passworddialog.h"
+#include "createroomdialog.h"
+#include <assert.h>
+
 #include <QDialog>
 #include <QMessageBox>
+#include <QListWidgetItem>
+#include <QHostAddress>
 
 namespace Ui {
 class RoomsListDialog;
@@ -16,25 +23,27 @@ public:
     explicit RoomsListDialog(QWidget * parent = 0);
     ~RoomsListDialog();
 
-    void setRoomsHash(QHash<QString, qint32> rooms);
-
 signals:
-    void roomChoosed(qint32 roomId, QString password);
-    void newRoomCreated(QString name, QString password);
+    void roomChoosed(qint32 roomIp, QString password);
+    void deleteServerRoom();
+    void newRoomCreated(QString, QString);
 
 public slots:
     void accept();
     void addRoom(QString name, qint32 id);
+    void deleteRoom(QString name);
+    void onServerIsUp(QString serverName);
 
 private slots:
-//    void listItemDoubleClicked();
+    void onListItemDoubleClicked(QModelIndex index);
     void onPasswordTyped(QString password);
     void onNewRoomButtonClicked();
+    void deleteServerRoomSlot();
 
 private:
-    QHash<QString, qint32> rooms;
+    QMap<QString, qint32> rooms;
     Ui::RoomsListDialog *ui;
-
+    QString localServer;
 };
 
 #endif // ROOMSLISTDIALOG_H

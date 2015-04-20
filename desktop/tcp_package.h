@@ -1,49 +1,132 @@
+#include <QObject>
+#include <QDataStream>
+#include <QHostAddress>
+
+//#include "client_connection.h"
+//class ClientConnection;
+
 #ifndef TCP_PACKAGE_H
 #define TCP_PACKAGE_H
 
-#include <QDataStream>
-
-enum pckg_t{TEXT, PASS, MEMBER, RAW, INVALID_PASS, ADRESS, REMOVE};
-
-union Data{
-    QString* strData;
-    char* rawData;
+enum pckg_t
+{
+    TEXT,
+    IMAGE,
+    PASS,
+    MEMBER,
+    INVALID_PASS,
+    REMOVE
 };
 
-
-//template<typename T>
-//const QDataStream& operator>>(const QDataStream& in, T& t){
-//    int i;
-//    in >> i;
-//    t = (pckg_t)i;
-//    return in;
-//}
-
-struct TcpPackageHeader{
-
-    pckg_t type;
-    int length;
-    TcpPackageHeader(char t, int l);
-    TcpPackageHeader();
-};
-
-class TcpPackage{
-    friend QDataStream& operator <<(QDataStream&, const TcpPackage&);
-    friend const QDataStream& operator >>(QDataStream&, TcpPackage&);
+//PackageHandler
+class PackageHandler : public QObject
+{
+    Q_OBJECT
+protected:
+    qint32 address;
+    int size;
+    int size2;
+    char* text;
+    char* login;
+    char* image;
+    char* password;
 public:
-    TcpPackage(TcpPackageHeader, Data);
-    TcpPackage();
-    const TcpPackageHeader* getHeader() const;
-    const Data* getData() const;
-
-    void setHeader(TcpPackageHeader);
-    void setData(Data);
-
-private:
-    TcpPackageHeader header;
-    Data interior;
-
+    virtual void decode(QDataStream& in) = 0;
+    void encode();
 };
 
+//ServerCOnnectionHandler
+class ServerConnectionHandler : public PackageHandler
+{
+    Q_OBJECT
+signals:
+    void gotText(QString);
+    void gotImage(QByteArray);
+    void gotData(QByteArray, QString);
+    void addMember(QString, QHostAddress);
+    void deleteMember(QHostAddress);
+};
+
+class ServerConnectionHandlerText : public ServerConnectionHandler
+{
+    Q_OBJECT
+public:
+    void decode(QDataStream &in);
+};
+
+class ServerConnectionHandlerRemoveMember : public ServerConnectionHandler
+{
+    Q_OBJECT
+public:
+    void decode(QDataStream &in);
+};
+
+class ServerConnectionHandlerMember : public ServerConnectionHandler
+{
+    Q_OBJECT
+public:
+    void decode(QDataStream &in);
+};
+
+class ServerConnectionHandlerImage : public ServerConnectionHandler
+{
+    Q_OBJECT
+public:
+    void decode(QDataStream &in);
+};
+
+//ClientConnection Handler
+class ClientConnectionHandler : public PackageHandler
+{
+    Q_OBJECT
+public:
+    //void decode(QDataStream&);
+signals:
+    //void onText(QString, ClientConnection * const);
+    //void onImage(QByteArray);
+    //void verifyPass(QString, ClientConnection * const);
+};
+
+
+//class ClientConnectionHandlerText : public ClientConnectionHandler
+//{
+//    Q_OBJECT
+//public:
+//    void decode(QDataStream &in);
+//};
+
+
+//class ClientConnectionHandlerVerifyPass : public ClientConnectionHandler
+//{
+//    Q_OBJECT
+//public:
+//    //void decode(QDataStream &in, ClientConnection * const);
+//};
+
+//class ClientConnectionHandlerImage : public ClientConnectionHandler
+//{
+//    Q_OBJECT
+//public:
+//    void decode(QDataStream &in);
+//};
+
+//Factory
+class Factory
+{
+public:
+    PackageHandler* getHandler(pckg_t type);
+};
+
+class ServerConnectionFactory : public Factory
+{
+public:
+    ServerConnectionHandler *getHandler(pckg_t type);
+};
+
+class ClientConnectionFactory : public Factory
+{
+public:
+   ClientConnectionHandler* getHandler(pckg_t type);
+};
 
 #endif // TCP_PACKAGE_H

@@ -1,77 +1,75 @@
 #include "tcp_package.h"
 
-QDataStream& operator<<(QDataStream& out, const TcpPackage& pack){
-    if(pack.getHeader()->type == RAW || pack.getHeader()->type == INVALID_PASS){
-        out << pack.getHeader()->type;
-        out << pack.getHeader()->length;
-        out << pack.getData()->rawData;
+void ServerConnectionHandlerText::decode(QDataStream &in)
+{
+    in >> size;
+    text = new char[size];
+    in >> text;
+    //emit gotText(QString::fromUtf8(text).toUtf8());
+    emit gotData(QByteArray::fromRawData(text, size), "text/plain");
+}
+
+void ServerConnectionHandlerMember::decode(QDataStream &in)
+{
+    in >> size;
+    login = new char[size];
+    in >> login;
+    in >> address;
+    emit addMember(QString::fromUtf8(login), QHostAddress(address));
+}
+
+ServerConnectionHandler *ServerConnectionFactory::getHandler(pckg_t packt)
+{
+    if(packt < 0)
+        qDebug() << "No data delivered";
+    switch(packt){
+        case MEMBER:
+            return new ServerConnectionHandlerMember();
+       case TEXT:
+            return new ServerConnectionHandlerText();
+       case REMOVE:
+            return new ServerConnectionHandlerRemoveMember();
+       case IMAGE:
+            return new ServerConnectionHandlerImage();
+       default: throw packt;
     }
-    else if(pack.getHeader()->type == TEXT || pack.getHeader()->type == MEMBER
-            || pack.getHeader()->type == PASS || pack.getHeader()->type == ADRESS
-            || pack.getHeader()->type == REMOVE){
-            out << pack.getHeader()->type;
-            out << pack.getHeader()->length;
-            out << pack.getData()->strData;
-    }
-    else
-        throw pack.getHeader()->type;
-
-    return out;
 }
 
-const QDataStream& operator>>(QDataStream& in, TcpPackage& pack){
-
-    TcpPackageHeader head;
-    int temp_type;
-    in >> temp_type;
-    head.type = (pckg_t)temp_type;
-    in >> head.length;
-    Data dat;
-    dat.rawData = new char[head.length];
-
-    if(head.type == RAW || head.type == INVALID_PASS){
-        in >> dat.rawData;
-    }
-    else if(head.type == TEXT || head.type == MEMBER
-            || head.type == PASS || head.type == ADRESS
-            || head.type == REMOVE){
-        in >> *dat.strData;
-    }
-    else
-        throw head.type;
-
-    pack.setHeader(head);
-    pack.setData(dat);
-    return in;
+void ServerConnectionHandlerRemoveMember::decode(QDataStream &in)
+{
+    in >> address;
+    emit(deleteMember(QHostAddress(address)));
 }
 
-TcpPackageHeader::TcpPackageHeader(char t, int l){
-    type = static_cast<pckg_t>(t);
-    length = l;
+
+void ServerConnectionHandlerImage::decode(QDataStream &in)
+{
+    in >> size;
+    //image = new char[size];
+    QByteArray image;
+    in >> image;
+    //emit gotImage(QByteArray::fromRawData(image, size));
+    //emit gotImage(image);
+    emit gotData(image, "image/png");
 }
 
-void TcpPackage::setData(Data d){
-    this->interior = d;
-}
 
-void TcpPackage::setHeader(TcpPackageHeader head){
-    this->header = head;
-}
-
-TcpPackageHeader::TcpPackageHeader(){}
-
-TcpPackage::TcpPackage(TcpPackageHeader header, Data data){
-    this->header = header;
-    this->interior = data;
-}
-
-TcpPackage::TcpPackage(){}
+//void ClientConnectionHandlerText::decode(QDataStream &in)
+//{
+//    in >> size;
+//    text = new char[size];
+//    in >> text;
+//    //emit(onText(QString::fromUtf8(text), this));
+//}
 
 
-const TcpPackageHeader* TcpPackage::getHeader() const{
-    return &header;
-}
-
-const Data* TcpPackage::getData() const{
-    return &interior;
-}
+//void ClientConnectionHandlerVerifyPass::decode(QDataStream &in, ClientConnection * const c)
+//{
+//    in >> size;
+//    password = new char[size];
+//    in >> password;
+//    in >> size2;
+//    login = new char[size2];
+//    in >> login;
+//    emit(verifyPass(QString::fromUtf8(password, size), c));
+//}

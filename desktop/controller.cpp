@@ -1,20 +1,23 @@
 #include "controller.h"
+#include "gui/mainwindow.h"
 #include <QDebug>
-Controller::Controller() : QObject(0)
+
+Controller::Controller(MainWindow *mainWindow) : QObject(0)
 {
-    udpService = new UDPService();
-    connect(udpService, SIGNAL(roomReceived(QString,QHostAddress)),
-            this, SLOT(addRoom(QString,QHostAddress)));
-    connect(udpService, SIGNAL(roomRequested()),
-            this, SLOT(getRoom()));
-    connect(udpService, SIGNAL(roomDeleted(QHostAddress)),
-            this, SLOT(deleteRoom(QHostAddress)));
-    udpService->initListener();
-    udpService->getRooms();
+    this->mainWindow = mainWindow;
+    connect(mainWindow, SIGNAL(roomListOpened(RoomsListDialog*)), this, SLOT(onRoomsListOpen(RoomsListDialog*)));
+    this->mainWindow->connectRoomListDialog();
+    initClipboardToGuiConnection();
+    initUDPService();
 }
 
 Controller::~Controller()
 {
+    delete mainWindow;
+    for(QMap<qint32, ClientRoom*>::iterator it = rooms.begin(); it != rooms.end(); ++it)
+        delete it.value();
+    delete clientRoom;
+    delete serverRoom;
     delete udpService;
 }
 
@@ -28,43 +31,146 @@ void Controller::addRoom(QString name, QHostAddress host)
     }
 }
 
-void Controller::getRoom()
+void Controller::getRoom(QHostAddress sender_address)
 {
     qDebug() << "room requested";
-    if(serverRoom != NULL) {
-        udpService->sendRoom(serverRoom->getName());
-    }
+    if(serverRoom != NULL)
+        udpService->sendRoom(serverRoom->getName(), sender_address);
+
 }
 
 void Controller::deleteRoom(QHostAddress host)
 {
+    qDebug() << "room deleted";
+    QString name = rooms.value(host.toIPv4Address())->getName();
     rooms.remove(host.toIPv4Address());
 }
 
-void Controller::createRoom(QString name, QString pass)
+void Controller::createServerRoom(QString name, QString pass)
 {
-    QString login = "login";
-    qDebug() << "create room: " << name;
-    if(serverRoom != NULL) {
+    if(serverRoom != NULL)
         return;
-    }
+
+    qDebug() << "create server room: " << name;
+
     serverRoom = new ServerRoom(name, pass);
     udpService->notifyAboutRoom(name);
-    //addRoom(name, serverRoom->getAddr());
-    //joinRoom(serverRoom->getAddr(), login, pass);
+    emit serverIsUp(name);
+
+    addRoom(name, serverRoom->getAddr());
+    qDebug() << serverRoom->getAddr();
+    QString login = "login";
+    joinRoom(serverRoom->getAddr().toIPv4Address(), pass);
+}
+
+void Controller::deleteServerRoom()
+{
+    if(serverRoom == NULL)
+        return;
+
+    delete serverRoom;
+    serverRoom = NULL;
+
+    qDebug() << "server room deleted ";
+
+    udpService->notifyAboutRoomDeleting();
+
+}
+
+void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
+{
+//    QMap<QString, qint32> roomsForGui;
+//    QMapIterator<qint32, ClientRoom*> i(rooms);
+//    while (i.hasNext())
+//    {
+//        i.next();
+//        roomsForGui.insert(i.value()->getName(), i.key());
+//    }
+
+//    if(serverRoom == NULL)
+//    {
+//        roomsDialog->setRoomsHash(roomsForGui, QString::null);
+//    } else {
+//        roomsDialog->setRoomsHash(roomsForGui, serverRoom->getName());
+//    }
+
+    connect(roomsDialog, SIGNAL(newRoomCreated(QString,QString)), this, SLOT(createServerRoom(QString,QString)));
+    connect(this, SIGNAL(roomAdded(QString,qint32)), roomsDialog, SLOT(addRoom(QString,qint32)));
+
+    connect(this, SIGNAL(serverIsUp(QString)), roomsDialog, SLOT(onServerIsUp(QString)));
+    connect(roomsDialog, SIGNAL(roomChoosed(qint32, QString)), this, SLOT(joinRoom(qint32,QString)));
+
+    connect(roomsDialog, SIGNAL(deleteServerRoom()), this, SLOT(deleteServerRoom()));
+    connect(this, SIGNAL(roomDeleted(QString)), roomsDialog, SLOT(deleteRoom(QString)));
+
+}
+
+void Controller::initClipboardToGuiConnection()
+{
+    connect(&clipboardService, SIGNAL(hasDataToText(QString, qint32)), mainWindow, SLOT(dataPushedToClipboard(QString, qint32)));
+    connect(&clipboardService, SIGNAL(deleteDataFromStorage(qint32)), mainWindow, SLOT(deleteItemFromList(qint32)));
+    connect(mainWindow, SIGNAL(pushDataChoosed(qint32)), &clipboardService, SLOT(pushDataToClipboardFromGui(qint32)));
+    connect(mainWindow, SIGNAL(settingsChoosed(int, bool)), &clipboardService, SLOT(onSettingsChoosed(int,bool)));
+}
+
+void Controller::initUDPService()
+{
+    udpService = new UDPService();
+    connect(udpService, SIGNAL(roomReceived(QString,QHostAddress)),
+            this, SLOT(addRoom(QString,QHostAddress)));
+    connect(udpService, SIGNAL(roomRequested(QHostAddress)),
+            this, SLOT(getRoom(QHostAddress)));
+    connect(udpService, SIGNAL(roomDeleted(QHostAddress)),
+            this, SLOT(deleteRoom(QHostAddress)));
+
+    udpService->initListener();
+    udpService->getRooms();
+}
+
+void Controller::initClipboardToClientRoomConnection()
+{
+
+
 }
 
 void Controller::joinRoom(qint32 addr, QString pass)
 {
-    QString login = "login";
-    qDebug() << "join room: " << addr;
-    if(clientRoom != NULL) {
+    QHostAddress host(addr);
+    qDebug() << "joining room: " << host.toString();
+
+    if(clientRoom != NULL)
         return;
-    }
+
     clientRoom = rooms.value(addr, NULL);
-    if(clientRoom == NULL) {
+    if(clientRoom == NULL)
         return;
-    }
     qDebug() << "joined";
-    //clientRoom->connectToHost(login, pass);
+
+    QString login = "login";
+
+    try{
+    clientRoom->connectToHost(login, pass);
+    }
+    catch(QAbstractSocket::SocketError)
+    {
+        qDebug() << "Socket problem. You probably have your Wifi turned off";
+        QMessageBox* networkerrormsg = new QMessageBox();
+        networkerrormsg->setText("Socket problem. You probably have your Wifi turned off");
+    }
+    connect(&clipboardService, SIGNAL(hasData(QByteArray, QString)),
+            clientRoom, SLOT(sendData(QByteArray, QString)));
+    connect(&clipboardService, SIGNAL(hasData(QByteArray,QString)),
+            clientRoom, SLOT(test(QByteArray, QString)));
+//    connect(&clipboardService, SIGNAL(hasText(QString)), clientRoom, SLOT(sendText(QString)));
+//    connect(&clipboardService, SIGNAL(hasImage(QImage)),
+//            clientRoom, SLOT(sendImage(QImage)));##
+    connect(clientRoom, SIGNAL(gotData(QByteArray, QString)),
+            &clipboardService, SLOT(pushFromHosts(QByteArray,QString)));
+    connect(clientRoom, SIGNAL(gotText(QString)),
+            &clipboardService, SLOT(pushText(QString)));
+    connect(clientRoom, SIGNAL(gotImage(QByteArray)),
+            &clipboardService, SLOT(pushImage(QByteArray)));
+    connect(&clipboardService, SIGNAL(setUpdatedBuffer()),
+            clientRoom, SLOT(updateBuffer()));//##
+    MainWindow().show();
 }

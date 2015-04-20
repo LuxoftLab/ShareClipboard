@@ -10,3 +10,6 @@ android/.classpath
 android/.project
 android/proguard-project.txt
 android/project.properties
+build-*/
+.DS_Store
+*/.DS_Store

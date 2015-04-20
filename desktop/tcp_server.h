@@ -6,18 +6,22 @@
 #include <QTcpServer>
 #include <QHostAddress>
 
+#include "constants.h"
+
 class TCPServer : public QObject
 {
     Q_OBJECT
 
 public:
     TCPServer();
+    ~TCPServer();
     QHostAddress getLocalAddress();
 signals:
     void addMember(QTcpSocket * socket);
+    void deleteMember(QHostAddress);
 private:
     QTcpServer* server;
-
+    QTcpSocket* newConnection;
 private slots:
     void newMember();
 };
