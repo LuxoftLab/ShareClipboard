@@ -31,6 +31,8 @@ void RoomsListDialog::onNewRoomButtonClicked()
 {  
     if(localServer ==  NULL) {
         CreateRoomDialog dialog;
+        connect(&dialog, SIGNAL(createRoom(QString,QString)),
+            this, SIGNAL(newRoomCreated(QString,QString)));
         dialog.exec();
     }
     else {

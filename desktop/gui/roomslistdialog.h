@@ -26,6 +26,7 @@ public:
 signals:
     void roomChoosed(qint32 roomIp, QString password);
     void deleteServerRoom();
+    void newRoomCreated(QString, QString);
 
 public slots:
     void accept();
