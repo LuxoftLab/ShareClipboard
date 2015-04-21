@@ -39,9 +39,9 @@ public class UDPService extends Thread {
 		while(enabled) {
 			try {
 				socket.setBroadcast(true);
-				Log.d(LOG, "receive...");
+				//Log.d(LOG, "receive...");
 				socket.receive(packet);
-				Log.d(LOG, "received");
+				//Log.d(LOG, "received");
 				if(!packet.getAddress().equals(local)) {
 					onPacket(
 							new UDPPacket(packet.getData(), packet.getOffset(), packet.getLength()),
@@ -85,11 +85,11 @@ public class UDPService extends Thread {
 	}
 	
 	private void onPacket(UDPPacket packet, InetAddress addr) {
-		Log.d(LOG, "on packet: "+packet.type + " id: " + packet.id);
+		//Log.d(LOG, "on packet: "+packet.type + " id: " + packet.id);
 		if(lastId == packet.id) {
 			return;
 		}
-		Log.d(LOG, "on packet: "+packet.type);
+		//Log.d(LOG, "on packet: "+packet.type);
 		lastId = packet.id;
 		switch(packet.type) {
 		case UDPPacket.GET_ROOM:
@@ -118,7 +118,7 @@ public class UDPService extends Thread {
 	private void sendPacket(UDPPacket packet, InetAddress addr, boolean isBroadcast) {
 		byte[] buf = packet.getBinary();
 		DatagramPacket datagram = new DatagramPacket(buf,buf.length, addr, PORT);
-		Log.d(LOG, "send packet: "+packet.id);
+		//Log.d(LOG, "send packet: "+packet.id);
 		new UDPSender(datagram, socket, isBroadcast).start();
 	}
 	

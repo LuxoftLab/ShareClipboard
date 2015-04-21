@@ -1,12 +1,16 @@
 package com.luxoftlab.shareclipboard.packets;
 
+import android.util.Log;
+
 import java.nio.ByteBuffer;
 
 public class UDPPacket {
+    public static final String LOG = "UDPPacket";
+
 	public static final byte ROOM = 0,
 							 GET_ROOM = 1,
 							 DELETE_ROOM = 2;
-	private static final int CONTENT_OFFSET = 5;
+	private static final int CONTENT_OFFSET = 1 + 4 + 4;
 	
 	public byte type;
 	public int id;
@@ -16,8 +20,10 @@ public class UDPPacket {
 		ByteBuffer wrapped = ByteBuffer.wrap(data, offset, length);
 		type = wrapped.get();
 		id = wrapped.getInt();
-		content = new String(data, offset+CONTENT_OFFSET, length-CONTENT_OFFSET);
-	}
+        int stringLength = wrapped.getInt();
+        Log.d(LOG, stringLength+"|"+offset+"|"+length+"|"+CONTENT_OFFSET);
+        content = new String(data, offset+CONTENT_OFFSET, stringLength);
+    }
 	
 	public UDPPacket(byte type) {
 		this.type = type;
@@ -39,8 +45,12 @@ public class UDPPacket {
 		ByteBuffer buffer = ByteBuffer.allocate(length);
 		buffer.put(type);
 		buffer.putInt(id);
-		if(tmp != null)
-			buffer.put(tmp);
+		if(tmp != null) {
+            buffer.putInt(tmp.length);
+            buffer.put(tmp);
+        } else {
+            buffer.putInt(0);
+        }
 		byte[] data = new byte[length];
 		buffer.position(0);
 		buffer.get(data);

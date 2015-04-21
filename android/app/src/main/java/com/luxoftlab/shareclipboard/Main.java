@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
 import android.view.View;
@@ -22,7 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
-public class Main extends ActionBarActivity implements MessageManager.Listener, ServiceConnection {
+public class Main extends ActionBarActivity implements ServiceConnection {
 	private static final String LOG = "activity";
 	
 	public static final int MSG_SHOW_ROOMS = 0,
@@ -50,7 +49,7 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
         serviceIntent = new Intent(this, Controller.class);
         startService(serviceIntent);
         
-        serviceConnection = new MessageManager(this);
+        initServiceConnection();
         controller = new ViewController(this);
         initGUI();
         Log.d(LOG, "created");
@@ -77,45 +76,6 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 	}
 
 	@Override
-	public boolean onMessage(Message msg) {
-		Bundle data = msg.getData();
-		switch(msg.what) {
-			case MSG_SHOW_ROOMS:
-				mainView.setVisibility(View.VISIBLE);
-				roomView.setVisibility(View.GONE);
-				break;
-			case MSG_SHOW_DEVICES:
-				roomView.setVisibility(View.VISIBLE);
-				mainView.setVisibility(View.GONE);
-				break;
-			case MSG_ADD_ROOM:
-				NewItemMessage room = new NewItemMessage(data);
-				roomsAdapter.put(new RowData(room.name, room.ip));
-				break;
-			case MSG_DELETE_ROOM:
-				DeleteItemMessage item = new DeleteItemMessage(data);
-				Log.d(LOG, "delete room"+item.ip);
-				roomsAdapter.remove(item.ip);
-				break;
-			case MSG_SHOW_FAIL:
-				Toast.makeText(this, "Fail", Toast.LENGTH_LONG).show();
-				break;
-			case MSG_ADD_DEVICE:
-				room = new NewItemMessage(data);
-				devicesAdapter.put(new RowData(room.name, room.ip));
-				break;
-			case MSG_DELETE_DEVICE:
-				item = new DeleteItemMessage(data);
-				devicesAdapter.remove(item.ip);
-				break;
-			default:
-				Log.w(LOG, "undefined message");
-				return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void onServiceConnected(ComponentName name, IBinder service) {
 		Log.d(LOG, "service connected");
 		serviceConnection.setTarget(new Messenger(service));
@@ -131,6 +91,66 @@ public class Main extends ActionBarActivity implements MessageManager.Listener, 
 	public MessageManager getServiceConnection() {
 		return serviceConnection;
 	}
+
+    private void initServiceConnection() {
+        serviceConnection = new MessageManager();
+
+        serviceConnection.addListener(MSG_SHOW_ROOMS, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                mainView.setVisibility(View.VISIBLE);
+                roomView.setVisibility(View.GONE);
+            }
+        });
+
+        serviceConnection.addListener(MSG_SHOW_DEVICES, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                roomView.setVisibility(View.VISIBLE);
+                mainView.setVisibility(View.GONE);
+            }
+        });
+
+        serviceConnection.addListener(MSG_ADD_ROOM, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                NewItemMessage room = new NewItemMessage(bundle);
+                roomsAdapter.put(new RowData(room.name, room.ip));
+            }
+        });
+
+        serviceConnection.addListener(MSG_DELETE_ROOM, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                DeleteItemMessage item = new DeleteItemMessage(bundle);
+                Log.d(LOG, "delete room"+item.ip);
+                roomsAdapter.remove(item.ip);
+            }
+        });
+
+        serviceConnection.addListener(MSG_SHOW_FAIL, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                Toast.makeText(Main.this, "Fail", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        serviceConnection.addListener(MSG_ADD_DEVICE, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                NewItemMessage room = new NewItemMessage(bundle);
+                devicesAdapter.put(new RowData(room.name, room.ip));
+            }
+        });
+
+        serviceConnection.addListener(MSG_DELETE_DEVICE, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                DeleteItemMessage item = new DeleteItemMessage(bundle);
+                devicesAdapter.remove(item.ip);
+            }
+        });
+    }
 
 	private void initGUI() {
 		mainView = (RelativeLayout)findViewById(R.id.mainView);

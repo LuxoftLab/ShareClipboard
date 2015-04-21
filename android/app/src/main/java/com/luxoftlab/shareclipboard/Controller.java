@@ -24,7 +24,7 @@ import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-public class Controller extends Service implements MessageManager.Listener {
+public class Controller extends Service {
 	private static final String LOG = "controller";
 	
 	private static final int NOTIFICATION_ID = 100;
@@ -42,7 +42,7 @@ public class Controller extends Service implements MessageManager.Listener {
 	private ClientRoom currentRoom;
 	private HashMap<InetAddress, ClientRoom> rooms;
 	
-	private MessageManager guiConnection = new MessageManager(this);
+	private MessageManager guiConnection = new MessageManager();;
 	private ClipboardManager clipboardManager;
 	
 	@Override
@@ -52,6 +52,7 @@ public class Controller extends Service implements MessageManager.Listener {
 			return START_STICKY;
 		}
 		Log.w(LOG, "started");
+        initGuiConnection();
 		currentRoom = null;
 		rooms = new HashMap<InetAddress, ClientRoom>();
 		 clipboardManager = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
@@ -83,45 +84,57 @@ public class Controller extends Service implements MessageManager.Listener {
 		Log.d(LOG, "destroyed");
 		super.onDestroy();
 	}
-	
-	@Override
-	public boolean onMessage(Message msg) {
-		Bundle data = msg.getData();
-		switch(msg.what) {
-		case MSG_CONNECTION:
-			Log.d(LOG, "gui connected");
-			guiConnection.setTarget(msg.replyTo);
-			synchronizeGUI();
-			break;
-		case MSG_CREATE_ROOM:
-			CreateRoomMessage createRoom = new CreateRoomMessage(data);
-			if(!createRoom(createRoom.name, createRoom.password)) {
-				guiConnection.send(Main.MSG_SHOW_FAIL, null);
-			}
-			guiConnection.send(Main.MSG_SHOW_DEVICES, null);
-			break;
-		case MSG_JOIN_ROOM:
-			JoinRoomMessage joinRoom = new JoinRoomMessage(data);
-			if(!joinRoom(joinRoom.ip, joinRoom.password)) {
-				guiConnection.send(Main.MSG_SHOW_FAIL, null);
-			}
-			guiConnection.send(Main.MSG_SHOW_DEVICES, null);
-			break;
-		case MSG_LEAVE_ROOM:
-			leaveRoom();
-			break;
-		case MSG_CLOSE:
-			udp.close();
-			leaveRoom();
-			stopForeground(true);
-			stopSelf();
-			Log.d(LOG, "closed");
-			break;
-		default:
-			Log.w(LOG, "undefined message");
-			return false;
-		}
-		return true;
+
+	public void initGuiConnection() {
+
+        guiConnection.addListener(MSG_CONNECTION, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                Log.d(LOG, "gui connected");
+                synchronizeGUI();
+            }
+        });
+
+        guiConnection.addListener(MSG_CREATE_ROOM, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                CreateRoomMessage createRoom = new CreateRoomMessage(bundle);
+                if(!createRoom(createRoom.name, createRoom.password)) {
+                    guiConnection.send(Main.MSG_SHOW_FAIL, null);
+                }
+                guiConnection.send(Main.MSG_SHOW_DEVICES, null);
+            }
+        });
+
+        guiConnection.addListener(MSG_JOIN_ROOM, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                JoinRoomMessage joinRoom = new JoinRoomMessage(bundle);
+                if(!joinRoom(joinRoom.ip, joinRoom.password)) {
+                    guiConnection.send(Main.MSG_SHOW_FAIL, null);
+                }
+                guiConnection.send(Main.MSG_SHOW_DEVICES, null);
+            }
+        });
+
+        guiConnection.addListener(MSG_LEAVE_ROOM, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                leaveRoom();
+            }
+        });
+
+        guiConnection.addListener(MSG_CLOSE, new MessageManager.Listener() {
+            @Override
+            public void onMessage(Bundle bundle) {
+                udp.close();
+                leaveRoom();
+                stopForeground(true);
+                stopSelf();
+                Log.d(LOG, "closed");
+            }
+        });
+
 	}
 	
 	public void getRoom(InetAddress addr) {
