@@ -16,23 +16,6 @@ TCPServer::~TCPServer()
     delete server;
 }
 
-QHostAddress TCPServer::getLocalAddress()
-{
-    QHostAddress ipAddress;
-    QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
-    // use the first non-localhost IPv4 address
-    for (int i = 0; i < ipAddressesList.size(); ++i)
-    {
-        if (ipAddressesList.at(i) != QHostAddress::LocalHost &&
-        ipAddressesList.at(i).toIPv4Address())
-        {
-            return ipAddress = ipAddressesList.at(i);
-        }
-    }
-
-    return ipAddress;
-}
-
 void TCPServer::newMember(){
     if(newConnection = server->nextPendingConnection()){
         connect(newConnection, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
