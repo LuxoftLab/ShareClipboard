@@ -100,7 +100,7 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out << type << arr.size() << arr.constData();
+    out << type << (qint32)arr.size() << arr.constData();
 
     if(socket->write(dat) == 0)
     {

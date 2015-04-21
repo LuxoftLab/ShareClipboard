@@ -112,7 +112,7 @@ void ServerConnection::sendData(QByteArray arr, bool& updated, pckg_t type)
         QByteArray dat;
         QDataStream out(&dat, QIODevice::WriteOnly);
         int s = arr.size();//##
-        out << type << arr.size() << arr.constData();
+        out << type << (qint32)arr.size() << arr.constData();
 
         if(socket->write(dat) == 0)
         {
