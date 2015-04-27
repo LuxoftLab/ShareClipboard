@@ -12,6 +12,11 @@ ClipboardService::ClipboardService() : QObject()
 
 void ClipboardService::onClipboardChanged()
 {
+    if(locked)
+    {
+        locked = false;
+        return;
+    }
     const QMimeData * mimeData = clipboard->mimeData();
     ClipboardData data;
     QString text;
@@ -69,6 +74,7 @@ void ClipboardService::onSettingsChoosed(int value, bool isInKB)
 
 void ClipboardService::pushFromHosts(QByteArray data, QString type)
 {
+    locked = true;
     QMimeData * mimeData = new QMimeData();
     mimeData->setData(type, data);
     emit setUpdatedBuffer();

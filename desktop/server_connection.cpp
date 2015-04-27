@@ -105,9 +105,9 @@ void ServerConnection::sendImage(QByteArray image)
 //        emit setNotUpdated();
 }
 
-void ServerConnection::sendData(QByteArray arr, bool& updated, pckg_t type)
+void ServerConnection::sendData(QByteArray arr, pckg_t type)
 {
-    if(!updated)
+    //if(!updated)
     {
         QByteArray dat;
         QDataStream out(&dat, QIODevice::WriteOnly);
@@ -119,6 +119,6 @@ void ServerConnection::sendData(QByteArray arr, bool& updated, pckg_t type)
             qDebug() << "No data written";
         }
     }
-    else
-        updated = false;
+//    else
+//        updated = false;
 }
