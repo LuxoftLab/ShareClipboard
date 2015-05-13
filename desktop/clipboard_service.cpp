@@ -58,42 +58,11 @@ void ClipboardService::pushFromHosts(QByteArray data, QString type)
     locked = true;
     QMimeData * mimeData = new QMimeData();
     mimeData->setData(type, data);
-    emit setUpdatedBuffer();
     clipboard->setMimeData(mimeData);
 
     qDebug() << "on text from outer host";
     const QMimeData * existingData = clipboard->mimeData();
 }
-
-//##
-//void ClipboardService::pushText(QString text)
-//{
-//    qDebug() << "on text from outer host";
-//    const QMimeData * existingData = clipboard->mimeData();
-
-//    QMimeData * mimeData = new QMimeData();
-//    mimeData->setData("text/plain", text.toUtf8());
-//    emit setUpdatedBuffer();
-//    clipboard->setMimeData(mimeData);
-//}
-
-//##
-//void ClipboardService::pushImage(QByteArray image)
-//{
-//    qDebug() << "on image from outer host";
-//    const QMimeData * existingData = clipboard->mimeData();
-
-//    //check if we already have the data
-//    if (existingData->hasImage() &&
-//            memcmp(image.constData(),
-//            existingData->imageData().toByteArray().constData(), image.size()) == 0){
-//        qDebug() << "same img"; //###
-//        return;
-//    }
-//    QMimeData * mimeData = new QMimeData();
-//    mimeData->setData("image/png", image);
-//    clipboard->setMimeData(mimeData);
-//}
 
 void ClipboardService::pushDataToClipboardFromGui(qint32 dataId)
 {
