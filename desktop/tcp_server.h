@@ -15,7 +15,6 @@ class TCPServer : public QObject
 public:
     TCPServer();
     ~TCPServer();
-    QHostAddress getLocalAddress();
 signals:
     void addMember(QTcpSocket * socket);
     void deleteMember(QHostAddress);

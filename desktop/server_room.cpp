@@ -104,8 +104,3 @@ void ServerRoom::sendText(QString s, ClientConnection * owner)
         t->sendData(s.toUtf8(), TEXT);
     }
 }
-
-QHostAddress ServerRoom::getAddr()
-{
-    return server->getLocalAddress();
-}

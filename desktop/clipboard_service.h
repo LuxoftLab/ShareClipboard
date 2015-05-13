@@ -38,6 +38,7 @@ private:
     QVector<ClipboardData>clipboardData;
     int clipboardOpacity = 10;
     bool isInKB;
+    bool locked;
 
     QString minimizeText(QString text);
 };

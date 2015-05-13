@@ -17,7 +17,6 @@ class ServerRoom : public Room
 public:
     ServerRoom(QString name, QString pass);
     ~ServerRoom();
-    QHostAddress getAddr();
 public slots:
     void addMember(QTcpSocket * socket);
     void deleteMember(QHostAddress addr);
