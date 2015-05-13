@@ -159,11 +159,6 @@ void Controller::joinRoom(qint32 addr, QString pass)
             clientRoom, SLOT(sendData(QByteArray, QString)));
     connect(clientRoom, SIGNAL(gotData(QByteArray, QString)),
             &clipboardService, SLOT(pushFromHosts(QByteArray,QString)));
-    connect(clientRoom, SIGNAL(gotText(QString)),
-            &clipboardService, SLOT(pushText(QString)));
-    connect(clientRoom, SIGNAL(gotImage(QByteArray)),
-            &clipboardService, SLOT(pushImage(QByteArray)));
-    connect(&clipboardService, SIGNAL(setUpdatedBuffer()),
-            clientRoom, SLOT(updateBuffer()));//##
+
     MainWindow().show();
 }
