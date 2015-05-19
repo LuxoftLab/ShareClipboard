@@ -41,6 +41,7 @@ private:
 
     QString minimizeText(QString text);
     QByteArray * imageToQByteArray(QImage&);
+    QImage byteArrayToImage(QByteArray&);
 };
 
 #endif // CLIPBOARDSERVICE_H

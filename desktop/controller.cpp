@@ -16,7 +16,7 @@ Controller::~Controller()
     delete mainWindow;
     for(QMap<qint32, ClientRoom*>::iterator it = rooms.begin(); it != rooms.end(); ++it)
         delete it.value();
-    delete clientRoom;
+    //delete clientRoom;
     delete serverRoom;
     delete udpService;
 }

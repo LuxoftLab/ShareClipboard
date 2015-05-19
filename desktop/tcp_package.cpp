@@ -48,9 +48,13 @@ void ServerConnectionHandlerImage::decode(QDataStream &in)
     //image = new char[size];
     QByteArray image;
     in >> image;
+
+    QImage image2 = QImage::fromData(image);
+    image2.save("/home/asalle/5.png");
     //emit gotImage(QByteArray::fromRawData(image, size));
     //emit gotImage(image);
     emit gotData(image, "image/png");
+    //emit gotData(QByteArray(image, size), "image/png");
 }
 
 
