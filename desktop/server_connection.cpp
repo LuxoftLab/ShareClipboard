@@ -112,7 +112,7 @@ void ServerConnection::sendData(QByteArray data, pckg_t type)
         QByteArray dat;
         QDataStream out(&dat, QIODevice::WriteOnly);
         //int s = arr.size();//##
-        out << type << data.size() << data;
+        out << type << data.size() << data.constData();
 
         QImage image2 = QImage::fromData(data);
         image2.save("/home/asalle/2.png");
