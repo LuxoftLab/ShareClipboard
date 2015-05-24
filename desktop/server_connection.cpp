@@ -117,9 +117,9 @@ void ServerConnection::sendData(QByteArray data, pckg_t type)
         QImage image2 = QImage::fromData(data);
         image2.save("/home/asalle/2.png");
 
-        if(socket->write(dat) == 0)
+        if(socket->write(dat) < dat.size())
         {
-            qDebug() << "No data written";
+            qDebug() << "ServerConnection socket error";
         }
     }
 //    else

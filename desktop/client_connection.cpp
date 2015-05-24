@@ -100,14 +100,16 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out << type << arr.size() << arr;
+    out << type << arr.size() << arr.constData();
 
     QImage image2 = QImage::fromData(arr);
     image2.save("/home/asalle/4.png");
 
-    if(socket->write(dat) == 0)
+    //if(socket->write(dat) == 0)
+    int s = 0;
+    if((s = socket->write(dat)) < dat.size())
     {
-        qDebug() << "No data written";
+        qDebug() << "ClientConnection socket error";
     }
 }
 
