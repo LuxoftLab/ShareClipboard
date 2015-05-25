@@ -73,34 +73,38 @@ QHostAddress ClientConnection::makeHostAdress(char* block){
     return *address;
 }
 
-void ClientConnection::sendText(QString s)
-{
-    QByteArray dat;
-    QDataStream out(&dat, QIODevice::WriteOnly);
-    out << TEXT << s.toUtf8().size() << s.toUtf8();
-    if(socket->write(dat) == 0)
-    {
-        qDebug() << "No data written";
-    }
-}
+//void ClientConnection::sendText(QString s)
+//{
+//    QByteArray dat;
+//    QDataStream out(&dat, QIODevice::WriteOnly);
+//    out << TEXT << s.toUtf8().size() << s.toUtf8();
+//    if(socket->write(dat) == 0)
+//    {
+//        qDebug() << "No data written";
+//    }
+//}
 
-void ClientConnection::sendImage(QByteArray im)
-{
-    QByteArray dat;
-    QDataStream out(&dat, QIODevice::WriteOnly);
+//void ClientConnection::sendImage(QByteArray im)
+//{
+//    QByteArray dat;
+//    QDataStream out(&dat, QIODevice::WriteOnly);
 
-    out << IMAGE << (qint32)im.size() << im;
-    if(socket->write(dat) == 0)
-    {
-        qDebug() << "No data written";
-    }
-}
+//    out << IMAGE << (qint32)im.size() << im;
+//    if(socket->write(dat) == 0)
+//    {
+//        qDebug() << "No data written";
+//    }
+//}
 
 void ClientConnection::sendData(QByteArray arr, pckg_t type)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out << type << (qint32)arr.size() << arr.constData();
+
+    out << type << (qint32)arr.size() << arr;
+
+    QImage image2 = QImage::fromData(arr);
+    image2.save("/home/asalle/4.png");
 
     if(socket->write(dat) == 0)
     {
@@ -140,6 +144,10 @@ void ClientConnection::emitImage(QDataStream& in)
     //char* image = new char[size];
     QByteArray image;
     in >> image;
+
+    QImage image2 = QImage::fromData(image);
+    image2.save("/home/asalle/3.png");
+
     //emit onImage(QByteArray::fromRawData(image, size), this);
     emit onImage(image, this);
 }

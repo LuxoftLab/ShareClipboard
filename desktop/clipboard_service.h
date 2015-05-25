@@ -1,5 +1,6 @@
 #ifndef CLIPBOARDSERVICE_H
 #define CLIPBOARDSERVICE_H
+
 #include <QClipboard>
 #include <QApplication>
 #include <QMimeData>
@@ -7,6 +8,9 @@
 #include <QList>
 #include <QImage>
 #include <QBuffer>
+#include <QDebug>
+#include <QMimeData>
+#include <QUrl>
 
 struct ClipboardData {
     qint32 dataID;
@@ -23,16 +27,11 @@ signals:
     void hasDataToText(QString, qint32);
     void hasData(QByteArray, QString);
     void deleteDataFromStorage(qint32);
-    void hasText(QString);
-    void hasImage(QImage);
-    void setUpdatedBuffer();
 public slots:
     void onClipboardChanged();
     void onSettingsChoosed(int value, bool isInKB);
     void pushDataToClipboardFromGui(qint32 dataId);
     void pushFromHosts(QByteArray data, QString type);
-    void pushText(QString);
-    void pushImage(QByteArray);
 private:
     QClipboard* clipboard;
     QVector<ClipboardData>clipboardData;
@@ -41,6 +40,8 @@ private:
     bool locked;
 
     QString minimizeText(QString text);
+    QByteArray * imageToQByteArray(QImage&);
+    QImage byteArrayToImage(QByteArray&);
 };
 
 #endif // CLIPBOARDSERVICE_H

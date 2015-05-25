@@ -16,7 +16,7 @@ Controller::~Controller()
     delete mainWindow;
     for(QMap<qint32, ClientRoom*>::iterator it = rooms.begin(); it != rooms.end(); ++it)
         delete it.value();
-    delete clientRoom;
+    //delete clientRoom;
     delete serverRoom;
     delete udpService;
 }
@@ -157,18 +157,8 @@ void Controller::joinRoom(qint32 addr, QString pass)
     }
     connect(&clipboardService, SIGNAL(hasData(QByteArray, QString)),
             clientRoom, SLOT(sendData(QByteArray, QString)));
-    connect(&clipboardService, SIGNAL(hasData(QByteArray,QString)),
-            clientRoom, SLOT(test(QByteArray, QString)));
-//    connect(&clipboardService, SIGNAL(hasText(QString)), clientRoom, SLOT(sendText(QString)));
-//    connect(&clipboardService, SIGNAL(hasImage(QImage)),
-//            clientRoom, SLOT(sendImage(QImage)));##
     connect(clientRoom, SIGNAL(gotData(QByteArray, QString)),
             &clipboardService, SLOT(pushFromHosts(QByteArray,QString)));
-    connect(clientRoom, SIGNAL(gotText(QString)),
-            &clipboardService, SLOT(pushText(QString)));
-    connect(clientRoom, SIGNAL(gotImage(QByteArray)),
-            &clipboardService, SLOT(pushImage(QByteArray)));
-    connect(&clipboardService, SIGNAL(setUpdatedBuffer()),
-            clientRoom, SLOT(updateBuffer()));//##
+
     MainWindow().show();
 }

@@ -1,6 +1,7 @@
 #include <QObject>
 #include <QDataStream>
 #include <QHostAddress>
+#include <QImage>
 
 //#include "client_connection.h"
 //class ClientConnection;

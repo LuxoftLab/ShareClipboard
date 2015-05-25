@@ -29,11 +29,11 @@ public:
 public slots:
     void addMember(QString login, QHostAddress addr);
     void deleteMember(QHostAddress addr);
-    void sendText(QString text);
     void sendData(QByteArray data, QString type);
-    void sendImage(QImage);
-    void updateBuffer();
-    void setNotUpdated();
+//    void sendText(QString text);
+//    void sendImage(QImage);
+//    void updateBuffer();
+//    void setNotUpdated();
 signals:
     void gotData(QByteArray, QString);
     void gotText(QString);

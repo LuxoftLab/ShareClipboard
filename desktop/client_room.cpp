@@ -22,12 +22,12 @@ void ClientRoom::connectToHost(QString login, QString pass)
             this, SLOT(deleteMember(QHostAddress)));
     connect(connection, SIGNAL(gotData(QByteArray,QString)),
             this, SIGNAL(gotData(QByteArray,QString)));
-    connect(connection, SIGNAL(gotText(QString)),//##
-            this, SIGNAL(gotText(QString)));
-    connect(connection, SIGNAL(gotImage(QByteArray)),
-            this, SIGNAL(gotImage(QByteArray)));
-    connect(connection, SIGNAL(setNotUpdated()),
-            this, SLOT(setNotUpdated()));
+//    connect(connection, SIGNAL(gotText(QString)),//##
+//            this, SIGNAL(gotText(QString)));
+//    connect(connection, SIGNAL(gotImage(QByteArray)),
+//            this, SIGNAL(gotImage(QByteArray)));
+//    connect(connection, SIGNAL(setNotUpdated()),
+//            this, SLOT(setNotUpdated()));
 
     connection->sendPassAndLogin(pass, login);
 }
@@ -40,10 +40,10 @@ void ClientRoom::deleteMember(QHostAddress addr) {
     members.remove(addr.toIPv4Address());
 }
 
-void ClientRoom::sendText(QString text)
-{
-    //connection->sendText(text);
-}
+//void ClientRoom::sendText(QString text)
+//{
+//    //connection->sendText(text);
+//}
 
 void ClientRoom::sendData(QByteArray data, QString type)
 {
@@ -62,25 +62,27 @@ void ClientRoom::sendData(QByteArray data, QString type)
         return;
     }
     int sz = data.size(); //##
+    QImage image2 = QImage::fromData(data);
+    image2.save("/home/asalle/1.png");
     connection->sendData(data, p_type);
 }
 
 
-void ClientRoom::sendImage(QImage image)
-{
-    connection->sendImage(image);
-    qDebug() << image.height() << image.width();
-}
+//void ClientRoom::sendImage(QImage image)
+//{
+//    connection->sendImage(image);
+//    qDebug() << image.height() << image.width();
+//}
 
-void ClientRoom::updateBuffer()
-{
-   // updated = true;
-}
+//void ClientRoom::updateBuffer()
+//{
+//   // updated = true;
+//}
 
-void ClientRoom::setNotUpdated()
-{
-    //updated = false;
-}
+//void ClientRoom::setNotUpdated()
+//{
+//    //updated = false;
+//}
 
 ClientRoom::~ClientRoom()
 {
