@@ -2,6 +2,7 @@
 #include <QDataStream>
 #include <QHostAddress>
 #include <QImage>
+#include <assert.h>
 
 //#include "client_connection.h"
 //class ClientConnection;

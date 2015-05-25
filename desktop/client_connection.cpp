@@ -106,9 +106,9 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
     QImage image2 = QImage::fromData(arr);
     image2.save("/home/asalle/4.png");
 
-    if(socket->write(dat) == 0)
+    if(socket->write(dat) < dat.size())
     {
-        qDebug() << "No data written";
+        qDebug() << "additional image transfer needed";
     }
 }
 
@@ -148,6 +148,7 @@ void ClientConnection::emitImage(QDataStream& in)
     {
         in >> temp;
         image.append(temp);
+        qDebug() << image.size() << temp.size();
     }
 
     QImage image2 = QImage::fromData(image);

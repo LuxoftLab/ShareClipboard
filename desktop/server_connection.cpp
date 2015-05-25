@@ -53,7 +53,18 @@ void ServerConnection::onData()
             this, SIGNAL(addMember(QString,QHostAddress)));
     connect(hand, SIGNAL(deleteMember(QHostAddress)),
             this, SIGNAL(deleteMember(QHostAddress)));
-    hand->decode(in);
+    /*if(packt == IMAGE)
+    {
+        QByteArray temp;
+
+        while(socket->bytesAvailable() > 0)
+        {
+            temp.append(socket->readAll());
+        }
+        QDataStream out(&temp, QIODevice::ReadOnly);
+        hand->decode(out);
+    }
+    else*/ hand->decode(in);
 }/*
 void ServerConnection::sendText(QString text, bool updated)
 {
@@ -111,13 +122,13 @@ void ServerConnection::sendData(QByteArray data, pckg_t type)
     {
         QByteArray dat;
         QDataStream out(&dat, QIODevice::WriteOnly);
-        int s = arr.size();//##
+
         out << type << (qint32)data.size() << data;
 
         QImage image2 = QImage::fromData(data);
         image2.save("/home/asalle/2.png");
-
-        if(socket->write(dat) == 0)
+        qDebug() << dat.size();
+        if(socket->write(dat) < dat.size())
         {
             qDebug() << "No data written";
         }
