@@ -36,8 +36,6 @@ signals:
     void gotImage(QByteArray);
     void gotData(QByteArray, QString);
     void setNotUpdated();
-private slots:
-    void connected();
 };
 
 #endif // SERVER_CONNECTION_H
