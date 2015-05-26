@@ -51,6 +51,8 @@ QString ClientConnection::getLogin() {
 void ClientConnection::onData(){
     QDataStream in(socket);
     qint32 packt;
+    QByteArray temp;
+    QDataStream inimage(&temp, QIODevice::ReadOnly);
     in >> packt;
     if(packt == 0)
         qDebug() << "No data delivered";
@@ -61,8 +63,10 @@ void ClientConnection::onData(){
         case TEXT:
             emitText(in);
             break;
-        case IMAGE:
-            emitImage(in);
+        case IMAGE:            
+            while(socket->bytesAvailable() > 0)
+                temp.append(socket->readAll());
+            emitImage(inimage);
             break;
         default: throw packt;
     }
@@ -105,11 +109,12 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
 
     QImage image2 = QImage::fromData(arr);
     image2.save("/home/asalle/4.png");
-
-    if(socket->write(dat) < dat.size())
+    int written = 0;
+    if((written = socket->write(dat)) < dat.size())
     {
         qDebug() << "additional image transfer needed";
     }
+    qDebug() << written;
 }
 
 //----------------- case handlers --------------------
@@ -147,6 +152,7 @@ void ClientConnection::emitImage(QDataStream& in)
     while(image.size() < size)
     {
         in >> temp;
+        assert(temp.size() > 0);
         image.append(temp);
         qDebug() << image.size() << temp.size();
     }

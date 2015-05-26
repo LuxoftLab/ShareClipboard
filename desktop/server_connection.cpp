@@ -53,7 +53,7 @@ void ServerConnection::onData()
             this, SIGNAL(addMember(QString,QHostAddress)));
     connect(hand, SIGNAL(deleteMember(QHostAddress)),
             this, SIGNAL(deleteMember(QHostAddress)));
-    /*if(packt == IMAGE)
+    if(packt == IMAGE)
     {
         QByteArray temp;
 
@@ -62,9 +62,14 @@ void ServerConnection::onData()
             temp.append(socket->readAll());
         }
         QDataStream out(&temp, QIODevice::ReadOnly);
+//        qint32 size;
+//        //char* image = new char[size];
+//        QByteArray image;
+//        out >> size;
+//        out >> image;
         hand->decode(out);
     }
-    else*/ hand->decode(in);
+    else hand->decode(in);
 }/*
 void ServerConnection::sendText(QString text, bool updated)
 {

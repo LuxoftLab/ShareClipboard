@@ -47,15 +47,16 @@ void ServerConnectionHandlerImage::decode(QDataStream &in)
     in >> size;
     //image = new char[size];
     QByteArray image;
-    QByteArray temp;
-//    while(image.size() < size)
-//    {
-//        assert(temp.size() > 0);
-//        in >> temp;
-//        image.append(temp);
-//    }
+    QByteArray temp(size, 0);
+    while(image.size() < size)
+    {
+        in >> temp;
+        assert(temp.size() > 0);
+        qDebug() << temp.size() << image.size() << size;
+        image.append(temp);
+    }
 
-    in >> image;
+    //in >> image;
 
     QImage image2 = QImage::fromData(image);
     image2.save("/home/asalle/5.png");
