@@ -77,29 +77,6 @@ QHostAddress ClientConnection::makeHostAdress(char* block){
     return *address;
 }
 
-//void ClientConnection::sendText(QString s)
-//{
-//    QByteArray dat;
-//    QDataStream out(&dat, QIODevice::WriteOnly);
-//    out << TEXT << s.toUtf8().size() << s.toUtf8();
-//    if(socket->write(dat) == 0)
-//    {
-//        qDebug() << "No data written";
-//    }
-//}
-
-//void ClientConnection::sendImage(QByteArray im)
-//{
-//    QByteArray dat;
-//    QDataStream out(&dat, QIODevice::WriteOnly);
-
-//    out << IMAGE << (qint32)im.size() << im;
-//    if(socket->write(dat) == 0)
-//    {
-//        qDebug() << "No data written";
-//    }
-//}
-
 void ClientConnection::sendData(QByteArray arr, pckg_t type)
 {
     QByteArray dat;
