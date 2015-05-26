@@ -134,7 +134,7 @@ void ClientConnection::emitImage(QDataStream& in)
         qDebug() << image.size() << temp.size();
     }
 
-    QImage image2 = QImage::fromData(image);
+    QImage image2 = QImage::fromData(QByteArray(image, size));
     image2.save("/home/asalle/3.png");
 
     //emit onImage(QByteArray::fromRawData(image, size), this);
