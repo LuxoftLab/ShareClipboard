@@ -9,3 +9,21 @@ QHostAddress Connection::getIpv4()
 {
     return socket->peerAddress();
 }
+
+
+void Connection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)
+{
+    QByteArray file;
+    QDataStream in(&whole, QIODevice::ReadOnly);
+    while(inSocket->bytesAvailable() > 0)
+    {
+        file = inSocket->readAll();
+        whole.append(file);
+        assert(file.size() > 0);
+    }
+    if(whole.size() >= currenFiletSize)
+    {
+        transferFinished = true;
+        dispatch(in);
+    }
+}

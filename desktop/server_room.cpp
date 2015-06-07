@@ -56,6 +56,7 @@ bool ServerRoom::verifyPass(QString pass, ClientConnection * conn)
 {
     if(this->pass != pass)
     {
+        qDebug() << pass << this->pass;
         conn->sendFail();
         return false;
     }

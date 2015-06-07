@@ -22,8 +22,11 @@ void ServerConnection::sendPassAndLogin(QString password, QString login)
 {
    QByteArray dat;
    QDataStream out(&dat, QIODevice::WriteOnly);
-   out << PASS << password.toUtf8().size() << password.toUtf8().data()
-       << login.toUtf8().size() << login.toUtf8().data();
+   out << qint32(0) << PASS << (qint32)password.toUtf8().size() << password.toUtf8().data();
+       //<< (qint32)login.toUtf8().size() << login.toUtf8().data();
+   out.device()->seek(0);
+   //qDebug() << password.size() << password << login.size() << login;
+   out << (qint32)(dat.size() - sizeof(qint32));
 
    if(socket->write(dat) == 0)
    {
@@ -34,6 +37,31 @@ void ServerConnection::sendPassAndLogin(QString password, QString login)
 void ServerConnection::onData()
 {
     QDataStream in(socket);
+    //QByteArray file;
+    if(transferFinished)
+    {
+        in >> currenFiletSize;
+        transferFinished = false;
+        file.clear();
+    }
+    downloadMore(file, socket);
+
+//    if(packt == IMAGE)
+//    {
+//        QByteArray temp;
+
+//        while(socket->bytesAvailable() > 0)
+//        {
+//            temp.append(socket->readAll());
+//        }
+//        QDataStream out(&temp, QIODevice::ReadOnly);
+//        hand->decode(out);
+//    }
+    /*else*/
+}
+
+void ServerConnection::dispatch(QDataStream &in)
+{
     qint32 packt;
     in >> packt;
     hand = (new ServerConnectionFactory())->getHandler((pckg_t)packt);
@@ -46,18 +74,7 @@ void ServerConnection::onData()
             this, SIGNAL(addMember(QString,QHostAddress)));
     connect(hand, SIGNAL(deleteMember(QHostAddress)),
             this, SIGNAL(deleteMember(QHostAddress)));
-    if(packt == IMAGE)
-    {
-        QByteArray temp;
-
-        while(socket->bytesAvailable() > 0)
-        {
-            temp.append(socket->readAll());
-        }
-        QDataStream out(&temp, QIODevice::ReadOnly);
-        hand->decode(out);
-    }
-    else hand->decode(in);
+    hand->decode(in);
 }
 
 void ServerConnection::sendData(QByteArray data, pckg_t type)
@@ -65,12 +82,17 @@ void ServerConnection::sendData(QByteArray data, pckg_t type)
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
 
-    out << type << (qint32)data.size() << data;
+    out << qint32(0) << type << (qint32)data.size() << data;//.constData();
+    out.device()->seek(0);
+    out << (qint32)(dat.size() - sizeof(qint32));
+    out.device()->seek(4+4+4+data.size());
 
-    QImage image2 = QImage::fromData(data);
+    QImage image2 = QImage::fromData(QByteArray(data.constData(), data.size()));
     image2.save("/home/asalle/2.png");
-    qDebug() << dat.size();
-    if(socket->write(dat) < dat.size())
+    qDebug() << dat.size() << data.size();
+
+    int wSize;
+    if((wSize = socket->write(dat)) < dat.size())
     {
         qDebug() << "No data written";
     }

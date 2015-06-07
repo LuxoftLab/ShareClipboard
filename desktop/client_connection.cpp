@@ -4,6 +4,7 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
     this->login = "login";
+    transferFinished = true;
     connect(socket, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
 }
@@ -50,26 +51,16 @@ QString ClientConnection::getLogin() {
 
 void ClientConnection::onData(){
     QDataStream in(socket);
-    qint32 packt;
-    QByteArray temp;
-    QDataStream inimage(&temp, QIODevice::ReadOnly);
-    in >> packt;
-    if(packt == 0)
-        qDebug() << "No data delivered";
-    switch(packt){
-        case PASS:
-            makePass(in);
-            break;
-        case TEXT:
-            emitText(in);
-            break;
-        case IMAGE:            
-            while(socket->bytesAvailable() > 0)
-                temp.append(socket->readAll());
-            emitImage(inimage);
-            break;
-        default: throw packt;
+    QDataStream infile(&file, QIODevice::ReadOnly);
+    if(transferFinished)
+    {
+        file.clear();
+        transferFinished = false;
+        in >> currenFiletSize;
+        currenFiletSize -= sizeof(packt);
+        in >> packt;
     }
+    downloadMore(file, socket);
 }
 
 QHostAddress ClientConnection::makeHostAdress(char* block){
@@ -82,7 +73,10 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
 
-    out << type << (qint32)arr.size() << arr;
+    out << qint32(0) << type << (qint32)arr.size() << arr;
+    out.device()->seek(0);
+    out << (qint32)(dat.size() - sizeof(qint32));
+    out.device()->seek(4+4+4+arr.size());
 
     QImage image2 = QImage::fromData(arr);
     image2.save("/home/asalle/4.png");
@@ -102,12 +96,41 @@ void ClientConnection::makePass(QDataStream& in)
     in >> pwdsz;
     char* pwd = new char[pwdsz];
     in >> pwd;
-    qint32 lgnsz;
-    in >> lgnsz;
-    char* lgn = new char[lgnsz];
-    in >> lgn;
-    qDebug() << pwd << lgn;
+   qDebug() << pwd;
     emit(verifyPass(QString::fromUtf8(pwd, pwdsz), this));
+}
+
+void ClientConnection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)
+{
+    QByteArray file;
+    QDataStream in(&whole, QIODevice::ReadOnly);
+    while(inSocket->bytesAvailable() > 0)
+    {
+        file = inSocket->readAll();
+        whole.append(file);
+        assert(file.size() > 0);
+    }
+    if(whole.size() >= currenFiletSize)
+    {
+        transferFinished = true;
+        dispatch(in);
+    }
+}
+
+void ClientConnection::dispatch(QDataStream& infile)
+{
+    switch(packt){
+        case PASS:
+            makePass(infile);
+            break;
+        case TEXT:
+            emitText(infile);
+            break;
+        case IMAGE:
+            emitImage(infile);
+            break;
+        default: throw packt;
+    }
 }
 
 void ClientConnection::emitText(QDataStream& in)
@@ -125,16 +148,8 @@ void ClientConnection::emitImage(QDataStream& in)
     in >> size;
     //char* image = new char[size];
     QByteArray image;
-    QByteArray temp;
-    while(image.size() < size)
-    {
-        in >> temp;
-        assert(temp.size() > 0);
-        image.append(temp);
-        qDebug() << image.size() << temp.size();
-    }
-
-    QImage image2 = QImage::fromData(QByteArray(image, size));
+    in >> image;
+    QImage image2 = QImage::fromData(image);
     image2.save("/home/asalle/3.png");
 
     //emit onImage(QByteArray::fromRawData(image, size), this);

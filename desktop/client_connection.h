@@ -9,6 +9,7 @@
 #include <QClipboard>
 #include <QImage>
 #include <QBuffer>
+#include <QDataStream>
 class ClientConnection : public Connection
 {
     Q_OBJECT
@@ -33,6 +34,8 @@ public slots:
     void emitImage(QDataStream&);
 private:
     void makePass(QDataStream&);
+    void downloadMore(QByteArray& whole, QTcpSocket * inSocket);
+    void dispatch(QDataStream& infile);
 };
 
 #endif // CLIENT_CONNECTION_H

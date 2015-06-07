@@ -12,6 +12,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
+#include <QDataStream>
 #include <QMessageBox>
 
 class ServerConnection : public Connection
@@ -36,6 +37,8 @@ signals:
     void gotImage(QByteArray);
     void gotData(QByteArray, QString);
     void setNotUpdated();
+private:
+    void dispatch(QDataStream & in);
 };
 
 #endif // SERVER_CONNECTION_H
