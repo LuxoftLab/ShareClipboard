@@ -1,4 +1,4 @@
- #include "server_connection.h"
+#include "server_connection.h"
 
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
@@ -22,10 +22,9 @@ void ServerConnection::sendPassAndLogin(QString password, QString login)
 {
    QByteArray dat;
    QDataStream out(&dat, QIODevice::WriteOnly);
+
    out << qint32(0) << PASS << (qint32)password.toUtf8().size() << password.toUtf8().data();
-       //<< (qint32)login.toUtf8().size() << login.toUtf8().data();
    out.device()->seek(0);
-   //qDebug() << password.size() << password << login.size() << login;
    out << (qint32)(dat.size() - sizeof(qint32));
 
    if(socket->write(dat) == 0)
@@ -37,7 +36,6 @@ void ServerConnection::sendPassAndLogin(QString password, QString login)
 void ServerConnection::onData()
 {
     QDataStream in(socket);
-    //QByteArray file;
     if(transferFinished)
     {
         in >> currenFiletSize;
@@ -45,19 +43,6 @@ void ServerConnection::onData()
         file.clear();
     }
     downloadMore(file, socket);
-
-//    if(packt == IMAGE)
-//    {
-//        QByteArray temp;
-
-//        while(socket->bytesAvailable() > 0)
-//        {
-//            temp.append(socket->readAll());
-//        }
-//        QDataStream out(&temp, QIODevice::ReadOnly);
-//        hand->decode(out);
-//    }
-    /*else*/
 }
 
 void ServerConnection::dispatch(QDataStream &in)
@@ -88,7 +73,8 @@ void ServerConnection::sendData(QByteArray data, pckg_t type)
     out.device()->seek(4+4+4+data.size());
 
     QImage image2 = QImage::fromData(QByteArray(data.constData(), data.size()));
-    image2.save("/home/asalle/2.png");
+    image2.save("/tmp/SharedClipboard/2.png");
+
     qDebug() << dat.size() << data.size();
 
     int wSize;

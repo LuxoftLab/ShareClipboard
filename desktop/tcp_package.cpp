@@ -20,8 +20,6 @@ void ServerConnectionHandlerMember::decode(QDataStream &in)
 
 ServerConnectionHandler *ServerConnectionFactory::getHandler(pckg_t packt)
 {
-    if(packt < 0)
-        qDebug() << "No data delivered";
     switch(packt){
         case MEMBER:
             return new ServerConnectionHandlerMember();
