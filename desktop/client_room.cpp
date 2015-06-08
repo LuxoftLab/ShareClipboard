@@ -1,5 +1,10 @@
 #include "client_room.h"
 
+floating_server_priorities ClientRoom::device_type()
+{
+    return PC;
+}
+
 ClientRoom::ClientRoom(QString name, QHostAddress host) : Room(name, "")
 {
     this->host = host;
@@ -16,12 +21,13 @@ void ClientRoom::connectToHost(QString login, QString pass)
         throw;
     }
 
-    connect(connection, SIGNAL(addMember(QString, QHostAddress)),
-            this, SLOT(addMember(QString, QHostAddress)));
+    connect(connection, SIGNAL(addMember(QString, floating_server_priorities, QHostAddress)),
+            this, SLOT(addMember(QString, floating_server_priorities, QHostAddress)));
     connect(connection, SIGNAL(deleteMember(QHostAddress)),
             this, SLOT(deleteMember(QHostAddress)));
     connect(connection, SIGNAL(gotData(QByteArray,QString)),
             this, SIGNAL(gotData(QByteArray,QString)));
+    connect(connection, SIGNAL(serverFell()), this, SLOT(recoverServer()));
 //    connect(connection, SIGNAL(gotText(QString)),//##
 //            this, SIGNAL(gotText(QString)));
 //    connect(connection, SIGNAL(gotImage(QByteArray)),
@@ -29,11 +35,11 @@ void ClientRoom::connectToHost(QString login, QString pass)
 //    connect(connection, SIGNAL(setNotUpdated()),
 //            this, SLOT(setNotUpdated()));
 
-    connection->sendPassAndLogin(pass, login);
+    connection->sendPassLoginPriority(pass, login, device_type());
 }
 
-void ClientRoom::addMember(QString login, QHostAddress addr) {
-    members.insert(addr.toIPv4Address(), new Member(login, addr));
+void ClientRoom::addMember(QString login, floating_server_priorities prior, QHostAddress addr) {
+    members.insert(addr.toIPv4Address(), new Member(login, addr, prior));
 }
 
 void ClientRoom::deleteMember(QHostAddress addr) {
@@ -67,6 +73,11 @@ void ClientRoom::sendData(QByteArray data, QString type)
     connection->sendData(data, p_type);
 }
 
+void ClientRoom::recoverServer()
+{
+
+}
+
 
 //void ClientRoom::sendImage(QImage image)
 //{
@@ -91,9 +102,10 @@ ClientRoom::~ClientRoom()
     delete connection;
 }
 
-Member::Member(QString login, QHostAddress addr)
+Member::Member(QString login, QHostAddress addr, floating_server_priorities prior)
 {
     this->login = login;
     this->addr = addr;
+    this->priority = prior;
 }
 

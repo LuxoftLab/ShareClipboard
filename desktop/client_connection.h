@@ -2,6 +2,7 @@
 #define CLIENT_CONNECTION_H
 
 #include "connection.h"
+#include "constants.h"
 #include "tcp_package.h"
 #include <assert.h>
 #include <QMimeData>
@@ -15,13 +16,13 @@ class ClientConnection : public Connection
     Q_OBJECT
     QString login;
 signals:
-    void verifyPass(QString pass, ClientConnection * const);
+    void verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
     void onText(QString, ClientConnection * const);
     void onImage(QByteArray, ClientConnection * const);
 public:
     ClientConnection(QTcpSocket * socket);
     void sendFail();
-    void sendMember(QString login, QHostAddress addr);
+    void sendMember(QString login, floating_server_priorities, QHostAddress addr);
     void removeMember(QHostAddress addr);
     QString getLogin();
     QHostAddress makeHostAdress(char*);

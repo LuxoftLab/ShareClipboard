@@ -4,6 +4,8 @@
 #include <QImage>
 #include <assert.h>
 
+#include "constants.h"
+
 //#include "client_connection.h"
 //class ClientConnection;
 
@@ -45,7 +47,7 @@ signals:
     void gotText(QString);
     void gotImage(QByteArray);
     void gotData(QByteArray, QString);
-    void addMember(QString, QHostAddress);
+    void addMember(QString, floating_server_priorities, QHostAddress);
     void deleteMember(QHostAddress);
 };
 

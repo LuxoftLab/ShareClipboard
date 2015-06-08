@@ -12,24 +12,27 @@
 struct Member {
     QString login;
     QHostAddress addr;
-    Member(QString login, QHostAddress addr);
+    floating_server_priorities priority;
+    Member(QString login, QHostAddress addr, floating_server_priorities prior);
 };
 
 class ClientRoom : public Room
 {
     Q_OBJECT
-
     ServerConnection * connection;
     QHostAddress host;
     QMap<qint32, Member*> members;
+
+    floating_server_priorities device_type();
 public:
     ClientRoom(QString name, QHostAddress host);
     ~ClientRoom();
     void connectToHost(QString login, QString pass);
 public slots:
-    void addMember(QString login, QHostAddress addr);
+    void addMember(QString login, floating_server_priorities, QHostAddress addr);
     void deleteMember(QHostAddress addr);
     void sendData(QByteArray data, QString type);
+    void recoverServer();
 //    void sendText(QString text);
 //    void sendImage(QImage);
 //    void updateBuffer();

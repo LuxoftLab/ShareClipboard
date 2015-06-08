@@ -3,7 +3,9 @@
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
     socket = new QTcpSocket(this);
+    transferFinished = true;
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
+    connect(socket, SIGNAL(disconnected()), this, SIGNAL(serverFell()));
 
     try
     {
@@ -18,12 +20,14 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
         qDebug() << socket->error();
 }
 
-void ServerConnection::sendPassAndLogin(QString password, QString login)
+void ServerConnection::sendPassLoginPriority(QString password, QString login, floating_server_priorities priority)
 {
    QByteArray dat;
    QDataStream out(&dat, QIODevice::WriteOnly);
-
-   out << qint32(0) << PASS << (qint32)password.toUtf8().size() << password.toUtf8().data();
+   out << qint32(0) << PASS
+       << (qint32)priority
+       << (qint32)password.toUtf8().size()
+       << password.toUtf8().data();
    out.device()->seek(0);
    out << (qint32)(dat.size() - sizeof(qint32));
 
@@ -55,8 +59,8 @@ void ServerConnection::dispatch(QDataStream &in)
             this, SIGNAL(gotImage(QByteArray)));
     connect(hand, SIGNAL(gotData(QByteArray,QString)),
             this, SIGNAL(gotData(QByteArray,QString)));
-    connect(hand, SIGNAL(addMember(QString,QHostAddress)),
-            this, SIGNAL(addMember(QString,QHostAddress)));
+    connect(hand, SIGNAL(addMember(QString,floating_server_priorities,QHostAddress)),
+            this, SIGNAL(addMember(QString,floating_server_priorities,QHostAddress)));
     connect(hand, SIGNAL(deleteMember(QHostAddress)),
             this, SIGNAL(deleteMember(QHostAddress)));
     hand->decode(in);

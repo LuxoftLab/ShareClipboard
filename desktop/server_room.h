@@ -20,7 +20,7 @@ public:
 public slots:
     void addMember(QTcpSocket * socket);
     void deleteMember(QHostAddress addr);
-    bool verifyPass(QString pass, ClientConnection * const);
+    bool verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
     void onText(QString, ClientConnection * const);
     void onImage(QByteArray, ClientConnection * const);
 private:

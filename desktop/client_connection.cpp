@@ -21,11 +21,17 @@ void ClientConnection::sendFail()
     }
 }
 
-void ClientConnection::sendMember(QString login, QHostAddress addr)
+void ClientConnection::sendMember(QString login, floating_server_priorities priority, QHostAddress addr)
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out << MEMBER << login.toUtf8().size() << login.toUtf8().data() << addr.toIPv4Address();
+    out << qint32(0) << MEMBER
+        << priority
+        << login.toUtf8().size()
+        << login.toUtf8().data()
+        << addr.toIPv4Address();
+    out.device()->seek(0);
+    out << qint32(dat.size() - sizeof(qint32));
 
     if(socket->write(dat) == 0)
     {
@@ -92,12 +98,14 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
 
 void ClientConnection::makePass(QDataStream& in)
 {
+    qint32 priority;
     qint32 pwdsz;
+    in >> priority;
     in >> pwdsz;
     char* pwd = new char[pwdsz];
     in >> pwd;
-   qDebug() << pwd;
-    emit(verifyPass(QString::fromUtf8(pwd, pwdsz), this));
+    qDebug() << pwd << pwdsz;
+    emit(verifyPass(QString::fromUtf8(pwd, pwdsz), (floating_server_priorities)priority, this));
 }
 
 void ClientConnection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)

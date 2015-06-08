@@ -5,4 +5,10 @@
 #define REPEAT 10
 #define UDP_PORT 12345
 
+enum floating_server_priorities
+{
+    PC,
+    MOBILE
+};
+
 #endif // CONSTANTS_H

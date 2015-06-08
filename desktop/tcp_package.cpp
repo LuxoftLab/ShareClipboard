@@ -11,11 +11,13 @@ void ServerConnectionHandlerText::decode(QDataStream &in)
 
 void ServerConnectionHandlerMember::decode(QDataStream &in)
 {
+    qint32 priority;
+    in >> priority;
     in >> size;
     login = new char[size];
     in >> login;
     in >> address;
-    emit addMember(QString::fromUtf8(login), QHostAddress(address));
+    emit addMember(QString::fromUtf8(login), (floating_server_priorities)priority, QHostAddress(address));
 }
 
 ServerConnectionHandler *ServerConnectionFactory::getHandler(pckg_t packt)

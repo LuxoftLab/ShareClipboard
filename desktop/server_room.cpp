@@ -21,8 +21,8 @@ ServerRoom::~ServerRoom()
 void ServerRoom::addMember(QTcpSocket * socket)
 {
     ClientConnection *t = new ClientConnection(socket);
-    connect(t, SIGNAL(verifyPass(QString, ClientConnection* const)),
-            this, SLOT(verifyPass(QString, ClientConnection* const)));
+    connect(t, SIGNAL(verifyPass(QString, floating_server_priorities, ClientConnection* const)),
+            this, SLOT(verifyPass(QString, floating_server_priorities, ClientConnection* const)));
     connect(t, SIGNAL(onText(QString, ClientConnection * const)),
             this, SLOT(onText(QString, ClientConnection * const)));
     connect(t, SIGNAL(onImage(QByteArray, ClientConnection * const)),
@@ -52,7 +52,7 @@ void ServerRoom::deleteMember(QHostAddress addr)
     }
 }
 
-bool ServerRoom::verifyPass(QString pass, ClientConnection * conn)
+bool ServerRoom::verifyPass(QString pass, floating_server_priorities priority, ClientConnection * conn)
 {
     if(this->pass != pass)
     {
@@ -62,13 +62,13 @@ bool ServerRoom::verifyPass(QString pass, ClientConnection * conn)
     }
     qint32 ip = conn->getIpv4().toIPv4Address();
     notVerified.remove(ip);
+    verified.insert(ip, conn);
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
-        t->sendMember(conn->getLogin(), conn->getIpv4());
-        conn->sendMember(t->getLogin(), t->getIpv4());
+        t->sendMember(conn->getLogin(), priority, conn->getIpv4());
+        conn->sendMember(t->getLogin(), priority, t->getIpv4());
     }
-    verified.insert(ip, conn);
     return true;
 }
 
