@@ -84,7 +84,6 @@ void ServerRoom::onImage(QByteArray im, ClientConnection * const)
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
-        //t->sendImage(im);
         t->sendData(im, IMAGE);
     }
 }
