@@ -13,7 +13,7 @@ void ClientConnection::sendFail()
 {
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
-    out << INVALID_PASS;
+    out << (qint32)sizeof(qint32) << INVALID_PASS;
 
     if(socket->write(dat) == 0)
     {
@@ -85,7 +85,7 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
     out.device()->seek(4+4+4+arr.size());
 
     QImage image2 = QImage::fromData(arr);
-    image2.save("/home/asalle/4.png");
+    image2.save("/tmp/SharedClipboard/4.png");
     int written = 0;
     if((written = socket->write(dat)) < dat.size())
     {
