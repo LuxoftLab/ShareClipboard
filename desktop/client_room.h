@@ -3,6 +3,7 @@
 
 #include <QHostAddress>
 #include <QMap>
+#include <QQueue>
 #include <QImage>
 #include <QBuffer>
 
@@ -22,12 +23,21 @@ class ClientRoom : public Room
     ServerConnection * connection;
     QHostAddress host;
     QMap<qint32, Member*> members;
+    QQueue<Member*> floating_server_candidates; //todo a priority queue
+    QString login;
+    QString pwd;
 
     floating_server_priorities device_type();
 public:
     ClientRoom(QString name, QHostAddress host);
     ~ClientRoom();
     void connectToHost(QString login, QString pass);
+    QString getLogin() const;
+    void setLogin(const QString &value);
+
+    QString getPwd() const;
+    void setPwd(const QString &value);
+
 public slots:
     void addMember(QString login, floating_server_priorities, QHostAddress addr);
     void deleteMember(QHostAddress addr);
@@ -41,6 +51,7 @@ signals:
     void gotData(QByteArray, QString);
     void gotText(QString);
     void gotImage(QByteArray);
+    void newFloatingServer(QHostAddress);
 };
 
 #endif // CLIENT_ROOM_H

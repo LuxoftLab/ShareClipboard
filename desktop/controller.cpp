@@ -58,7 +58,7 @@ void Controller::createServerRoom(QString name, QString pass)
     emit serverIsUp(name);
 
     addRoom(name, QHostAddress("127.0.0.1"));
-    //joinRoom(QHostAddress("127.0.0.1").toIPv4Address(), pass); //##
+    //joinRoom(QHostAddress("127.0.0.1").toIPv4Address(), pass);
 }
 
 void Controller::deleteServerRoom()
@@ -73,6 +73,13 @@ void Controller::deleteServerRoom()
 
     udpService->notifyAboutRoomDeleting();
 
+}
+
+void Controller::createFloatingServerRoom(QHostAddress)
+{
+    deleteServerRoom();
+    //serverRoom = NULL;
+    createServerRoom(clientRoom->getLogin(), clientRoom->getPwd());
 }
 
 void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
@@ -159,6 +166,10 @@ void Controller::joinRoom(qint32 addr, QString pass)
             clientRoom, SLOT(sendData(QByteArray, QString)));
     connect(clientRoom, SIGNAL(gotData(QByteArray, QString)),
             &clipboardService, SLOT(pushFromHosts(QByteArray,QString)));
+    connect(clientRoom, SIGNAL(newFloatingServer(QHostAddress)),
+            this, SLOT(createFloatingServerRoom(QHostAddress)));
+    clientRoom->setLogin(host.toString());
+    clientRoom->setPwd(pass);
 
     MainWindow().show();
 }

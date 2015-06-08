@@ -39,6 +39,7 @@ public slots:
     void addRoom(QString name, QHostAddress host);
     void deleteRoom(QHostAddress host);
     void deleteServerRoom();
+    void createFloatingServerRoom(QHostAddress);
 
     void onRoomsListOpen(RoomsListDialog *roomsDialog);
 

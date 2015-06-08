@@ -5,7 +5,7 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
     socket = new QTcpSocket(this);
     transferFinished = true;
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
-    connect(socket, SIGNAL(disconnected()), this, SIGNAL(serverFell()));
+    //connect(socket, SIGNAL(disconnected()), this, SIGNAL(serverFell()));
 
     try
     {
@@ -47,6 +47,7 @@ void ServerConnection::onData()
         file.clear();
     }
     downloadMore(file, socket);
+    emit serverFell();
 }
 
 void ServerConnection::dispatch(QDataStream &in)

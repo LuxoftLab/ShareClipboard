@@ -69,6 +69,7 @@ bool ServerRoom::verifyPass(QString pass, floating_server_priorities priority, C
         t->sendMember(conn->getLogin(), priority, conn->getIpv4());
         conn->sendMember(t->getLogin(), priority, t->getIpv4());
     }
+
     return true;
 }
 

@@ -1,5 +1,25 @@
 #include "client_room.h"
 
+
+QString ClientRoom::getLogin() const
+{
+    return login;
+}
+
+void ClientRoom::setLogin(const QString &value)
+{
+    login = value;
+}
+
+QString ClientRoom::getPwd() const
+{
+    return pwd;
+}
+
+void ClientRoom::setPwd(const QString &value)
+{
+    pwd = value;
+}
 floating_server_priorities ClientRoom::device_type()
 {
     return PC;
@@ -39,7 +59,9 @@ void ClientRoom::connectToHost(QString login, QString pass)
 }
 
 void ClientRoom::addMember(QString login, floating_server_priorities prior, QHostAddress addr) {
-    members.insert(addr.toIPv4Address(), new Member(login, addr, prior));
+    Member* newMember = new Member(login, addr, prior);
+    members.insert(addr.toIPv4Address(), newMember);
+    floating_server_candidates.append(newMember);
 }
 
 void ClientRoom::deleteMember(QHostAddress addr) {
@@ -75,7 +97,8 @@ void ClientRoom::sendData(QByteArray data, QString type)
 
 void ClientRoom::recoverServer()
 {
-
+    if(floating_server_candidates.size() > 0 && floating_server_candidates.first()->addr == host)
+        emit newFloatingServer(host);
 }
 
 
