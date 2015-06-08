@@ -78,27 +78,11 @@ void Controller::deleteServerRoom()
 void Controller::createFloatingServerRoom(QHostAddress)
 {
     deleteServerRoom();
-    //serverRoom = NULL;
     createServerRoom(clientRoom->getLogin(), clientRoom->getPwd());
 }
 
 void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
 {
-//    QMap<QString, qint32> roomsForGui;
-//    QMapIterator<qint32, ClientRoom*> i(rooms);
-//    while (i.hasNext())
-//    {
-//        i.next();
-//        roomsForGui.insert(i.value()->getName(), i.key());
-//    }
-
-//    if(serverRoom == NULL)
-//    {
-//        roomsDialog->setRoomsHash(roomsForGui, QString::null);
-//    } else {
-//        roomsDialog->setRoomsHash(roomsForGui, serverRoom->getName());
-//    }
-
     connect(roomsDialog, SIGNAL(newRoomCreated(QString,QString)), this, SLOT(createServerRoom(QString,QString)));
     connect(this, SIGNAL(roomAdded(QString,qint32)), roomsDialog, SLOT(addRoom(QString,qint32)));
 
@@ -107,7 +91,6 @@ void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
 
     connect(roomsDialog, SIGNAL(deleteServerRoom()), this, SLOT(deleteServerRoom()));
     connect(this, SIGNAL(roomDeleted(QString)), roomsDialog, SLOT(deleteRoom(QString)));
-
 }
 
 void Controller::initClipboardToGuiConnection()
