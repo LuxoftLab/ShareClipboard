@@ -34,18 +34,7 @@ void ClipboardService::onClipboardChanged()
         data.type = "image/png";
         QImage image = qvariant_cast<QImage>(mimeData->imageData());
 
-        QImage image2;
         data.data = *imageToQByteArray(image);
-
-        QByteArray imagestore;
-       // imagestore = *imageToQByteArray(image);
-
-//       QByteArray ba;
-//       QBuffer buffer(&ba);
-//       buffer.open(QIODevice::WriteOnly);
-//       image.save(&buffer, "PNG");
-        image2 = QImage::fromData(data.data);
-        image2.save("/home/asalle/heheheheynow.png");
 
         qDebug() << "size: " << data.data.size();
         const char* rawdata = data.data.constData();
@@ -75,12 +64,9 @@ void ClipboardService::pushFromHosts(QByteArray data, QString type)
     QMimeData * mimeData = new QMimeData();
 
     mimeData->setData(type, data);
-    QImage image2 = QImage::fromData(data);
-    image2.save("/home/asalle/6.png");
     clipboard->setMimeData(mimeData);
 
     qDebug() << "on data from outer host";
-    //const QMimeData * existingData = clipboard->mimeData();
 }
 
 void ClipboardService::pushDataToClipboardFromGui(qint32 dataId)

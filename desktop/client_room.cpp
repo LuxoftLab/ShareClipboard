@@ -48,12 +48,6 @@ void ClientRoom::connectToHost(QString login, QString pass)
     connect(connection, SIGNAL(gotData(QByteArray,QString)),
             this, SIGNAL(gotData(QByteArray,QString)));
     connect(connection, SIGNAL(serverFell()), this, SLOT(recoverServer()));
-//    connect(connection, SIGNAL(gotText(QString)),//##
-//            this, SIGNAL(gotText(QString)));
-//    connect(connection, SIGNAL(gotImage(QByteArray)),
-//            this, SIGNAL(gotImage(QByteArray)));
-//    connect(connection, SIGNAL(setNotUpdated()),
-//            this, SLOT(setNotUpdated()));
 
     connection->sendPassLoginPriority(pass, login, device_type());
 }
@@ -68,55 +62,31 @@ void ClientRoom::deleteMember(QHostAddress addr) {
     members.remove(addr.toIPv4Address());
 }
 
-//void ClientRoom::sendText(QString text)
-//{
-//    //connection->sendText(text);
-//}
-
 void ClientRoom::sendData(QByteArray data, QString type)
 {
     pckg_t p_type;
     if(type == "text/plain")
     {
          p_type = TEXT;
-        //connection->sendText(QString::fromUtf8(data), updated, type);##
     }
     else if(type == "image/png")
         p_type = IMAGE;
-//        connection->sendImage(data, updated);##
     else
     {
         qDebug() << "no such mime type available";
         return;
     }
-    int sz = data.size(); //##
-    QImage image2 = QImage::fromData(data);
-    image2.save("/home/asalle/1.png");
+
     connection->sendData(data, p_type);
 }
 
 void ClientRoom::recoverServer()
 {
-    if(floating_server_candidates.size() > 0 && floating_server_candidates.first()->addr == host)
+    qDebug() << "recovering server";
+    qDebug() << floating_server_candidates.first()->addr << connection->localAddress();
+    if(floating_server_candidates.size() > 0 && floating_server_candidates.first()->addr == connection->localAddress())
         emit newFloatingServer(host);
 }
-
-
-//void ClientRoom::sendImage(QImage image)
-//{
-//    connection->sendImage(image);
-//    qDebug() << image.height() << image.width();
-//}
-
-//void ClientRoom::updateBuffer()
-//{
-//   // updated = true;
-//}
-
-//void ClientRoom::setNotUpdated()
-//{
-//    //updated = false;
-//}
 
 ClientRoom::~ClientRoom()
 {
@@ -131,4 +101,3 @@ Member::Member(QString login, QHostAddress addr, floating_server_priorities prio
     this->addr = addr;
     this->priority = prior;
 }
-

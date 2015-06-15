@@ -78,8 +78,11 @@ void Controller::deleteServerRoom()
 void Controller::createFloatingServerRoom(QHostAddress)
 {
     deleteServerRoom();
-    //serverRoom = NULL;
     createServerRoom(clientRoom->getLogin(), clientRoom->getPwd());
+    QString pwd = clientRoom->getPwd();
+    delete clientRoom;
+    clientRoom = NULL;
+    joinRoom(QHostAddress("127.0.0.1").toIPv4Address(), pwd);
 }
 
 void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
@@ -171,5 +174,5 @@ void Controller::joinRoom(qint32 addr, QString pass)
     clientRoom->setLogin(host.toString());
     clientRoom->setPwd(pass);
 
-    MainWindow().show();
+    //MainWindow().show();
 }
