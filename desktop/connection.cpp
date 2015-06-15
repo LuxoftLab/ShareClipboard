@@ -10,6 +10,11 @@ QHostAddress Connection::getIpv4()
     return socket->peerAddress();
 }
 
+QHostAddress Connection::localAddress()
+{
+    return socket->localAddress();
+}
+
 
 void Connection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)
 {

@@ -97,7 +97,9 @@ void ClientRoom::sendData(QByteArray data, QString type)
 
 void ClientRoom::recoverServer()
 {
-    if(floating_server_candidates.size() > 0 && floating_server_candidates.first()->addr == host)
+    qDebug() << "recovering server";
+    qDebug() << floating_server_candidates.first()->addr << connection->localAddress();
+    if(floating_server_candidates.size() > 0 && floating_server_candidates.first()->addr == connection->localAddress())
         emit newFloatingServer(host);
 }
 

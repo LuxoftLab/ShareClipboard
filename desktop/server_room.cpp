@@ -60,6 +60,7 @@ bool ServerRoom::verifyPass(QString pass, floating_server_priorities priority, C
         conn->sendFail();
         return false;
     }
+    qDebug() << "verified IP:" << conn->localAddress();
     qint32 ip = conn->getIpv4().toIPv4Address();
     notVerified.remove(ip);
     verified.insert(ip, conn);
