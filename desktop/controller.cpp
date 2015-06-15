@@ -78,7 +78,6 @@ void Controller::deleteServerRoom()
 void Controller::createFloatingServerRoom(QHostAddress)
 {
     deleteServerRoom();
-    //serverRoom = NULL;
     createServerRoom(clientRoom->getLogin(), clientRoom->getPwd());
     QString pwd = clientRoom->getPwd();
     delete clientRoom;
