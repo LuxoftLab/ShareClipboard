@@ -23,6 +23,7 @@ protected:
 public:
     Connection(QTcpSocket * socket);
     QHostAddress getIpv4();
+    QHostAddress localAddress();
 };
 
 #endif // CONNECTION_H

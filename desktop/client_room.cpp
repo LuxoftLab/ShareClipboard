@@ -75,17 +75,14 @@ void ClientRoom::sendData(QByteArray data, QString type)
         qDebug() << "no such mime type available";
         return;
     }
-
-    QImage image2 = QImage::fromData(data);
-    image2.save("/tmp/SharedClipboard/1.png"); //##
-
     connection->sendData(data, p_type);
 }
 
 void ClientRoom::recoverServer()
 {
-    if(floating_server_candidates.size() > 0
-            && floating_server_candidates.first()->addr == host)
+    qDebug() << "recovering server";
+    qDebug() << floating_server_candidates.first()->addr << connection->localAddress();
+    if(floating_server_candidates.size() > 0 && floating_server_candidates.first()->addr == connection->localAddress())
         emit newFloatingServer(host);
 }
 
@@ -102,4 +99,3 @@ Member::Member(QString login, QHostAddress addr, floating_server_priorities prio
     this->addr = addr;
     this->priority = prior;
 }
-

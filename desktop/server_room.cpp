@@ -60,6 +60,7 @@ bool ServerRoom::verifyPass(QString pass, floating_server_priorities priority, C
         conn->sendFail();
         return false;
     }
+    qDebug() << "verified IP:" << conn->localAddress();
     qint32 ip = conn->getIpv4().toIPv4Address();
     notVerified.remove(ip);
     verified.insert(ip, conn);
@@ -101,7 +102,6 @@ void ServerRoom::sendText(QString s, ClientConnection * owner)
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
-        //t->sendText(s);
         t->sendData(s.toUtf8(), TEXT);
     }
 }

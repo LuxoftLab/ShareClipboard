@@ -22,6 +22,7 @@ class ClientRoom : public Room
     Q_OBJECT
     ServerConnection * connection;
     QHostAddress host;
+    QHostAddress ownAdress;
     QMap<qint32, Member*> members;
     QQueue<Member*> floating_server_candidates; //todo a priority queue
     QString login;

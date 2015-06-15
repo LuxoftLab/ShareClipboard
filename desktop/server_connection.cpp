@@ -47,7 +47,6 @@ void ServerConnection::onData()
         file.clear();
     }
     downloadMore(file, socket);
-    //emit serverFell();
 }
 
 void ServerConnection::dispatch(QDataStream &in)
