@@ -71,18 +71,13 @@ void ServerConnection::sendData(QByteArray data, pckg_t type)
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
 
-    out << qint32(0) << type << (qint32)data.size() << data;//.constData();
+    out << qint32(0) << type << (qint32)data.size();
+    out.writeRawData(data.constData(), data.size());
     out.device()->seek(0);
     out << (qint32)(dat.size() - sizeof(qint32));
-    out.device()->seek(4+4+4+data.size());
+    out.device()->seek(4+4+4+data.size()+1);
 
-    QImage image2 = QImage::fromData(QByteArray(data.constData(), data.size()));
-    image2.save("/tmp/SharedClipboard/2.png");
-
-    qDebug() << dat.size() << data.size();
-
-    int wSize;
-    if((wSize = socket->write(dat)) < dat.size())
+    if(socket->write(dat) < dat.size())
     {
         qDebug() << "No data written";
     }
