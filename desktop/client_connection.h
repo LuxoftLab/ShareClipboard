@@ -15,6 +15,7 @@ class ClientConnection : public Connection
 {
     Q_OBJECT
     QString login;
+    TcpPackage * hand;
 signals:
     void verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
     void onText(QString, ClientConnection * const);
@@ -31,10 +32,10 @@ public:
     void sendData(QByteArray arr, pckg_t type);
 public slots:
     void onData();
-    void emitText(QDataStream&);
-    void emitImage(QDataStream&);
+    void emitText(QString);
+    void emitImage(QByteArray);
+    void makePass(QString, floating_server_priorities);
 private:
-    void makePass(QDataStream&);
     void downloadMore(QByteArray& whole, QTcpSocket * inSocket);
     void dispatch(QDataStream& infile);
 };

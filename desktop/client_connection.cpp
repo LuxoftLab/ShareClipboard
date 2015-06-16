@@ -93,16 +93,16 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
 
 //----------------- case handlers --------------------
 
-void ClientConnection::makePass(QDataStream& in)
+void ClientConnection::makePass(QString pass, floating_server_priorities priority)
 {
-    qint32 priority;
-    qint32 pwdsz;
-    in >> priority;
-    in >> pwdsz;
-    char* pwd = new char[pwdsz];
-    in >> pwd;
-    qDebug() << pwd << pwdsz;
-    emit(verifyPass(QString::fromUtf8(pwd, pwdsz), (floating_server_priorities)priority, this));
+//    qint32 priority;
+//    qint32 pwdsz;
+//    in >> priority;
+//    in >> pwdsz;
+//    char* pwd = new char[pwdsz];
+//    in >> pwd;
+//    qDebug() << pwd << pwdsz;
+    emit(verifyPass(pass, priority, this));
 }
 
 void ClientConnection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)
@@ -124,35 +124,34 @@ void ClientConnection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)
 
 void ClientConnection::dispatch(QDataStream& infile)
 {
-    switch(packt){
-        case PASS:
-            makePass(infile);
-            break;
-        case TEXT:
-            emitText(infile);
-            break;
-        case IMAGE:
-            emitImage(infile);
-            break;
-        default: throw packt;
-    }
+//    switch(packt){
+//        case PASS:
+//            makePass(infile);
+//            break;
+//        case TEXT:
+//            emitText(infile);
+//            break;
+//        case IMAGE:
+//            emitImage(infile);
+//            break;
+//        default: throw packt;
+//    }
+
+    hand = TcpPackageFactory().getPackage((pckg_t)packt);
+    connect(hand, SIGNAL(gotText(QString)),
+            this, SLOT(emitText(QString)));
+    connect(hand, SIGNAL(gotImage(QByteArray)),
+            this, SLOT(emitImage(QByteArray)));
+
+    hand->decode(infile);
 }
 
-void ClientConnection::emitText(QDataStream& in)
+void ClientConnection::emitText(QString text)
 {
-    qint32 size;
-    in >> size;
-    char* text = new char[size];
-    in.readRawData(text, size);
-    emit(onText(QString::fromUtf8(text), this));
+    emit(onText(text, this));
 }
 
-void ClientConnection::emitImage(QDataStream& in)
+void ClientConnection::emitImage(QByteArray ba)
 {
-    qint32 size;
-    in >> size;
-    char* image = new char[size];
-    in.readRawData(image, size);
-
-   emit onImage(QByteArray(image, size), this);
+    emit onImage(ba, this);
 }

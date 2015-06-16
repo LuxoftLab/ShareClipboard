@@ -69,6 +69,8 @@ TcpPackage *TcpPackageFactory::getPackage(pckg_t type)
             return new RemoveMemberPackage();
        case IMAGE:
             return new ImagePackage();
+       case PASS:
+            return new PassPackage();
        default: throw type;
     }
 }
@@ -101,4 +103,16 @@ void ImagePackage::decode(QDataStream &in)
     in.readRawData(image,size);
 
     emit gotData(QByteArray(image, size), "image/png");
+}
+
+
+void PassPackage::decode(QDataStream &in)
+{
+    qint32 priority;
+    qint32 pwdsz;
+    in >> priority;
+    in >> pwdsz;
+    char* pwd = new char[pwdsz];
+    in >> pwd;
+    emit gotPass(QString::fromUtf8(pwd, pwdsz), (floating_server_priorities)priority);
 }
