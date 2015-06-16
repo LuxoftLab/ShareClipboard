@@ -27,6 +27,8 @@ void ServerRoom::addMember(QTcpSocket * socket)
             this, SLOT(onText(QString, ClientConnection * const)));
     connect(t, SIGNAL(onImage(QByteArray, ClientConnection * const)),
             this, SLOT(onImage(QByteArray, ClientConnection * const)));
+    connect(t, SIGNAL(deleteMember(QHostAddress)),
+                      this, SLOT(deleteMember(QHostAddress)));
     notVerified.insert(socket->peerAddress().toIPv4Address(), t);
 }
 
@@ -98,7 +100,6 @@ void ServerRoom::saveText()
 
 void ServerRoom::sendText(QString s, ClientConnection * owner)
 {
-    //TODO exclude owner
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
