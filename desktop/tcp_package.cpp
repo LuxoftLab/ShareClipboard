@@ -43,12 +43,8 @@ void ServerConnectionHandlerRemoveMember::decode(QDataStream &in)
 void ServerConnectionHandlerImage::decode(QDataStream &in)
 {
     in >> size;
+    image = new char[size];
+    in.readRawData(image,size);
 
-    //image = new char[size];
-    QByteArray image;
-    in >> image;
-
-    QImage image2 = QImage::fromData(QByteArray(image, size));
-    image2.save("/tmp/SharedClipboard/5.png");
     emit gotData(QByteArray(image, size), "image/png");
 }

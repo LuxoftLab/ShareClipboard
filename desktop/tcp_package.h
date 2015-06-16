@@ -6,9 +6,6 @@
 
 #include "constants.h"
 
-//#include "client_connection.h"
-//class ClientConnection;
-
 #ifndef TCP_PACKAGE_H
 #define TCP_PACKAGE_H
 

@@ -79,19 +79,16 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
 
-    out << qint32(0) << type << (qint32)arr.size() << arr;
+    out << qint32(0) << type << (qint32)arr.size();
+    out.writeRawData(arr.constData(), arr.size());
     out.device()->seek(0);
     out << (qint32)(dat.size() - sizeof(qint32));
     out.device()->seek(4+4+4+arr.size());
 
-    QImage image2 = QImage::fromData(arr);
-    image2.save("/tmp/SharedClipboard/4.png");
-    int written = 0;
-    if((written = socket->write(dat)) < dat.size())
+    if(socket->write(dat) < dat.size())
     {
         qDebug() << "additional image transfer needed";
     }
-    qDebug() << written;
 }
 
 //----------------- case handlers --------------------
