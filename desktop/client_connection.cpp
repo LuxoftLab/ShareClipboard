@@ -91,8 +91,6 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
     }
 }
 
-//----------------- case handlers --------------------
-
 void ClientConnection::makePass(QString pass, floating_server_priorities priority)
 {
     emit(verifyPass(pass, priority, this));
