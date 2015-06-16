@@ -154,12 +154,8 @@ void ClientConnection::emitImage(QDataStream& in)
 {
     qint32 size;
     in >> size;
-    //char* image = new char[size];
-    QByteArray image;
-    in >> image;
-    QImage image2 = QImage::fromData(image);
-    image2.save("/home/asalle/3.png");
+    char* image = new char[size];
+    in.readRawData(image, size);
 
-    //emit onImage(QByteArray::fromRawData(image, size), this);
-    emit onImage(image, this);
+   emit onImage(QByteArray(image, size), this);
 }

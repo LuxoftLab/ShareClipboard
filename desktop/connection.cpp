@@ -15,7 +15,6 @@ QHostAddress Connection::localAddress()
     return socket->localAddress();
 }
 
-
 void Connection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)
 {
     QByteArray file;
