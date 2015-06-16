@@ -143,7 +143,7 @@ void ClientConnection::emitText(QDataStream& in)
     qint32 size;
     in >> size;
     char* text = new char[size];
-    in >> text;
+    in.readRawData(text, size);
     emit(onText(QString::fromUtf8(text), this));
 }
 

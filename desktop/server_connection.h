@@ -25,7 +25,8 @@ public:
     void sendImage(QImage);
     void sendImage(QByteArray);
     void sendData(QByteArray, pckg_t);
-    ServerConnectionHandler* hand;
+    //ServerConnectionHandler* hand;
+    TcpPackage * hand;
 public slots:
     void onData();
 signals:

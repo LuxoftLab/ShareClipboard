@@ -53,7 +53,8 @@ void ServerConnection::dispatch(QDataStream &in)
 {
     qint32 packt;
     in >> packt;
-    hand = (new ServerConnectionFactory())->getHandler((pckg_t)packt);
+    //hand = (new ServerConnectionFactory())->getHandler((pckg_t)packt);
+    hand = TcpPackageFactory().getPackage((pckg_t)packt);
     connect(hand, SIGNAL(gotText(QString)), this, SIGNAL(gotText(QString)));
     connect(hand, SIGNAL(gotImage(QByteArray)),
             this, SIGNAL(gotImage(QByteArray)));
