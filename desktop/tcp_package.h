@@ -13,7 +13,7 @@ enum pckg_t
 {
     TEXT,
     IMAGE,
-    FILE,
+    FILENOTIF,
     PASS,
     MEMBER,
     INVALID_PASS,
