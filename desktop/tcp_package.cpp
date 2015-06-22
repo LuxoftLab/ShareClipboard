@@ -54,6 +54,8 @@ void TextPackage::decode(QDataStream &in)
     in >> size;
     text = new char[size];
     in.readRawData(text, size);
+
+    emit gotText(QByteArray::fromRawData(text, size));
     emit gotData(QByteArray::fromRawData(text, size), "text/plain");
 }
 
@@ -103,6 +105,7 @@ void ImagePackage::decode(QDataStream &in)
     in.readRawData(image,size);
 
     emit gotData(QByteArray(image, size), "image/png");
+    emit gotImage(QByteArray(image, size));
 }
 
 

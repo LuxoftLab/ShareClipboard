@@ -142,6 +142,8 @@ void ClientConnection::dispatch(QDataStream& infile)
             this, SLOT(emitText(QString)));
     connect(hand, SIGNAL(gotImage(QByteArray)),
             this, SLOT(emitImage(QByteArray)));
+    connect(hand, SIGNAL(gotPass(QString,floating_server_priorities)),
+            this, SLOT(makePass(QString,floating_server_priorities)));
 
     hand->decode(infile);
 }
