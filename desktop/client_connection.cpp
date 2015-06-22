@@ -91,18 +91,14 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
     }
 }
 
-//----------------- case handlers --------------------
-
 void ClientConnection::makePass(QString pass, floating_server_priorities priority)
 {
-//    qint32 priority;
-//    qint32 pwdsz;
-//    in >> priority;
-//    in >> pwdsz;
-//    char* pwd = new char[pwdsz];
-//    in >> pwd;
-//    qDebug() << pwd << pwdsz;
     emit(verifyPass(pass, priority, this));
+}
+
+void ClientConnection::emitDeleteMember()
+{
+    emit deleteMember(socket->localAddress());
 }
 
 void ClientConnection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)
@@ -124,19 +120,6 @@ void ClientConnection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)
 
 void ClientConnection::dispatch(QDataStream& infile)
 {
-//    switch(packt){
-//        case PASS:
-//            makePass(infile);
-//            break;
-//        case TEXT:
-//            emitText(infile);
-//            break;
-//        case IMAGE:
-//            emitImage(infile);
-//            break;
-//        default: throw packt;
-//    }
-
     hand = TcpPackageFactory().getPackage((pckg_t)packt);
     connect(hand, SIGNAL(gotText(QString)),
             this, SLOT(emitText(QString)));
