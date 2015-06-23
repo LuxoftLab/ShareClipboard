@@ -33,7 +33,7 @@ protected:
     char* password;
 public:
     virtual void decode(QDataStream& in) = 0;
-    void encode();
+    virtual QByteArray * encode(QString, QString, floating_server_priorities) = 0;
 signals:
     void gotText(QString);
     void gotImage(QByteArray);
@@ -46,26 +46,31 @@ signals:
 class TextPackage : public TcpPackage
 {
     void decode(QDataStream &in);
+    QByteArray * encode(QString, QString, floating_server_priorities);
 };
 
 class MemberPackage : public TcpPackage
 {
     void decode(QDataStream &in);
+    QByteArray * encode(QString, QString, floating_server_priorities);
 };
 
 class RemoveMemberPackage : public TcpPackage
 {
     void decode(QDataStream &in);
+    QByteArray * encode(QString, QString, floating_server_priorities);
 };
 
 class ImagePackage : public TcpPackage
 {
     void decode(QDataStream &in);
+    QByteArray * encode(QString, QString, floating_server_priorities);
 };
 
 class PassPackage : public TcpPackage
 {
     void decode(QDataStream &in);
+    QByteArray * encode(QString, QString, floating_server_priorities);
 };
 
 class TcpPackageFactory
