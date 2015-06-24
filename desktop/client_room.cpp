@@ -55,7 +55,10 @@ void ClientRoom::connectToHost(QString login, QString pass)
 void ClientRoom::addMember(QString login, floating_server_priorities prior, QHostAddress addr) {
     Member* newMember = new Member(login, addr, prior);
     members.insert(addr.toIPv4Address(), newMember);
-    floating_server_candidates.append(newMember);
+    if(prior == PC)
+        floating_server_candidates.push_front(newMember);
+    else if(prior == MOBILE)
+        floating_server_candidates.push_back(newMember);
 }
 
 void ClientRoom::deleteMember(QHostAddress addr) {
