@@ -14,14 +14,6 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 
 void ClientConnection::sendFail()
 {
-//    QByteArray dat;
-//    QDataStream out(&dat, QIODevice::WriteOnly);
-//    out << (qint32)sizeof(qint32) << INVALID_PASS;
-
-//    if(socket->write(dat) == 0)
-//    {
-//        qDebug() << "No data written";
-//    }
     FailPackage().write(socket);
 }
 
@@ -52,11 +44,6 @@ void ClientConnection::onData(){
     }
     downloadMore(file, socket);
 }
-
-//QHostAddress ClientConnection::makeHostAdress(char* block){
-//    QHostAddress* address = new QHostAddress;
-//    return *address;
-//}
 
 void ClientConnection::sendData(QByteArray arr, pckg_t type)
 {

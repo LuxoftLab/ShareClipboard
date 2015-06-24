@@ -7,20 +7,14 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
     connect(socket, SIGNAL(disconnected()), this, SIGNAL(serverFell()));
 
-    try
-    {
-        socket->connectToHost(host, PORT_NUMBER);
-    }
-    catch(QAbstractSocket::SocketError)
-    {
-        throw;
-    }
-
+    socket->connectToHost(host, PORT_NUMBER);
     if(!socket->waitForConnected(3000))
         qDebug() << socket->error();
 }
 
-void ServerConnection::sendPassLoginPriority(QString password, QString login, floating_server_priorities priority)
+void ServerConnection::sendPassLoginPriority(QString password,
+                                             QString login,
+                                             floating_server_priorities priority)
 {
     PassPackage(password, priority).write(socket);
 }
@@ -56,17 +50,5 @@ void ServerConnection::dispatch(QDataStream &in)
 
 void ServerConnection::sendData(QByteArray data, pckg_t type)
 {
-    QByteArray dat;
-    QDataStream out(&dat, QIODevice::WriteOnly);
-
-    out << qint32(0) << type << (qint32)data.size();
-    out.writeRawData(data.constData(), data.size());
-    out.device()->seek(0);
-    out << (qint32)(dat.size() - sizeof(qint32));
-    out.device()->seek(4+4+4+data.size()+1);
-
-    if(socket->write(dat) < dat.size())
-    {
-        qDebug() << "No data written";
-    }
+    DataPackage(data, type).write(socket);
 }

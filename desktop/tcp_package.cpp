@@ -17,6 +17,17 @@ TcpPackage *TcpPackageFactory::getPackage(pckg_t type)
     }
 }
 
+DataPackage::DataPackage(QByteArray& data, pckg_t type)
+{
+    this->data = data;
+    this->type = type;
+}
+
+DataPackage::DataPackage()
+{
+
+}
+
 void DataPackage::read(QDataStream & in)
 {
     in >> size;
