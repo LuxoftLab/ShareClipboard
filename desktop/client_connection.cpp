@@ -14,44 +14,25 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 
 void ClientConnection::sendFail()
 {
-    QByteArray dat;
-    QDataStream out(&dat, QIODevice::WriteOnly);
-    out << (qint32)sizeof(qint32) << INVALID_PASS;
+//    QByteArray dat;
+//    QDataStream out(&dat, QIODevice::WriteOnly);
+//    out << (qint32)sizeof(qint32) << INVALID_PASS;
 
-    if(socket->write(dat) == 0)
-    {
-        qDebug() << "No data written";
-    }
+//    if(socket->write(dat) == 0)
+//    {
+//        qDebug() << "No data written";
+//    }
+    FailPackage().write(socket);
 }
 
 void ClientConnection::sendMember(QString login, floating_server_priorities priority, QHostAddress addr)
 {
-    QByteArray dat;
-    QDataStream out(&dat, QIODevice::WriteOnly);
-    out << qint32(0) << MEMBER
-        << priority
-        << login.toUtf8().size()
-        << login.toUtf8().data()
-        << addr.toIPv4Address();
-    out.device()->seek(0);
-    out << qint32(dat.size() - sizeof(qint32));
-
-    if(socket->write(dat) == 0)
-    {
-        qDebug() << "No data written";
-    }
+    MemberPackage(login, addr, priority).write(socket);
 }
 
 void ClientConnection::removeMember(QHostAddress addr)
 {
-    QByteArray dat;
-    QDataStream out(&dat, QIODevice::WriteOnly);
-    out << REMOVE << addr.toIPv4Address();
-
-    if(socket->write(dat) == 0)
-    {
-        qDebug() << "No data written";
-    }
+    RemoveMemberPackage(addr).write(socket);
 }
 
 QString ClientConnection::getLogin() {
@@ -72,10 +53,10 @@ void ClientConnection::onData(){
     downloadMore(file, socket);
 }
 
-QHostAddress ClientConnection::makeHostAdress(char* block){
-    QHostAddress* address = new QHostAddress;
-    return *address;
-}
+//QHostAddress ClientConnection::makeHostAdress(char* block){
+//    QHostAddress* address = new QHostAddress;
+//    return *address;
+//}
 
 void ClientConnection::sendData(QByteArray arr, pckg_t type)
 {

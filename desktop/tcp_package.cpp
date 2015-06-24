@@ -79,22 +79,48 @@ void PassPackage::write(QTcpSocket * socket)
     socket->write(dat);
 }
 
+MemberPackage::MemberPackage()
+{
+
+}
+
+MemberPackage::MemberPackage(QString login, QHostAddress addr, floating_server_priorities priority)
+{
+    this->login = login;
+    this->addr = addr;
+    this->prior = priority;
+}
+
 void MemberPackage::read(QDataStream & in)
 {
     qint32 priority;
     in >> priority;
     in >> size;
-    login = new char[size];
+    char* login = new char[size];
     in >> login;
     in >> address;
     emit addMember(QString::fromUtf8(login),
                    (floating_server_priorities)priority,
                    QHostAddress(address));
+    delete login;
 }
 
-void MemberPackage::write(QTcpSocket *)
+void MemberPackage::write(QTcpSocket * socket)
 {
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << qint32(0) << MEMBER
+        << prior
+        << login.toUtf8().size()
+        << login.toUtf8().data()
+        << addr.toIPv4Address();
+    out.device()->seek(0);
+    out << qint32(dat.size() - sizeof(qint32));
 
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
 }
 
 ImagePackage::ImagePackage()
@@ -118,12 +144,47 @@ void ImagePackage::read(QDataStream & in)
 }
 
 
-void RemoveMemberPackage::write(QTcpSocket *)
+RemoveMemberPackage::RemoveMemberPackage()
 {
 
+}
+
+RemoveMemberPackage::RemoveMemberPackage(QHostAddress toRemove)
+{
+    this->removeAddr = toRemove;
+}
+
+void RemoveMemberPackage::write(QTcpSocket * socket)
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << (qint32)(sizeof(qint32)) << REMOVE << removeAddr.toIPv4Address();
+
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
 }
 
 void RemoveMemberPackage::read(QDataStream &)
 {
 
+}
+
+
+void FailPackage::read(QDataStream &)
+{
+
+}
+
+void FailPackage::write(QTcpSocket * socket)
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+    out << INVALID_PASS;
+
+    if(socket->write(dat) == 0)
+    {
+        qDebug() << "No data written";
+    }
 }

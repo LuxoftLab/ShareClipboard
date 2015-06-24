@@ -45,6 +45,13 @@ signals:
     void deleteMember(QHostAddress);
 };
 
+class FailPackage : public TcpPackage
+{
+public:
+    void read(QDataStream &);
+    void write(QTcpSocket *);
+};
+
 class DataPackage : public TcpPackage
 {
     QByteArray data;
@@ -56,14 +63,22 @@ public:
 
 class MemberPackage : public TcpPackage
 {
+    QString login;
+    QHostAddress addr;
+    floating_server_priorities prior;
 public:
+    MemberPackage();
+    MemberPackage(QString, QHostAddress, floating_server_priorities);
     void read(QDataStream &);
     void write(QTcpSocket *);
 };
 
 class RemoveMemberPackage : public TcpPackage
 {
+    QHostAddress removeAddr;
 public:
+    RemoveMemberPackage();
+    RemoveMemberPackage(QHostAddress);
     void write(QTcpSocket *);
     void read(QDataStream &);
 };
