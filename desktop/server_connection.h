@@ -27,8 +27,8 @@ public:
     void sendData(QByteArray, pckg_t);
 
     TcpPackage * hand;
-public slots:
-    void onData();
+//public slots:
+//    void onData();
 signals:
     void addMember(QString login, floating_server_priorities, QHostAddress addr);
     void deleteMember(QHostAddress addr);

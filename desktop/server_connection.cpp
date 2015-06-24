@@ -19,17 +19,17 @@ void ServerConnection::sendPassLoginPriority(QString password,
     PassPackage(password, priority).write(socket);
 }
 
-void ServerConnection::onData()
-{
-    QDataStream in(socket);
-    if(transferFinished)
-    {
-        in >> currenFiletSize;
-        transferFinished = false;
-        file.clear();
-    }
-    downloadMore(file, socket);
-}
+//void ServerConnection::onData()
+//{
+//    QDataStream in(socket);
+//    if(transferFinished)
+//    {
+//        in >> currenFiletSize;
+//        transferFinished = false;
+//        file.clear();
+//    }
+//    downloadMore(file, socket);
+//}
 
 void ServerConnection::dispatch(QDataStream &in)
 {

@@ -24,6 +24,8 @@ public:
     Connection(QTcpSocket * socket);
     QHostAddress getIpv4();
     QHostAddress localAddress();
+public slots:
+    void onData();
 };
 
 #endif // CONNECTION_H

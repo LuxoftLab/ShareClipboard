@@ -32,7 +32,7 @@ public:
     void sendImage(QByteArray);
     void sendData(QByteArray arr, pckg_t type);
 public slots:
-    void onData();
+    //void onData();
     void emitText(QString);
     void emitImage(QByteArray);
     void makePass(QString, floating_server_priorities);

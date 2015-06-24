@@ -15,6 +15,19 @@ QHostAddress Connection::localAddress()
     return socket->localAddress();
 }
 
+void Connection::onData()
+{
+    QDataStream in(socket);
+    if(transferFinished)
+    {
+        in >> currenFiletSize;
+        transferFinished = false;
+        file.clear();
+    }
+    downloadMore(file, socket);
+
+}
+
 void Connection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)
 {
     QByteArray file;

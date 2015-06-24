@@ -31,19 +31,19 @@ QString ClientConnection::getLogin() {
     return login;
 }
 
-void ClientConnection::onData(){
-    QDataStream in(socket);
-    QDataStream infile(&file, QIODevice::ReadOnly);
-    if(transferFinished)
-    {
-        file.clear();
-        transferFinished = false;
-        in >> currenFiletSize;
-        currenFiletSize -= sizeof(packt);
-        in >> packt;
-    }
-    downloadMore(file, socket);
-}
+//void ClientConnection::onData(){
+//    QDataStream in(socket);
+//    QDataStream infile(&file, QIODevice::ReadOnly);
+//    if(transferFinished)
+//    {
+//        file.clear();
+//        transferFinished = false;
+//        in >> currenFiletSize;
+//        currenFiletSize -= sizeof(packt);
+//        in >> packt;
+//    }
+//    downloadMore(file, socket);
+//}
 
 void ClientConnection::sendData(QByteArray arr, pckg_t type)
 {
@@ -91,6 +91,8 @@ void ClientConnection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)
 
 void ClientConnection::dispatch(QDataStream& infile)
 {
+    qint32 packt;
+    infile >> packt;
     hand = TcpPackageFactory().getPackage((pckg_t)packt);
     connect(hand, SIGNAL(gotText(QString)),
             this, SLOT(emitText(QString)));
