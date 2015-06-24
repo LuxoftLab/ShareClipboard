@@ -34,9 +34,6 @@ protected:
     char* image;
     char* password;
 public:
-//    virtual void decode(QDataStream& in) = 0;
-//    virtual QByteArray * encode(QString, QString, floating_server_priorities) = 0;
-
     virtual void write(QTcpSocket *) = 0;
     virtual void read(QDataStream &) = 0;
 signals:
@@ -57,16 +54,8 @@ public:
     void write(QTcpSocket *);
 };
 
-//class TextPackage : public TcpPackage
-//{
-//    void decode(QDataStream &in);
-//    QByteArray * encode(QString, QString, floating_server_priorities);
-//};
-
 class MemberPackage : public TcpPackage
 {
-//    void decode(QDataStream &in);
-//    QByteArray * encode(QString, QString, floating_server_priorities);
 public:
     void read(QDataStream &);
     void write(QTcpSocket *);
@@ -74,21 +63,23 @@ public:
 
 class RemoveMemberPackage : public TcpPackage
 {
-    void decode(QDataStream &in);
-    QByteArray * encode(QString, QString, floating_server_priorities);
+//    void decode(QDataStream &in);
+//    QByteArray * encode(QString, QString, floating_server_priorities);
+public:
+    void write(QTcpSocket *);
+    void read(QDataStream &);
 };
 
 class ImagePackage : public TcpPackage
 {
-    void decode(QDataStream &in);
-    QByteArray * encode(QString, QString, floating_server_priorities);
+public:
+    ImagePackage();
+    void write(QTcpSocket *);
+    void read(QDataStream &);
 };
 
 class PassPackage : public TcpPackage
 {
-//    void decode(QDataStream &in);
-//    QByteArray * encode(QString, QString, floating_server_priorities);
-
     floating_server_priorities priority;
     QString password;
 public:
