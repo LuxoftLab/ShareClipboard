@@ -17,22 +17,6 @@ TcpPackage *TcpPackageFactory::getPackage(pckg_t type)
     }
 }
 
-//void RemoveMemberPackage::decode(QDataStream &in)
-//{
-//    in >> address;
-//    emit(deleteMember(QHostAddress(address)));
-//}
-
-//void ImagePackage::decode(QDataStream &in)
-//{
-//    in >> size;
-//    image = new char[size];
-//    in.readRawData(image,size);
-
-//    emit gotData(QByteArray(image, size), "image/png");
-//    emit gotImage(QByteArray(image, size));
-//}
-
 void DataPackage::read(QDataStream & in)
 {
     in >> size;
@@ -59,7 +43,6 @@ void DataPackage::write(QTcpSocket * socket)
         qDebug() << "No data written";
     }
 }
-
 
 PassPackage::PassPackage(QString pass, floating_server_priorities prior)
 {
@@ -96,7 +79,6 @@ void PassPackage::write(QTcpSocket * socket)
     socket->write(dat);
 }
 
-
 void MemberPackage::read(QDataStream & in)
 {
     qint32 priority;
@@ -114,7 +96,6 @@ void MemberPackage::write(QTcpSocket *)
 {
 
 }
-
 
 ImagePackage::ImagePackage()
 {

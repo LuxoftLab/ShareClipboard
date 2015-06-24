@@ -63,8 +63,6 @@ public:
 
 class RemoveMemberPackage : public TcpPackage
 {
-//    void decode(QDataStream &in);
-//    QByteArray * encode(QString, QString, floating_server_priorities);
 public:
     void write(QTcpSocket *);
     void read(QDataStream &);
