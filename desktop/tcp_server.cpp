@@ -11,13 +11,11 @@ TCPServer::TCPServer()
 
 TCPServer::~TCPServer()
 {
-    //delete newConnection;
     delete server;
 }
 
 void TCPServer::newMember(){
     if(newConnection = server->nextPendingConnection()){
-        //connect(newConnection, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
         emit addMember(newConnection);
     }
 }

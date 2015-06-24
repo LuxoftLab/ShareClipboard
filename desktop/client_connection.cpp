@@ -5,8 +5,11 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
     this->socket = socket;
     this->login = "login";
     transferFinished = true;
-    connect(socket, SIGNAL(disconnected()), this, SLOT(emitDeleteMember()));
-    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
+
+    connect(socket, SIGNAL(disconnected()),
+            this, SLOT(emitDeleteMember()));
+    connect(socket, SIGNAL(readyRead()),
+            this, SLOT(onData()));
 }
 
 void ClientConnection::sendFail()
@@ -128,7 +131,6 @@ void ClientConnection::dispatch(QDataStream& infile)
     connect(hand, SIGNAL(gotPass(QString,floating_server_priorities)),
             this, SLOT(makePass(QString,floating_server_priorities)));
 
-//    hand->decode(infile);
     hand->read(infile);
 }
 

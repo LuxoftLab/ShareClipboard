@@ -5,7 +5,8 @@
 Controller::Controller(MainWindow *mainWindow) : QObject(0)
 {
     this->mainWindow = mainWindow;
-    connect(mainWindow, SIGNAL(roomListOpened(RoomsListDialog*)), this, SLOT(onRoomsListOpen(RoomsListDialog*)));
+    connect(mainWindow, SIGNAL(roomListOpened(RoomsListDialog*)),
+            this, SLOT(onRoomsListOpen(RoomsListDialog*)));
     this->mainWindow->connectRoomListDialog();
     initClipboardToGuiConnection();
     initUDPService();
@@ -56,7 +57,6 @@ void Controller::createServerRoom(QString name, QString pass)
     emit serverIsUp(name);
 
     addRoom(name, QHostAddress("127.0.0.1"));
-    //joinRoom(QHostAddress("127.0.0.1").toIPv4Address(), pass);
 }
 
 void Controller::deleteServerRoom()
@@ -155,6 +155,4 @@ void Controller::joinRoom(qint32 addr, QString pass)
             this, SLOT(createFloatingServerRoom(QHostAddress)));
     clientRoom->setLogin(host.toString());
     clientRoom->setPwd(pass);
-
-    //MainWindow().show();
 }
