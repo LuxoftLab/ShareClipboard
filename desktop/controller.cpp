@@ -13,12 +13,10 @@ Controller::Controller(MainWindow *mainWindow) : QObject(0)
 
 Controller::~Controller()
 {
-    delete mainWindow;
     for(QMap<qint32, ClientRoom*>::iterator it = rooms.begin(); it != rooms.end(); ++it)
         delete it.value();
-    //delete clientRoom;
-    delete serverRoom;
     delete udpService;
+    delete mainWindow;
 }
 
 void Controller::addRoom(QString name, QHostAddress host)

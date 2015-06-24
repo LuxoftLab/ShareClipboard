@@ -22,15 +22,16 @@ ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 
 void ServerConnection::sendPassLoginPriority(QString password, QString login, floating_server_priorities priority)
 {
-   QByteArray * dat = TcpPackageFactory().
-                        getPackage(PASS)->
-                        encode(password, login, priority);
+//   QByteArray * dat = TcpPackageFactory().
+//                        getPackage(PASS)->
+//                        encode(password, login, priority);
 
-   if(socket->write(*dat) == 0)
-   {
-       qDebug() << "No data written";
-   }
-   delete dat;
+//   if(socket->write(*dat) == 0)
+//   {
+//       qDebug() << "No data written";
+//   }
+//   delete dat;
+    PassPackage(password, priority).write(socket);
 }
 
 void ServerConnection::onData()
@@ -59,7 +60,8 @@ void ServerConnection::dispatch(QDataStream &in)
             this, SIGNAL(addMember(QString,floating_server_priorities,QHostAddress)));
     connect(hand, SIGNAL(deleteMember(QHostAddress)),
             this, SIGNAL(deleteMember(QHostAddress)));
-    hand->decode(in);
+    //hand->decode(in);
+    hand->read(in);
 }
 
 void ServerConnection::sendData(QByteArray data, pckg_t type)

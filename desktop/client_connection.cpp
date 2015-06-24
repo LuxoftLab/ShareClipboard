@@ -128,7 +128,8 @@ void ClientConnection::dispatch(QDataStream& infile)
     connect(hand, SIGNAL(gotPass(QString,floating_server_priorities)),
             this, SLOT(makePass(QString,floating_server_priorities)));
 
-    hand->decode(infile);
+//    hand->decode(infile);
+    hand->read(infile);
 }
 
 void ClientConnection::emitText(QString text)

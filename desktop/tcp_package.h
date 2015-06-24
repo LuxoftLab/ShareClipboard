@@ -2,7 +2,9 @@
 #include <QDataStream>
 #include <QHostAddress>
 #include <QImage>
+#include <QTcpSocket>
 #include <assert.h>
+#include <exception>
 
 #include "constants.h"
 
@@ -32,8 +34,11 @@ protected:
     char* image;
     char* password;
 public:
-    virtual void decode(QDataStream& in) = 0;
-    virtual QByteArray * encode(QString, QString, floating_server_priorities) = 0;
+//    virtual void decode(QDataStream& in) = 0;
+//    virtual QByteArray * encode(QString, QString, floating_server_priorities) = 0;
+
+    virtual void write(QTcpSocket *) = 0;
+    virtual void read(QDataStream &) = 0;
 signals:
     void gotText(QString);
     void gotImage(QByteArray);
@@ -43,16 +48,28 @@ signals:
     void deleteMember(QHostAddress);
 };
 
-class TextPackage : public TcpPackage
+class DataPackage : public TcpPackage
 {
-    void decode(QDataStream &in);
-    QByteArray * encode(QString, QString, floating_server_priorities);
+    QByteArray data;
+    pckg_t type;
+public:
+    void read(QDataStream &);
+    void write(QTcpSocket *);
 };
+
+//class TextPackage : public TcpPackage
+//{
+//    void decode(QDataStream &in);
+//    QByteArray * encode(QString, QString, floating_server_priorities);
+//};
 
 class MemberPackage : public TcpPackage
 {
-    void decode(QDataStream &in);
-    QByteArray * encode(QString, QString, floating_server_priorities);
+//    void decode(QDataStream &in);
+//    QByteArray * encode(QString, QString, floating_server_priorities);
+public:
+    void read(QDataStream &);
+    void write(QTcpSocket *);
 };
 
 class RemoveMemberPackage : public TcpPackage
@@ -69,8 +86,16 @@ class ImagePackage : public TcpPackage
 
 class PassPackage : public TcpPackage
 {
-    void decode(QDataStream &in);
-    QByteArray * encode(QString, QString, floating_server_priorities);
+//    void decode(QDataStream &in);
+//    QByteArray * encode(QString, QString, floating_server_priorities);
+
+    floating_server_priorities priority;
+    QString password;
+public:
+    PassPackage(QString, floating_server_priorities);
+    PassPackage();
+    void read(QDataStream &);
+    void write(QTcpSocket *);
 };
 
 class TcpPackageFactory

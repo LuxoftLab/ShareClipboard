@@ -1,19 +1,19 @@
 #include "tcp_package.h"
 
-void TextPackage::decode(QDataStream &in)
-{
-    in >> size;
-    text = new char[size];
-    in.readRawData(text, size);
+//void TextPackage::decode(QDataStream &in)
+//{
+//    in >> size;
+//    text = new char[size];
+//    in.readRawData(text, size);
 
-    emit gotText(QByteArray::fromRawData(text, size));
-    emit gotData(QByteArray::fromRawData(text, size), "text/plain");
-}
+//    emit gotText(QByteArray::fromRawData(text, size));
+//    emit gotData(QByteArray::fromRawData(text, size), "text/plain");
+//}
 
-QByteArray * TextPackage::encode(QString, QString, floating_server_priorities)
-{
-    throw TEXT;
-}
+//QByteArray * TextPackage::encode(QString, QString, floating_server_priorities)
+//{
+//    throw TEXT;
+//}
 
 
 TcpPackage *TcpPackageFactory::getPackage(pckg_t type)
@@ -22,11 +22,11 @@ TcpPackage *TcpPackageFactory::getPackage(pckg_t type)
         case MEMBER:
             return new MemberPackage();
        case TEXT:
-            return new TextPackage();
+            return new DataPackage();
        case REMOVE:
-            return new RemoveMemberPackage();
+            //return new RemoveMemberPackage();
        case IMAGE:
-            return new ImagePackage();
+            //return new ImagePackage();
        case PASS:
             return new PassPackage();
        default: throw type;
@@ -34,23 +34,23 @@ TcpPackage *TcpPackageFactory::getPackage(pckg_t type)
 }
 
 
-void MemberPackage::decode(QDataStream &in)
-{
-    qint32 priority;
-    in >> priority;
-    in >> size;
-    login = new char[size];
-    in >> login;
-    in >> address;
-    emit addMember(QString::fromUtf8(login),
-                   (floating_server_priorities)priority,
-                   QHostAddress(address));
-}
+//void MemberPackage::decode(QDataStream &in)
+//{
+//    qint32 priority;
+//    in >> priority;
+//    in >> size;
+//    login = new char[size];
+//    in >> login;
+//    in >> address;
+//    emit addMember(QString::fromUtf8(login),
+//                   (floating_server_priorities)priority,
+//                   QHostAddress(address));
+//}
 
-QByteArray * MemberPackage::encode(QString, QString, floating_server_priorities)
-{
-    throw MEMBER;
-}
+//QByteArray * MemberPackage::encode(QString, QString, floating_server_priorities)
+//{
+//    throw MEMBER;
+//}
 
 void RemoveMemberPackage::decode(QDataStream &in)
 {
@@ -58,10 +58,10 @@ void RemoveMemberPackage::decode(QDataStream &in)
     emit(deleteMember(QHostAddress(address)));
 }
 
-QByteArray * RemoveMemberPackage::encode(QString, QString, floating_server_priorities)
-{
-    throw REMOVE;
-}
+//QByteArray * RemoveMemberPackage::encode(QString, QString, floating_server_priorities)
+//{
+//    throw REMOVE;
+//}
 
 
 void ImagePackage::decode(QDataStream &in)
@@ -80,7 +80,71 @@ QByteArray * ImagePackage::encode(QString, QString, floating_server_priorities)
 }
 
 
-void PassPackage::decode(QDataStream &in)
+//void PassPackage::decode(QDataStream &in)
+//{
+//    qint32 priority;
+//    qint32 pwdsz;
+//    in >> priority;
+//    in >> pwdsz;
+//    char* pwd = new char[pwdsz];
+//    in >> pwd;
+//    emit gotPass(QString::fromUtf8(pwd, pwdsz), (floating_server_priorities)priority);
+//}
+
+//QByteArray * PassPackage::encode(QString password, QString login, floating_server_priorities priority)
+//{
+//    QByteArray * dat = new QByteArray();
+//    QDataStream out(dat, QIODevice::WriteOnly);
+//    out << qint32(0) << PASS
+//        << (qint32)priority
+//        << (qint32)password.toUtf8().size()
+//        << password.toUtf8().data();
+//    out.device()->seek(0);
+//    out << (qint32)(dat->size() - sizeof(qint32));
+//    return dat;
+//}
+
+
+void DataPackage::read(QDataStream & in)
+{
+    in >> size;
+    text = new char[size];
+    in.readRawData(text, size);
+
+    emit gotText(QByteArray::fromRawData(text, size));
+    emit gotData(QByteArray::fromRawData(text, size), "text/plain");
+}
+
+void DataPackage::write(QTcpSocket * socket)
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+
+    out << qint32(0) << type << (qint32)data.size();
+    out.writeRawData(data.constData(), data.size());
+    out.device()->seek(0);
+    out << (qint32)(dat.size() - sizeof(qint32));
+    out.device()->seek(4+4+4+data.size()+1);
+
+    if(socket->write(dat) < dat.size())
+    {
+        qDebug() << "No data written";
+    }
+}
+
+
+PassPackage::PassPackage(QString pass, floating_server_priorities prior)
+{
+    this->password = pass;
+    this->priority = prior;
+}
+
+PassPackage::PassPackage()
+{
+
+}
+
+void PassPackage::read(QDataStream & in)
 {
     qint32 priority;
     qint32 pwdsz;
@@ -91,15 +155,34 @@ void PassPackage::decode(QDataStream &in)
     emit gotPass(QString::fromUtf8(pwd, pwdsz), (floating_server_priorities)priority);
 }
 
-QByteArray * PassPackage::encode(QString password, QString login, floating_server_priorities priority)
+void PassPackage::write(QTcpSocket * socket)
 {
-    QByteArray * dat = new QByteArray();
-    QDataStream out(dat, QIODevice::WriteOnly);
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
     out << qint32(0) << PASS
         << (qint32)priority
         << (qint32)password.toUtf8().size()
         << password.toUtf8().data();
     out.device()->seek(0);
-    out << (qint32)(dat->size() - sizeof(qint32));
-    return dat;
+    out << (qint32)(dat.size() - sizeof(qint32));
+    socket->write(dat);
+}
+
+
+void MemberPackage::read(QDataStream & in)
+{
+    qint32 priority;
+    in >> priority;
+    in >> size;
+    login = new char[size];
+    in >> login;
+    in >> address;
+    emit addMember(QString::fromUtf8(login),
+                   (floating_server_priorities)priority,
+                   QHostAddress(address));
+}
+
+void MemberPackage::write(QTcpSocket *)
+{
+
 }
