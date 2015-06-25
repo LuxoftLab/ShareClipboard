@@ -150,7 +150,7 @@ void MainWindow::createTrayIcon()
 
 void MainWindow::fillDevicesList(QList<QString> list) {
     QList<QString>::iterator i;
-    for(i = list.begin(); i != list.end(); i++) {
+    for(i = list.begin(); i != list.end(); ++i) {
         ui->listWidget->addItem(*i);
     }
 }

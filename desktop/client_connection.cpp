@@ -4,7 +4,6 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
     this->login = "login";
-    transferFinished = true;
 
     connect(socket, SIGNAL(disconnected()),
             this, SLOT(emitDeleteMember()));

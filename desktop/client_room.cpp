@@ -28,6 +28,7 @@ floating_server_priorities ClientRoom::device_type()
 ClientRoom::ClientRoom(QString name, QHostAddress host) : Room(name, "")
 {
     this->host = host;
+    connection = NULL;
 }
 
 void ClientRoom::connectToHost(QString login, QString pass)

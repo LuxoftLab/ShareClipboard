@@ -117,11 +117,11 @@ void Controller::initUDPService()
     udpService->getRooms();
 }
 
-void Controller::initClipboardToClientRoomConnection()
-{
+//void Controller::initClipboardToClientRoomConnection()
+//{
 
 
-}
+//}
 
 void Controller::joinRoom(qint32 addr, QString pass)
 {

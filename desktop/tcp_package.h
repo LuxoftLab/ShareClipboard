@@ -19,7 +19,8 @@ enum pckg_t
     PASS,
     MEMBER,
     INVALID_PASS,
-    REMOVE
+    REMOVE,
+    TCP_IDLE
 };
 
 class TcpPackage : public QObject

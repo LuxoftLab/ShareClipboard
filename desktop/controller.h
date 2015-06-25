@@ -46,7 +46,7 @@ public slots:
 private:
     void initClipboardToGuiConnection();
     void initUDPService();
-    void initClipboardToClientRoomConnection();
+    //void initClipboardToClientRoomConnection();
 };
 
 #endif // CONTROLLER_H

@@ -15,7 +15,7 @@ TCPServer::~TCPServer()
 }
 
 void TCPServer::newMember(){
-    if(newConnection = server->nextPendingConnection()){
+    if((newConnection = server->nextPendingConnection())){
         emit addMember(newConnection);
     }
 }

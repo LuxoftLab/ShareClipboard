@@ -87,7 +87,6 @@ QString ClipboardService::minimizeText(QString text)
     const int MAX_STR_LEN = 50;
 
     int index = text.indexOf('\n');
-    int size = text.size();
 
     if( index >= 0 && index < MAX_STR_LEN)
     {
@@ -112,7 +111,7 @@ QByteArray * ClipboardService::imageToQByteArray(QImage & image)
     return ba;
 }
 
-QImage ClipboardService::byteArrayToImage(QByteArray & ba)
-{
-    return QImage::fromData(ba.constData(), "PNG");
-}
+//QImage ClipboardService::byteArrayToImage(QByteArray & ba)
+//{
+//    return QImage::fromData(ba.constData(), "PNG");
+//}
