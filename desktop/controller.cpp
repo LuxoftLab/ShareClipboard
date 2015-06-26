@@ -2,18 +2,18 @@
 #include "gui/mainwindow.h"
 #include <QDebug>
 
-//Controller::Controller(MainWindow *mainWindow) : QObject(0)
-Controller::Controller() : QObject(0)
+Controller::Controller(ClipboardTrayIcon * icon) : QObject(0)
 {
     icon = new ClipboardTrayIcon();
+    this->icon = icon;
+    connect(icon, SIGNAL(roomListOpened(RoomsListDialog*)),
+            this, SLOT(onRoomsListOpen(RoomsListDialog*)));
+    connect(icon, SIGNAL(serverRoomCreated(QString,QString)),
+            this, SLOT(createServerRoom(QString,QString)));
+    icon->show();
 
-    //this->mainWindow = mainWindow;
-    //connect(mainWindow, SIGNAL(roomListOpened(RoomsListDialog*)),
-            //this, SLOT(onRoomsListOpen(RoomsListDialog*)));
-    //this->mainWindow->connectRoomListDialog();
-
-    //initClipboardToGuiConnection();
-    //initUDPService();
+//    initClipboardToGuiConnection();
+    initUDPService();
 }
 
 Controller::~Controller()
@@ -22,7 +22,6 @@ Controller::~Controller()
     for(QMap<qint32, ClientRoom*>::iterator it = rooms.begin(); it != rooms.end(); ++it)
         delete it.value();
     delete udpService;
-    //delete mainWindow;
 }
 
 void Controller::addRoom(QString name, QHostAddress host)

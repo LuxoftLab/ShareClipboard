@@ -43,6 +43,11 @@ void CreateRoomDialog::accept()
         messageBox.exec();
         return;
     }
-    emit (createRoom(ui->lineEdit->text(), ui->lineEdit_2->text()));
+    emit createRoom(ui->lineEdit->text(), ui->lineEdit_2->text());
     close();
+}
+
+void CreateRoomDialog::on_buttonBox_accepted()
+{
+    qDebug() << "create";
 }

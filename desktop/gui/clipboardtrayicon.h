@@ -8,6 +8,8 @@
 #include <QApplication>
 
 #include "roomslistdialog.h"
+#include "passworddialog.h"
+#include "createroomdialog.h"
 
 class ClipboardTrayIcon : public QMainWindow
 {    
@@ -15,7 +17,9 @@ class ClipboardTrayIcon : public QMainWindow
 
     QSystemTrayIcon * icon;
     RoomsListDialog * roomDialog;
+    CreateRoomDialog * createRoomDialog;
 
+    QMenu * trayIconMenu;
     QAction * connectAction;
     QAction * createRoomAction;
     QAction * historyAction;
@@ -24,19 +28,26 @@ class ClipboardTrayIcon : public QMainWindow
     QAction * settingsAction;
     QAction * aboutAction;
     QAction * quitAction;
+
+    void createMenu();
 public:
     ClipboardTrayIcon();
     ~ClipboardTrayIcon();
+
+    void show();
 signals:
-    void createRoom();
     void history();
     void maximize();
     void stopSharing();
     void settings();
     void about();
     void quit();
+
+    void serverRoomCreated(QString, QString);
+    void roomListOpened(RoomsListDialog *);
 public slots:
     void connectRoom();
+    void createRoom();
 };
 
 #endif // CLIPBOARDTRAYICON_H

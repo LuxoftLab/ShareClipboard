@@ -1,16 +1,15 @@
 #include "clipboardtrayicon.h"
 
-ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow(0)
+void ClipboardTrayIcon::createMenu()
 {
-    roomDialog = new RoomsListDialog();
-    QMenu * trayIconMenu = new QMenu();
+    trayIconMenu = new QMenu();
 
     connectAction = new QAction(tr("C&onnect to room"), this);
     connect(connectAction, SIGNAL(triggered()), this, SLOT(connectRoom()));
     trayIconMenu->addAction(connectAction);
 
     createRoomAction = new QAction(tr("C&reate room"), this);
-    connect(createRoomAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+    connect(createRoomAction, SIGNAL(triggered()), this, SLOT(createRoom()));
     trayIconMenu->addAction(createRoomAction);
 
     trayIconMenu->addSeparator();
@@ -47,7 +46,11 @@ ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow(0)
     icon = new QSystemTrayIcon();
     icon->setIcon(QIcon(":images/colorful.svg"));
     icon->setContextMenu(trayIconMenu);
-    icon->show();
+}
+
+ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow()
+{
+    createMenu();
 }
 
 ClipboardTrayIcon::~ClipboardTrayIcon()
@@ -61,11 +64,25 @@ ClipboardTrayIcon::~ClipboardTrayIcon()
     delete historyAction;
     delete createRoomAction;
     delete connectAction;
-    delete roomDialog;
+    delete trayIconMenu;
+}
+
+void ClipboardTrayIcon::show()
+{
+    this->icon->show();
 }
 
 void ClipboardTrayIcon::connectRoom()
 {
+    roomDialog = new RoomsListDialog(this);
     roomDialog->exec();
+    emit roomListOpened(roomDialog);
 }
 
+void ClipboardTrayIcon::createRoom()
+{
+    createRoomDialog = new CreateRoomDialog(this);
+    connect(createRoomDialog, SIGNAL(createRoom(QString,QString)),
+            this, SIGNAL(serverRoomCreated(QString,QString)));
+    createRoomDialog->exec();
+}

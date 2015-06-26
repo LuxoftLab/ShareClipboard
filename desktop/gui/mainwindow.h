@@ -21,7 +21,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void fillDevicesList(QList<QString> list);
-    void connectRoomListDialog();
+    //void connectRoomListDialog();
 signals:
     void downloadFile();
     void changeName(QString name);
@@ -37,6 +37,7 @@ public slots:
     void newDevicePluged(QString deviceName);
     void newNameVerified(QString newName);
 private slots:
+    void connectRoomListDialog();
     void chooseRoomClicked();
     void changeNameClicked();
     void onSettingsClicked();

@@ -28,9 +28,12 @@ private:
     ClipboardService clipboardService;
     ClipboardTrayIcon * icon;
 public:
-    //Controller(MainWindow * mainWindow);
+    Controller(ClipboardTrayIcon * mainWindow);
+    //Controller(MainWindow *);
     Controller();
     ~Controller();
+
+    void idle();
 signals:
     void roomAdded(QString name, qint32 ip);
     void roomDeleted(QString name);

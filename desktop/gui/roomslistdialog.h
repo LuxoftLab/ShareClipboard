@@ -40,6 +40,8 @@ private slots:
     void onNewRoomButtonClicked();
     void deleteServerRoomSlot();
 
+    void on_connectButt_clicked();
+
 private:
     QMap<QString, qint32> rooms;
     Ui::RoomsListDialog *ui;
