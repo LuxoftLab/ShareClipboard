@@ -14,6 +14,7 @@
 #include "clipboard_service.h"
 #include "gui/mainwindow.h"
 #include "gui/roomslistdialog.h"
+#include "gui/clipboardtrayicon.h"
 
 class Controller : public QObject
 {
@@ -25,8 +26,10 @@ private:
     QMap <qint32, ClientRoom*> rooms;
     MainWindow * mainWindow;
     ClipboardService clipboardService;
+    ClipboardTrayIcon * icon;
 public:
-    Controller(MainWindow * mainWindow);
+    //Controller(MainWindow * mainWindow);
+    Controller();
     ~Controller();
 signals:
     void roomAdded(QString name, qint32 ip);
