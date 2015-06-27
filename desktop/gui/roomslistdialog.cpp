@@ -93,6 +93,7 @@ void RoomsListDialog::deleteRoom(QString name)
 }
 
 void RoomsListDialog::on_connectButt_clicked()
+
 {
-    qDebug() << "clicked";
+    accept();
 }
