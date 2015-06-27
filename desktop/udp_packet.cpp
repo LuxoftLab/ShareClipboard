@@ -4,11 +4,13 @@ DatagramPacket unpackPackage(QDataStream &stream){
     DatagramPacket packet;
     stream >> packet.type;
     stream >> packet.id;
+    int length;
+    stream >> length;
 
     if(packet.type == ROOM){
-        char* fromBytes;
-        stream >> fromBytes;
-        packet.name = QString::fromUtf8(fromBytes);
+        char * fromBytes = new char[length];
+        stream.readRawData(fromBytes, length);
+        packet.name = QString::fromUtf8(fromBytes, length);
     }
 
     return packet;

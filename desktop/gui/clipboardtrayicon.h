@@ -16,7 +16,7 @@ class ClipboardTrayIcon : public QMainWindow
     Q_OBJECT
 
     QSystemTrayIcon * icon;
-    RoomsListDialog * roomDialog;
+    RoomsListDialog * roomDialog = NULL;
     CreateRoomDialog * createRoomDialog;
 
     QMenu * trayIconMenu;

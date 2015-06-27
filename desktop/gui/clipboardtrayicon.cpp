@@ -74,14 +74,21 @@ void ClipboardTrayIcon::show()
 
 void ClipboardTrayIcon::connectRoom()
 {
-    roomDialog = new RoomsListDialog(this);
+    if(roomDialog == NULL){
+        roomDialog = new RoomsListDialog(this);
+        emit roomListOpened(roomDialog);
+    }
+
+
     roomDialog->exec();
-    emit roomListOpened(roomDialog);
 }
 
 void ClipboardTrayIcon::createRoom()
 {
     createRoomDialog = new CreateRoomDialog(this);
+    roomDialog = new RoomsListDialog(this);
+    emit roomListOpened(roomDialog);
+
     connect(createRoomDialog, SIGNAL(createRoom(QString,QString)),
             this, SIGNAL(serverRoomCreated(QString,QString)));
     createRoomDialog->exec();

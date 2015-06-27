@@ -39,6 +39,7 @@ private:
     bool isInKB;
     bool locked;
 
+
     QString minimizeText(QString text);
     QByteArray * imageToQByteArray(QImage&);
     QImage byteArrayToImage(QByteArray&);

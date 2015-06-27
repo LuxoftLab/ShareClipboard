@@ -81,11 +81,13 @@ void UDPService::sendPackage(const QHostAddress &peer, const DatagramPacket &pac
 
     if (packet.type == ROOM){
         QByteArray toBytes = packet.name.toUtf8();
-        stream << toBytes.data();
+        stream << toBytes.size();
+        stream.writeRawData(toBytes, toBytes.size());
+    } else {
+        stream << 0;
     }
 
     QUdpSocket socket;
-
     for (int i = 0; i < REPEAT; ++i)
         socket.writeDatagram(data_buffer.data(), peer, UDP_PORT);
 }
@@ -112,7 +114,6 @@ void UDPService::listener(){
         data.resize(udp_socket->pendingDatagramSize());
         QHostAddress sender_adr;
         udp_socket->readDatagram(data.data(), data.size(), &sender_adr);
-
         QDataStream stream(&data, QIODevice::ReadOnly);
         DatagramPacket packet;
 
