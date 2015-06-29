@@ -15,7 +15,7 @@ void ClipboardTrayIcon::createMenu()
     trayIconMenu->addSeparator();
 
     historyAction = new QAction(tr("&History"), this);
-    connect(historyAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+    connect(historyAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
     trayIconMenu->addAction(historyAction);
 
     trayIconMenu->addSeparator();
@@ -46,6 +46,12 @@ void ClipboardTrayIcon::createMenu()
     icon = new QSystemTrayIcon();
     icon->setIcon(QIcon(":images/colorful.svg"));
     icon->setContextMenu(trayIconMenu);
+}
+
+void ClipboardTrayIcon::connectMainWindow(MainWindow * mainWindow)
+{
+    connect(mainWindow, SIGNAL(createRoom()), this, SLOT(createRoom()));
+    connect(mainWindow, SIGNAL(connectRoom()), this, SLOT(connectRoom()));
 }
 
 ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow()
@@ -85,11 +91,24 @@ void ClipboardTrayIcon::connectRoom()
 
 void ClipboardTrayIcon::createRoom()
 {
-    createRoomDialog = new CreateRoomDialog(this);
-    roomDialog = new RoomsListDialog(this);
-    emit roomListOpened(roomDialog);
+    if(createRoomDialog == NULL)
+        createRoomDialog = new CreateRoomDialog(this);
+    //roomDialog = new RoomsListDialog(this);
+    //emit roomListOpened(roomDialog);
 
     connect(createRoomDialog, SIGNAL(createRoom(QString,QString)),
             this, SIGNAL(serverRoomCreated(QString,QString)));
     createRoomDialog->exec();
+}
+
+void ClipboardTrayIcon::showMaximized()
+{
+    mainwindow = new MainWindow(this);
+    connectMainWindow(mainwindow);
+    mainwindow->show();
+}
+
+void ClipboardTrayIcon::serServerIcon(QString)
+{
+    icon->setIcon(QIcon(":/images/server.svg"));
 }

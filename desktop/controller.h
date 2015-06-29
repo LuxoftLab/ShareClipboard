@@ -24,9 +24,10 @@ private:
     ServerRoom* serverRoom = NULL;
     ClientRoom* clientRoom = NULL;
     QMap <qint32, ClientRoom*> rooms;
-    MainWindow * mainWindow;
+    //MainWindow * mainWindow;
     ClipboardService clipboardService;
     ClipboardTrayIcon * icon;
+    bool server;
 public:
     Controller(ClipboardTrayIcon * mainWindow);
     //Controller(MainWindow *);
@@ -34,6 +35,7 @@ public:
     ~Controller();
 
     void idle();
+    bool isServer();
 signals:
     void roomAdded(QString name, qint32 ip);
     void roomDeleted(QString name);

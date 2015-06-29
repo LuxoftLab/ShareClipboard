@@ -97,3 +97,8 @@ void RoomsListDialog::on_connectButt_clicked()
 {
     accept();
 }
+
+void RoomsListDialog::on_cancelButt_clicked()
+{
+    this->close();
+}

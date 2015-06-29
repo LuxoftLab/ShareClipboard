@@ -18,13 +18,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->nameLabel->setText("Имя устройства: " + QHostInfo::localHostName());
 
     connect(ui->changeNamePushButton, SIGNAL(clicked()), this, SLOT(changeNameClicked()));
-    connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
+    connect(ui->changeRoomPushButton, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
     connect(ui->clipboardText, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(clipboardDataListItemDBClicked(QListWidgetItem*)));
     connect(ui->actionOpen_Settings_2, SIGNAL(triggered()), this, SLOT(onSettingsClicked()));
 }
 
 MainWindow::~MainWindow()
 {
+    if(createRoomDialog != NULL)
+        delete createRoomDialog;
     delete roomDialog;
     delete ui;
 }
@@ -46,10 +48,12 @@ void MainWindow::chooseRoomClicked()
 //        roomDialog = new RoomsListDialog();
 //        emit roomListOpened(roomDialog);
 //    }
-    roomDialog->exec();
+    //roomDialog->exec();
 
     // TODO implement changing of room after connection
    // ui->pushButton_3->setEnabled(false);
+
+//    roomDialog->exec();
 }
 
 void MainWindow::changeNameClicked()
@@ -78,8 +82,8 @@ void MainWindow::onSettingsAccepted(int value, bool isInKB)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (trayIcon->isVisible())
-    {
+//    if (trayIcon->isVisible())
+//    {
         QMessageBox::information(this, tr("Systray"),
                                  tr("The program will keep running in the "
                                     "system tray. To terminate the program, "
@@ -87,7 +91,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
                                     "of the system tray entry."));
         hide();
         event->ignore();
-    }
+//    }
 }
 
 void MainWindow::dataPushedToClipboard(QString text, qint32 id) {
@@ -103,49 +107,49 @@ void MainWindow::deleteItemFromList(qint32 id)
 
 void MainWindow::createTrayIcon()
 {
-    if(!trayIcon->isSystemTrayAvailable())
-    {
-        QMessageBox msgBox;
-        msgBox.setText(tr("System tray is unavailable!"));
-        msgBox.exec();
-        trayIcon = NULL;
-        return;
-    }
+//    if(!trayIcon->isSystemTrayAvailable())
+//    {
+//        QMessageBox msgBox;
+//        msgBox.setText(tr("System tray is unavailable!"));
+//        msgBox.exec();
+//        trayIcon = NULL;
+//        return;
+//    }
 
-    QMenu * trayIconMenu = new QMenu(this);
+//    QMenu * trayIconMenu = new QMenu(this);
 
-    QAction * minimizeAction = new QAction(tr("Mi&nimize"), this);
-    connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
-    trayIconMenu->addAction(minimizeAction);
+//    QAction * minimizeAction = new QAction(tr("Mi&nimize"), this);
+//    connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
+//    trayIconMenu->addAction(minimizeAction);
 
-    QAction * maximizeAction = new QAction(tr("Ma&ximize"), this);
-    connect(maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
-    trayIconMenu->addAction(maximizeAction);
+//    QAction * maximizeAction = new QAction(tr("Ma&ximize"), this);
+//    connect(maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
+//    trayIconMenu->addAction(maximizeAction);
 
-    QAction * restoreAction = new QAction(tr("&Restore"), this);
-    connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
-    trayIconMenu->addAction(restoreAction);
+//    QAction * restoreAction = new QAction(tr("&Restore"), this);
+//    connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+//    trayIconMenu->addAction(restoreAction);
 
-    trayIconMenu->addSeparator();
+//    trayIconMenu->addSeparator();
 
-    QAction * quitAction = new QAction(tr("&Quit"), this);
-    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-    trayIconMenu->addAction(quitAction);
+//    QAction * quitAction = new QAction(tr("&Quit"), this);
+//    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+//    trayIconMenu->addAction(quitAction);
 
-    trayIcon = new QSystemTrayIcon(this);
+//    trayIcon = new QSystemTrayIcon(this);
 
-    trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setToolTip("Shared clipboard");
-    trayIcon->setIcon(QIcon(":/images/colorful.svg"));
-    //trayIcon->setIcon(QIcon(":/images/communities.svg"));
-    //trayIcon->setIcon(QIcon::fromTheme("edit-undo"));
-    trayIcon->show();
+//    trayIcon->setContextMenu(trayIconMenu);
+//    trayIcon->setToolTip("Shared clipboard");
+//    trayIcon->setIcon(QIcon(":/images/colorful.svg"));
+//    //trayIcon->setIcon(QIcon(":/images/communities.svg"));
+//    //trayIcon->setIcon(QIcon::fromTheme("edit-undo"));
+//    trayIcon->show();
 
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-            this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
-    connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(trayMessageClicked()));
+//    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+//            this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
+//    connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(trayMessageClicked()));
 
-    trayIcon->showMessage("Shared Clipboard run", "Click to open main window");
+//    trayIcon->showMessage("Shared Clipboard run", "Click to open main window");
 }
 
 void MainWindow::fillDevicesList(QList<QString> list) {
@@ -162,7 +166,7 @@ void MainWindow::connectRoomListDialog()
 
 void MainWindow::newDevicePluged(QString deviceName)
 {
-    trayIcon->showMessage(deviceName + tr("& connected to room"), "Shared clipboard");
+    //trayIcon->showMessage(deviceName + tr("& connected to room"), "Shared clipboard");
 }
 
 void MainWindow::newNameVerified(QString newName)
@@ -191,3 +195,25 @@ void MainWindow::clipboardDataListItemDBClicked(QListWidgetItem * listItem)
 }
 
 
+
+void MainWindow::on_connectpushButton_clicked()
+{
+    emit connectRoom();
+}
+
+void MainWindow::on_changeRoomPushButton_clicked()
+{
+    if(isServer){
+        emit deleteRoom();
+    }
+    else {
+        emit createRoom();
+    }
+}
+
+void MainWindow::on_shareccheckBox_toggled(bool checked)
+{
+    if(checked)
+        emit shareClipboard();
+    else emit unshareClipboard();
+}

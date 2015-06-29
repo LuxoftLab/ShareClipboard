@@ -42,6 +42,8 @@ private slots:
 
     void on_connectButt_clicked();
 
+    void on_cancelButt_clicked();
+
 private:
     QMap<QString, qint32> rooms;
     Ui::RoomsListDialog *ui;

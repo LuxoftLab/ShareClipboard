@@ -10,14 +10,16 @@
 #include "roomslistdialog.h"
 #include "passworddialog.h"
 #include "createroomdialog.h"
+#include "mainwindow.h"
 
 class ClipboardTrayIcon : public QMainWindow
 {    
     Q_OBJECT
 
-    QSystemTrayIcon * icon;
+    QSystemTrayIcon * icon = NULL;
+    MainWindow * mainwindow = NULL;
     RoomsListDialog * roomDialog = NULL;
-    CreateRoomDialog * createRoomDialog;
+    CreateRoomDialog * createRoomDialog = NULL;
 
     QMenu * trayIconMenu;
     QAction * connectAction;
@@ -30,14 +32,13 @@ class ClipboardTrayIcon : public QMainWindow
     QAction * quitAction;
 
     void createMenu();
+    void connectMainWindow(MainWindow*);
 public:
     ClipboardTrayIcon();
     ~ClipboardTrayIcon();
 
     void show();
 signals:
-    void history();
-    void maximize();
     void stopSharing();
     void settings();
     void about();
@@ -48,6 +49,9 @@ signals:
 public slots:
     void connectRoom();
     void createRoom();
+    void showMaximized();
+
+    void serServerIcon(QString);
 };
 
 #endif // CLIPBOARDTRAYICON_H

@@ -28,6 +28,12 @@ signals:
     void roomListOpened(RoomsListDialog *);
     void pushDataChoosed(qint32);
     void settingsChoosed(int, bool);
+
+    void createRoom();
+    void deleteRoom();
+    void connectRoom();
+    void shareClipboard();
+    void unshareClipboard();
 protected:
     void closeEvent(QCloseEvent * event);
 public slots:
@@ -48,14 +54,21 @@ private slots:
 
     void clipboardDataListItemDBClicked(QListWidgetItem *listItem);
 
+    void on_connectpushButton_clicked();
+    void on_changeRoomPushButton_clicked();
+
+    void on_shareccheckBox_toggled(bool checked);
+
 private:
     Ui::MainWindow * ui;
-    QSystemTrayIcon * trayIcon;
+    //QSystemTrayIcon * trayIcon;
     QVector<qint32> dataIdsVector;
     RoomsListDialog *roomDialog;
+    CreateRoomDialog * createRoomDialog = NULL;
 
     void createTrayIcon();
     bool askForFileDownload(QString fileName);
+    bool isServer;
 };
 
 #endif // MAINWINDOW_H

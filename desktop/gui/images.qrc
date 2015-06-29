@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>images/communities.svg</file>
         <file>images/colorful.svg</file>
+        <file>images/server.svg</file>
     </qresource>
 </RCC>
