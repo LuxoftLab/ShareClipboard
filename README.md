@@ -5,7 +5,7 @@ Current features:
 * Copy&paste text as plain text
 * Copy&paste images as byte stream, e. g. printscreening them
 * Desktop (cross-platform) and mobile (android) versions (android one is under development so far)
-* Don't be worried if server leaves the room, another device in queue will adopt the server responsibilities and the system will stay persistant
+* Don't be worried if server leaves the room, another device in queue will adopt the server responsibilities and the system will stay persistent
 * Minimalistic & full-window design, up to you what to use
 * Clipboard history
 
