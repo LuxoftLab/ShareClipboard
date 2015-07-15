@@ -20,7 +20,7 @@ void CreateRoomDialog::accept()
     if(ui->lineEdit->text().isEmpty())
     {
         QMessageBox messageBox;
-        messageBox.setText("Введите имя комнаты!");
+        messageBox.setText(tr("Введите имя комнаты!"));
         messageBox.setIcon(QMessageBox::Warning);
         messageBox.exec();
         return;
@@ -29,7 +29,7 @@ void CreateRoomDialog::accept()
     if(ui->lineEdit_2->text().isEmpty())
     {
         QMessageBox messageBox;
-        messageBox.setText("Введите пароль!");
+        messageBox.setText(tr("Введите пароль!"));
         messageBox.setIcon(QMessageBox::Warning);
         messageBox.exec();
         return;
@@ -38,7 +38,7 @@ void CreateRoomDialog::accept()
     if(ui->lineEdit_2->text().compare(ui->lineEdit_3->text()) != 0)
     {
         QMessageBox messageBox;
-        messageBox.setText("Пароли не совпадают");
+        messageBox.setText(tr("Пароли не совпадают"));
         messageBox.setIcon(QMessageBox::Warning);
         messageBox.exec();
         return;
@@ -49,5 +49,9 @@ void CreateRoomDialog::accept()
 
 void CreateRoomDialog::on_buttonBox_accepted()
 {
-    qDebug() << "create";
+    this->accept();
+    ui->lineEdit->clear();
+    ui->lineEdit_2->clear();
+    ui->lineEdit_3->clear();
+    ui->lineEdit->setFocus();
 }

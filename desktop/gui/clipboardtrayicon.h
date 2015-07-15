@@ -30,6 +30,7 @@ class ClipboardTrayIcon : public QMainWindow
     QAction * settingsAction;
     QAction * aboutAction;
     QAction * quitAction;
+    QAction * deleteServerAction = NULL;
 
     void createMenu();
     void connectMainWindow(MainWindow*);
@@ -46,12 +47,14 @@ signals:
 
     void serverRoomCreated(QString, QString);
     void roomListOpened(RoomsListDialog *);
+    void deleteServerSignal();
 public slots:
     void connectRoom();
     void createRoom();
     void showMaximized();
 
-    void serServerIcon(QString);
+    void becomeServer(QString);
+    void stopBeignServer();
 };
 
 #endif // CLIPBOARDTRAYICON_H

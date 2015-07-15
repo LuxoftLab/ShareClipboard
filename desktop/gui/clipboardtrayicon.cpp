@@ -4,13 +4,13 @@ void ClipboardTrayIcon::createMenu()
 {
     trayIconMenu = new QMenu();
 
-    connectAction = new QAction(tr("C&onnect to room"), this);
-    connect(connectAction, SIGNAL(triggered()), this, SLOT(connectRoom()));
-    trayIconMenu->addAction(connectAction);
-
     createRoomAction = new QAction(tr("C&reate room"), this);
     connect(createRoomAction, SIGNAL(triggered()), this, SLOT(createRoom()));
     trayIconMenu->addAction(createRoomAction);
+
+    connectAction = new QAction(tr("C&onnect to room"), this);
+    connect(connectAction, SIGNAL(triggered()), this, SLOT(connectRoom()));
+    trayIconMenu->addAction(connectAction);
 
     trayIconMenu->addSeparator();
 
@@ -62,6 +62,8 @@ ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow()
 ClipboardTrayIcon::~ClipboardTrayIcon()
 {
     delete icon;
+    if(deleteServerAction != NULL)
+        delete deleteServerAction;
     delete quitAction;
     delete aboutAction;
     delete settingsAction;
@@ -84,17 +86,19 @@ void ClipboardTrayIcon::connectRoom()
         roomDialog = new RoomsListDialog(this);
         emit roomListOpened(roomDialog);
     }
-
-
     roomDialog->exec();
 }
 
 void ClipboardTrayIcon::createRoom()
 {
-    if(createRoomDialog == NULL)
+    if(createRoomDialog == NULL){
         createRoomDialog = new CreateRoomDialog(this);
-    //roomDialog = new RoomsListDialog(this);
-    //emit roomListOpened(roomDialog);
+    }
+
+    if(roomDialog == NULL){
+        roomDialog = new RoomsListDialog(this);
+        emit roomListOpened(roomDialog);
+    }
 
     connect(createRoomDialog, SIGNAL(createRoom(QString,QString)),
             this, SIGNAL(serverRoomCreated(QString,QString)));
@@ -108,7 +112,21 @@ void ClipboardTrayIcon::showMaximized()
     mainwindow->show();
 }
 
-void ClipboardTrayIcon::serServerIcon(QString)
+void ClipboardTrayIcon::becomeServer(QString)
 {
     icon->setIcon(QIcon(":/images/server.svg"));
+
+    trayIconMenu->removeAction(createRoomAction);
+    deleteServerAction = new QAction(tr("D&elete server"), this);
+    connect(deleteServerAction, SIGNAL(triggered()),
+            this, SIGNAL(deleteServerSignal()));
+    trayIconMenu->insertAction(connectAction, deleteServerAction);
+}
+
+void ClipboardTrayIcon::stopBeignServer()
+{
+    icon->setIcon(QIcon(":/images/colorful.svg"));
+
+    trayIconMenu->removeAction(deleteServerAction);
+    trayIconMenu->insertAction(connectAction, createRoomAction);
 }

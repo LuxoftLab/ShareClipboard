@@ -39,10 +39,9 @@ private slots:
     void onPasswordTyped(QString password);
     void onNewRoomButtonClicked();
     void deleteServerRoomSlot();
+    void on_buttonBox_accepted();
 
-    void on_connectButt_clicked();
-
-    void on_cancelButt_clicked();
+    void on_buttonBox_rejected();
 
 private:
     QMap<QString, qint32> rooms;

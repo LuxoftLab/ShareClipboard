@@ -86,7 +86,7 @@ void ClientRoom::recoverServer()
 {
     qDebug() << "recovering server";
     qDebug() << floating_server_candidates.first()->addr << connection->localAddress();
-    if(floating_server_candidates.size() > 0 && floating_server_candidates.first()->addr == connection->localAddress())
+    if(floating_server_candidates.size() > 1 && floating_server_candidates.first()->addr == connection->localAddress())
         emit newFloatingServer(host);
 }
 

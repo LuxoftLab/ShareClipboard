@@ -11,7 +11,11 @@ Controller::Controller(ClipboardTrayIcon * icon) : QObject(0)
     connect(icon, SIGNAL(serverRoomCreated(QString,QString)),
             this, SLOT(createServerRoom(QString,QString)));
     connect(this, SIGNAL(serverIsUp(QString)),
-            icon, SLOT(serServerIcon(QString)));
+            icon, SLOT(becomeServer(QString)));
+    connect(icon, SIGNAL(deleteServerSignal()),
+            this, SLOT(deleteServerRoom()));
+    connect(this, SIGNAL(serverIsDown()),
+            icon, SLOT(stopBeignServer()));
     icon->show();
 
     initClipboardToGuiConnection();
@@ -54,6 +58,7 @@ void Controller::deleteRoom(QHostAddress host)
     qDebug() << "room deleted";
     QString name = rooms.value(host.toIPv4Address())->getName();
     rooms.remove(host.toIPv4Address());
+    emit roomDeleted(name);
 }
 
 void Controller::createServerRoom(QString name, QString pass)
@@ -74,6 +79,7 @@ void Controller::deleteServerRoom()
 {
     if(serverRoom == NULL)
         return;
+    deleteRoom(QHostAddress("127.0.0.1"));
 
     delete serverRoom;
     serverRoom = NULL;
@@ -81,7 +87,7 @@ void Controller::deleteServerRoom()
     qDebug() << "server room deleted ";
 
     udpService->notifyAboutRoomDeleting();
-
+    emit serverIsDown();
 }
 
 void Controller::createFloatingServerRoom(QHostAddress)
@@ -96,14 +102,20 @@ void Controller::createFloatingServerRoom(QHostAddress)
 
 void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
 {
-    connect(roomsDialog, SIGNAL(newRoomCreated(QString,QString)), this, SLOT(createServerRoom(QString,QString)));
-    connect(this, SIGNAL(roomAdded(QString,qint32)), roomsDialog, SLOT(addRoom(QString,qint32)));
+    connect(roomsDialog, SIGNAL(newRoomCreated(QString,QString)),
+            this, SLOT(createServerRoom(QString,QString)));
+    connect(this, SIGNAL(roomAdded(QString,qint32)),
+            roomsDialog, SLOT(addRoom(QString,qint32)));
 
-    connect(this, SIGNAL(serverIsUp(QString)), roomsDialog, SLOT(onServerIsUp(QString)));
-    connect(roomsDialog, SIGNAL(roomChoosed(qint32, QString)), this, SLOT(joinRoom(qint32,QString)));
+    connect(this, SIGNAL(serverIsUp(QString)),
+            roomsDialog, SLOT(onServerIsUp(QString)));
+    connect(roomsDialog, SIGNAL(roomChoosed(qint32, QString)),
+            this, SLOT(joinRoom(qint32,QString)));
 
-    connect(roomsDialog, SIGNAL(deleteServerRoom()), this, SLOT(deleteServerRoom()));
-    connect(this, SIGNAL(roomDeleted(QString)), roomsDialog, SLOT(deleteRoom(QString)));
+    connect(roomsDialog, SIGNAL(deleteServerRoom()),
+            this, SLOT(deleteServerRoom()));
+    connect(this, SIGNAL(roomDeleted(QString)),
+            roomsDialog, SLOT(deleteRoom(QString)));
 }
 
 void Controller::initClipboardToGuiConnection()
@@ -127,12 +139,6 @@ void Controller::initUDPService()
     udpService->initListener();
     udpService->getRooms();
 }
-
-//void Controller::initClipboardToClientRoomConnection()
-//{
-
-
-//}
 
 void Controller::joinRoom(qint32 addr, QString pass)
 {
