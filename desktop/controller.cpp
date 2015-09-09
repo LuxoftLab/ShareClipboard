@@ -4,7 +4,6 @@
 
 Controller::Controller(ClipboardTrayIcon * icon) : QObject(0)
 {
-    icon = new ClipboardTrayIcon();
     this->icon = icon;
     connect(icon, SIGNAL(roomListOpened(RoomsListDialog*)),
             this, SLOT(onRoomsListOpen(RoomsListDialog*)));
@@ -72,7 +71,7 @@ void Controller::createServerRoom(QString name, QString pass)
     udpService->notifyAboutRoom(name);
     emit serverIsUp(name);
 
-    addRoom(name, QHostAddress("127.0.0.1"));
+    //addRoom(name, QHostAddress("127.0.0.1"));
 }
 
 void Controller::deleteServerRoom()

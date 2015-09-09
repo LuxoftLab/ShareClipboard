@@ -57,6 +57,8 @@ void ClipboardTrayIcon::connectMainWindow(MainWindow * mainWindow)
 ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow()
 {
     createMenu();
+    roomDialog = new RoomsListDialog();
+    emit roomListOpened(roomDialog);
 }
 
 ClipboardTrayIcon::~ClipboardTrayIcon()
@@ -84,8 +86,8 @@ void ClipboardTrayIcon::connectRoom()
 {
     if(roomDialog == NULL){
         roomDialog = new RoomsListDialog(this);
-        emit roomListOpened(roomDialog);
     }
+    //emit roomListOpened(roomDialog);
     roomDialog->exec();
 }
 
@@ -97,9 +99,9 @@ void ClipboardTrayIcon::createRoom()
 
     if(roomDialog == NULL){
         roomDialog = new RoomsListDialog(this);
-        emit roomListOpened(roomDialog);
     }
 
+    emit roomListOpened(roomDialog);
     connect(createRoomDialog, SIGNAL(createRoom(QString,QString)),
             this, SIGNAL(serverRoomCreated(QString,QString)));
     createRoomDialog->exec();
