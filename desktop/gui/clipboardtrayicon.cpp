@@ -43,9 +43,9 @@ void ClipboardTrayIcon::createMenu()
     trayIconMenu->addAction(quitAction);
 
 
-    icon = new QSystemTrayIcon();
-    icon->setIcon(QIcon(":images/colorful.svg"));
+    icon = new QSystemTrayIcon(this);
     icon->setContextMenu(trayIconMenu);
+    icon->setIcon(QIcon(":images/colorful.svg"));
 }
 
 void ClipboardTrayIcon::connectMainWindow(MainWindow * mainWindow)
