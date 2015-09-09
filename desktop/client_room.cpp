@@ -74,6 +74,9 @@ void ClientRoom::sendData(QByteArray data, QString type)
     else if(type == "image/png"){
         p_type = IMAGE;
     }
+    else if (type == "text/uri-list"){
+        p_type = FILENOTIF;
+    }
     else{
         qDebug() << "no such mime type available";
         return;
@@ -87,6 +90,11 @@ void ClientRoom::recoverServer()
     qDebug() << floating_server_candidates.first()->addr << connection->localAddress();
     if(floating_server_candidates.size() > 0 && floating_server_candidates.first()->addr == connection->localAddress())
         emit newFloatingServer(host);
+}
+
+void ClientRoom::fileNotification(QString name)
+{
+
 }
 
 ClientRoom::~ClientRoom()

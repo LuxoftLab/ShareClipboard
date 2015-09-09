@@ -24,6 +24,7 @@ class ClientRoom : public Room
     QHostAddress host;
     QHostAddress ownAdress;
     QMap<qint32, Member*> members;
+    QMap<qint32, QString> files;
     QQueue<Member*> floating_server_candidates; //todo a priority queue
     QString login;
     QString pwd;
@@ -44,6 +45,7 @@ public slots:
     void deleteMember(QHostAddress addr);
     void sendData(QByteArray data, QString type);
     void recoverServer();
+    void fileNotification(QString name);
 //    void sendText(QString text);
 //    void sendImage(QImage);
 //    void updateBuffer();

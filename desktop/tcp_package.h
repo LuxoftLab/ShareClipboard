@@ -16,6 +16,7 @@ enum pckg_t
     TEXT,
     IMAGE,
     FILENOTIF,
+    SHAREDFILE,
     PASS,
     MEMBER,
     INVALID_PASS,

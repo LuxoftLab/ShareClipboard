@@ -28,7 +28,7 @@ void ClipboardService::onClipboardChanged()
         data.data = mimeData->data(data.type);
         text = mimeData->urls().first().toString();
     }
-    if (mimeData->hasImage()) {
+    else if (mimeData->hasImage()) {
         text = "copied image #" + QString::number(qrand());
         qDebug() << "has image: " << text;
         data.type = "image/png";
@@ -40,7 +40,7 @@ void ClipboardService::onClipboardChanged()
         const char* rawdata = data.data.constData();
         qDebug() << "data:" << rawdata;
     }
-    if (mimeData->hasText()) {
+    else if (mimeData->hasText()) {
         qDebug() << "has text: " << mimeData->text();
         data.type = "text/plain";
         data.data = mimeData->text().toUtf8();

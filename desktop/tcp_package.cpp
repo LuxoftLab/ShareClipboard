@@ -11,6 +11,8 @@ TcpPackage *TcpPackageFactory::getPackage(pckg_t type)
             return new RemoveMemberPackage();
        case IMAGE:
             return new ImagePackage();
+       case FILENOTIF:
+            return new DataPackage();
        case PASS:
             return new PassPackage();
        default: throw type;
@@ -199,3 +201,4 @@ void FailPackage::write(QTcpSocket * socket)
         qDebug() << "No data written";
     }
 }
+
