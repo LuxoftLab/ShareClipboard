@@ -15,6 +15,8 @@ Controller::Controller(ClipboardTrayIcon * icon) : QObject(0)
             this, SLOT(deleteServerRoom()));
     connect(this, SIGNAL(serverIsDown()),
             icon, SLOT(stopBeignServer()));
+    connect(icon, SIGNAL(toggleSharingSignal()),
+            &(this->clipboardService), SLOT(turnSharing()));
     icon->show();
 
     initClipboardToGuiConnection();

@@ -36,3 +36,8 @@ void SettingsDialog::on_radioButton_clicked()
     ui->spinBox->setEnabled(true);
     ui->spinBox_2->setDisabled(true);
 }
+
+void SettingsDialog::on_buttonBox_rejected()
+{
+    this->close();
+}

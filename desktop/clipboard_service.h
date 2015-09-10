@@ -32,13 +32,14 @@ public slots:
     void onSettingsChoosed(int value, bool isInKB);
     void pushDataToClipboardFromGui(qint32 dataId);
     void pushFromHosts(QByteArray data, QString type);
+    void turnSharing();
 private:
     QClipboard* clipboard;
     QVector<ClipboardData>clipboardData;
     int clipboardOpacity = 10;
     bool isInKB;
     bool locked;
-
+    bool sharingOn;
 
     QString minimizeText(QString text);
     QByteArray * imageToQByteArray(QImage&);

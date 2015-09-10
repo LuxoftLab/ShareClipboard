@@ -14,24 +14,24 @@ void ClipboardTrayIcon::createMenu()
 
     trayIconMenu->addSeparator();
 
-    historyAction = new QAction(tr("&History"), this);
+    historyAction = new QAction(tr("&History/Maximize"), this);
     connect(historyAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
     trayIconMenu->addAction(historyAction);
 
     trayIconMenu->addSeparator();
 
-    maximizeAction = new QAction(tr("Ma&ximize"), this);
-    connect(maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
-    trayIconMenu->addAction(maximizeAction);
+//    maximizeAction = new QAction(tr("Ma&ximize"), this);
+//    connect(maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
+//    trayIconMenu->addAction(maximizeAction);
 
-    stopSharingAction = new QAction(tr("&Stop Sharing"), this);
-    connect(stopSharingAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+    stopSharingAction = new QAction(sharingOffString, this);
+    connect(stopSharingAction, SIGNAL(triggered()), this, SLOT(toggleSharing()));
     trayIconMenu->addAction(stopSharingAction);
 
     trayIconMenu->addSeparator();
 
     settingsAction = new QAction(tr("Se&ttings"), this);
-    connect(settingsAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+    connect(settingsAction, SIGNAL(triggered()), this, SLOT(showSettings()));
     trayIconMenu->addAction(settingsAction);
 
     aboutAction = new QAction(tr("&About"), this);
@@ -56,8 +56,10 @@ void ClipboardTrayIcon::connectMainWindow(MainWindow * mainWindow)
 
 ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow()
 {
-    createMenu();
     roomDialog = new RoomsListDialog();
+    sharingOnString = tr("Enable Sharing");
+    sharingOffString = tr("Disable Sharing");
+    createMenu();
 }
 
 ClipboardTrayIcon::~ClipboardTrayIcon()
@@ -65,11 +67,15 @@ ClipboardTrayIcon::~ClipboardTrayIcon()
     delete icon;
     if(deleteServerAction != NULL)
         delete deleteServerAction;
+    if(aboutWindow != NULL)
+        delete aboutWindow;
+    if(settingsDialog != NULL)
+        delete settingsDialog;
     delete quitAction;
     delete aboutAction;
     delete settingsAction;
     delete stopSharingAction;
-    delete maximizeAction;
+    //delete maximizeAction;
     delete historyAction;
     delete createRoomAction;
     delete connectAction;
@@ -116,6 +122,23 @@ void ClipboardTrayIcon::showAbout()
 {
     aboutWindow = new About();
     aboutWindow->show();
+}
+
+void ClipboardTrayIcon::showSettings()
+{
+    settingsDialog = new SettingsDialog();
+    settingsDialog->show();
+}
+
+void ClipboardTrayIcon::toggleSharing()
+{
+    if(stopSharingAction->text() == sharingOffString){
+        stopSharingAction->setText(sharingOnString);
+    }
+    else if(stopSharingAction->text() == sharingOnString){
+        stopSharingAction->setText(sharingOffString);
+    }
+    emit toggleSharingSignal();
 }
 
 void ClipboardTrayIcon::becomeServer(QString)

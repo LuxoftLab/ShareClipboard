@@ -12,6 +12,7 @@
 #include "createroomdialog.h"
 #include "mainwindow.h"
 #include "about.h"
+#include "settingsdialog.h"
 
 class ClipboardTrayIcon : public QMainWindow
 {    
@@ -22,17 +23,21 @@ class ClipboardTrayIcon : public QMainWindow
     RoomsListDialog * roomDialog = NULL;
     CreateRoomDialog * createRoomDialog = NULL;
     About * aboutWindow = NULL;
+    SettingsDialog * settingsDialog = NULL;
 
     QMenu * trayIconMenu;
     QAction * connectAction;
     QAction * createRoomAction;
     QAction * historyAction;
-    QAction * maximizeAction;
+    //QAction * maximizeAction;
     QAction * stopSharingAction;
     QAction * settingsAction;
     QAction * aboutAction;
     QAction * quitAction;
     QAction * deleteServerAction = NULL;
+
+    QString sharingOnString;
+    QString sharingOffString;
 
     void createMenu();
     void connectMainWindow(MainWindow*);
@@ -46,6 +51,7 @@ signals:
     void settings();
     void about();
     void quit();
+    void toggleSharingSignal();
 
     void serverRoomCreated(QString, QString);
     void roomListOpened(RoomsListDialog *);
@@ -55,6 +61,8 @@ public slots:
     void createRoom();
     void showMaximized();
     void showAbout();
+    void showSettings();
+    void toggleSharing();
 
     void becomeServer(QString);
     void stopBeignServer();
