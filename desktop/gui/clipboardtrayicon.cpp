@@ -35,7 +35,7 @@ void ClipboardTrayIcon::createMenu()
     trayIconMenu->addAction(settingsAction);
 
     aboutAction = new QAction(tr("&About"), this);
-    connect(aboutAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(showAbout()));
     trayIconMenu->addAction(aboutAction);
 
     quitAction = new QAction(tr("&Quit"), this);
@@ -58,8 +58,6 @@ ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow()
 {
     createMenu();
     roomDialog = new RoomsListDialog();
-//    emit roomListOpened(roomDialog);
-//    //emit roomDialog->roomListOpened(roomDialog);
 }
 
 ClipboardTrayIcon::~ClipboardTrayIcon()
@@ -102,7 +100,6 @@ void ClipboardTrayIcon::createRoom()
         roomDialog = new RoomsListDialog(this);
     }
 
-    //emit roomListOpened(roomDialog);
     connect(createRoomDialog, SIGNAL(createRoom(QString,QString)),
             this, SIGNAL(serverRoomCreated(QString,QString)));
     createRoomDialog->exec();
@@ -113,6 +110,12 @@ void ClipboardTrayIcon::showMaximized()
     mainwindow = new MainWindow(this);
     connectMainWindow(mainwindow);
     mainwindow->show();
+}
+
+void ClipboardTrayIcon::showAbout()
+{
+    aboutWindow = new About();
+    aboutWindow->show();
 }
 
 void ClipboardTrayIcon::becomeServer(QString)

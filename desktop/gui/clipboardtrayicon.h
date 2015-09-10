@@ -11,6 +11,7 @@
 #include "passworddialog.h"
 #include "createroomdialog.h"
 #include "mainwindow.h"
+#include "about.h"
 
 class ClipboardTrayIcon : public QMainWindow
 {    
@@ -20,6 +21,7 @@ class ClipboardTrayIcon : public QMainWindow
     MainWindow * mainwindow = NULL;
     RoomsListDialog * roomDialog = NULL;
     CreateRoomDialog * createRoomDialog = NULL;
+    About * aboutWindow = NULL;
 
     QMenu * trayIconMenu;
     QAction * connectAction;
@@ -52,6 +54,7 @@ public slots:
     void connectRoom();
     void createRoom();
     void showMaximized();
+    void showAbout();
 
     void becomeServer(QString);
     void stopBeignServer();
