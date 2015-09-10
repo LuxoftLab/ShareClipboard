@@ -72,9 +72,9 @@ void MainWindow::onSettingsClicked()
 
 void MainWindow::onSettingsAccepted(int value, bool isInKB)
 {
-    while(ui->listWidget->count() > value) {
-        delete ui->clipboardText->takeItem(ui->listWidget->count() - 1);
-    }
+//    while(ui->listWidget->count() > value) {
+//        delete ui->clipboardText->takeItem(ui->listWidget->count() - 1);
+//    }
     qDebug() << "asdfasdf";
     dataIdsVector.resize(value);
     emit onSettingsAccepted(value, isInKB);
@@ -155,7 +155,7 @@ void MainWindow::createTrayIcon()
 void MainWindow::fillDevicesList(QList<QString> list) {
     QList<QString>::iterator i;
     for(i = list.begin(); i != list.end(); ++i) {
-        ui->listWidget->addItem(*i);
+        //ui->listWidget->addItem(*i);
     }
 }
 
