@@ -44,8 +44,9 @@ void ClipboardTrayIcon::createMenu()
 
 
     icon = new QSystemTrayIcon(this);
-    icon->setContextMenu(trayIconMenu);
     icon->setIcon(QIcon(":images/colorful.svg"));
+    icon->setContextMenu(trayIconMenu);
+    icon->showMessage("SharedClipboard", "is running");
 }
 
 void ClipboardTrayIcon::connectMainWindow(MainWindow * mainWindow)
@@ -158,4 +159,9 @@ void ClipboardTrayIcon::stopBeignServer()
 
     trayIconMenu->removeAction(deleteServerAction);
     trayIconMenu->insertAction(connectAction, createRoomAction);
+}
+
+void ClipboardTrayIcon::showMessage(QString title, QString body)
+{
+    icon->showMessage(title, body);
 }

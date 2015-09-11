@@ -66,6 +66,7 @@ public slots:
 
     void becomeServer(QString);
     void stopBeignServer();
+    void showMessage(QString, QString);
 };
 
 #endif // CLIPBOARDTRAYICON_H

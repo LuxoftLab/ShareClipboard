@@ -119,9 +119,9 @@ void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
             roomsDialog, SLOT(deleteRoom(QString)));
 }
 
-void Controller::addFileNotificationToQueue(QString, QHostAddress)
+void Controller::fileNotification(QString fileName, QHostAddress address)
 {
-
+    icon->showMessage("New file copied to clipboard", fileName+" from "+address.toString()+" click here to download");
 }
 
 void Controller::initClipboardToGuiConnection()
@@ -177,7 +177,7 @@ void Controller::joinRoom(qint32 addr, QString pass)
     connect(clientRoom, SIGNAL(newFloatingServer(QHostAddress)),
             this, SLOT(createFloatingServerRoom(QHostAddress)));
     connect(clientRoom, SIGNAL(gotFileNotification(QString,QHostAddress)),
-            this, SLOT(addFileNotificationToQueue(QString,QHostAddress)));
+            this, SLOT(fileNotification(QString,QHostAddress)));
     clientRoom->setLogin(host.toString());
     clientRoom->setPwd(pass);
 }
