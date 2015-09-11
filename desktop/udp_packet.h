@@ -4,7 +4,12 @@
 #include <QDataStream>
 #include "constants.h"
 
-enum PacketType{ROOM = 0, GET_ROOM = 1, DELETE_ROOM = 2};
+enum PacketType{
+    ROOM = 0,
+    GET_ROOM = 1,
+    DELETE_ROOM = 2,
+    UDP_IDLE
+    };
 
 struct DatagramPacket{
     quint8 type;

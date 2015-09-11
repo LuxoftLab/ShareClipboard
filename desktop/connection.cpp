@@ -2,6 +2,7 @@
 
 Connection::Connection(QTcpSocket * socket)
 {
+    transferFinished = true;
     this->socket = socket;
 }
 

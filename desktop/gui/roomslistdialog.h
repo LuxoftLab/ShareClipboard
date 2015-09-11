@@ -27,6 +27,7 @@ signals:
     void roomChoosed(qint32 roomIp, QString password);
     void deleteServerRoom();
     void newRoomCreated(QString, QString);
+    void roomListOpened(RoomsListDialog*);
 
 public slots:
     void accept();
@@ -39,6 +40,9 @@ private slots:
     void onPasswordTyped(QString password);
     void onNewRoomButtonClicked();
     void deleteServerRoomSlot();
+    void on_buttonBox_accepted();
+
+    void on_buttonBox_rejected();
 
 private:
     QMap<QString, qint32> rooms;

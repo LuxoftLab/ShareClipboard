@@ -46,10 +46,7 @@ public slots:
     void sendData(QByteArray data, QString type);
     void recoverServer();
     void fileNotification(QString name);
-//    void sendText(QString text);
-//    void sendImage(QImage);
-//    void updateBuffer();
-//    void setNotUpdated();
+
 signals:
     void gotData(QByteArray, QString);
     void gotText(QString);

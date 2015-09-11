@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QObject>
 
 #include "controller.h"
 #include "gui/mainwindow.h"
@@ -7,10 +8,9 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    ClipboardTrayIcon * icon = new ClipboardTrayIcon();
+    Controller controller(icon);
 
-    MainWindow * window = new MainWindow();
-    Controller controller(window);
-    window->show();
-
+    a.setQuitOnLastWindowClosed(false);
     return a.exec();
 }

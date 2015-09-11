@@ -15,7 +15,7 @@ class ClientConnection : public Connection
 {
     Q_OBJECT
     QString login;
-    TcpPackage * hand;
+
 signals:
     void verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
     void onText(QString, ClientConnection * const);

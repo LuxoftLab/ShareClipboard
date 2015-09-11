@@ -14,6 +14,7 @@
 #include "clipboard_service.h"
 #include "gui/mainwindow.h"
 #include "gui/roomslistdialog.h"
+#include "gui/clipboardtrayicon.h"
 
 class Controller : public QObject
 {
@@ -23,15 +24,23 @@ private:
     ServerRoom* serverRoom = NULL;
     ClientRoom* clientRoom = NULL;
     QMap <qint32, ClientRoom*> rooms;
-    MainWindow * mainWindow;
+    //MainWindow * mainWindow;
     ClipboardService clipboardService;
+    ClipboardTrayIcon * icon;
+    bool server;
 public:
-    Controller(MainWindow * mainWindow);
+    Controller(ClipboardTrayIcon * mainWindow);
+    //Controller(MainWindow *);
+    Controller();
     ~Controller();
+
+    void idle();
+    bool isServer();
 signals:
     void roomAdded(QString name, qint32 ip);
     void roomDeleted(QString name);
     void serverIsUp(QString name);
+    void serverIsDown();
 public slots:
     void createServerRoom(QString name, QString pass);
     void joinRoom(qint32 addr, QString pass);
@@ -47,7 +56,6 @@ public slots:
 private:
     void initClipboardToGuiConnection();
     void initUDPService();
-    void initClipboardToClientRoomConnection();
 };
 
 #endif // CONTROLLER_H

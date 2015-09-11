@@ -26,7 +26,6 @@ public:
     void sendImage(QByteArray);
     void sendData(QByteArray, pckg_t);
 
-    TcpPackage * hand;
 //public slots:
 //    void onData();
 signals:

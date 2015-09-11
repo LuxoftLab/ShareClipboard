@@ -28,6 +28,7 @@ floating_server_priorities ClientRoom::device_type()
 ClientRoom::ClientRoom(QString name, QHostAddress host) : Room(name, "")
 {
     this->host = host;
+    connection = NULL;
 }
 
 void ClientRoom::connectToHost(QString login, QString pass)
@@ -90,7 +91,7 @@ void ClientRoom::recoverServer()
 {
     qDebug() << "recovering server";
     qDebug() << floating_server_candidates.first()->addr << connection->localAddress();
-    if(floating_server_candidates.size() > 0 && floating_server_candidates.first()->addr == connection->localAddress())
+    if(floating_server_candidates.size() > 1 && floating_server_candidates.first()->addr == connection->localAddress())
         emit newFloatingServer(host);
 }
 

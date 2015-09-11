@@ -3,7 +3,7 @@
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
     socket = new QTcpSocket(this);
-    transferFinished = true;
+    //transferFinished = true;
     connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
     connect(socket, SIGNAL(disconnected()), this, SIGNAL(serverFell()));
 

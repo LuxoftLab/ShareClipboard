@@ -27,7 +27,7 @@ DataPackage::DataPackage(QByteArray& data, pckg_t type)
 
 DataPackage::DataPackage()
 {
-
+    type = TCP_IDLE;
 }
 
 void DataPackage::read(QDataStream & in)
@@ -65,7 +65,7 @@ PassPackage::PassPackage(QString pass, floating_server_priorities prior)
 
 PassPackage::PassPackage()
 {
-
+    this->priority = FLOAT_IDLE;
 }
 
 void PassPackage::read(QDataStream & in)
@@ -94,7 +94,7 @@ void PassPackage::write(QTcpSocket * socket)
 
 MemberPackage::MemberPackage()
 {
-
+    prior = FLOAT_IDLE;
 }
 
 MemberPackage::MemberPackage(QString login, QHostAddress addr, floating_server_priorities priority)
@@ -115,7 +115,6 @@ void MemberPackage::read(QDataStream & in)
     emit addMember(QString::fromUtf8(login),
                    (floating_server_priorities)priority,
                    QHostAddress(address));
-    delete login;
 }
 
 void MemberPackage::write(QTcpSocket * socket)

@@ -8,7 +8,8 @@
 enum floating_server_priorities
 {
     PC,
-    MOBILE
+    MOBILE,
+    FLOAT_IDLE
 };
 
 #endif // CONSTANTS_H

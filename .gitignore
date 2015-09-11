@@ -1,5 +1,12 @@
-android/bin/
 *.user
 build-*/
 .DS_Store
 */.DS_Store
+
+/android/.gradle
+/android/local.properties
+/android/.idea/workspace.xml
+/android/.idea/libraries
+/android/.DS_Store
+/android/build
+

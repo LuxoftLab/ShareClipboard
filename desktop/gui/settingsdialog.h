@@ -23,6 +23,8 @@ private slots:
     void on_radioButton_3_clicked();
     void on_radioButton_clicked();
 
+    void on_buttonBox_rejected();
+
 private:
     Ui::SettingsDialog *ui;
 };
