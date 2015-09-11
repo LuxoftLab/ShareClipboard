@@ -47,6 +47,8 @@ void ClientRoom::connectToHost(QString login, QString pass)
             this, SLOT(deleteMember(QHostAddress)));
     connect(connection, SIGNAL(gotData(QByteArray,QString)),
             this, SIGNAL(gotData(QByteArray,QString)));
+    connect(connection, SIGNAL(gotFileNotification(QString,QHostAddress)),
+            this, SIGNAL(gotFileNotification(QString,QHostAddress)));
     connect(connection, SIGNAL(serverFell()), this, SLOT(recoverServer()));
 
     connection->sendPassLoginPriority(pass, login, device_type());

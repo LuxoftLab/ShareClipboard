@@ -27,6 +27,8 @@ void ServerRoom::addMember(QTcpSocket * socket)
             this, SLOT(onText(QString, ClientConnection * const)));
     connect(t, SIGNAL(onImage(QByteArray, ClientConnection * const)),
             this, SLOT(onImage(QByteArray, ClientConnection * const)));
+    connect(t, SIGNAL(onFileNotification(QString,QHostAddress,ClientConnection*const)),
+            this, SLOT(onFileNotification(QString,QHostAddress,ClientConnection*const)));
     connect(t, SIGNAL(deleteMember(QHostAddress)),
                       this, SLOT(deleteMember(QHostAddress)));
     notVerified.insert(socket->peerAddress().toIPv4Address(), t);
@@ -78,8 +80,11 @@ bool ServerRoom::verifyPass(QString pass, floating_server_priorities priority, C
 
 void ServerRoom::onText(QString s, ClientConnection * owner)
 {
-    saveText();
-    sendText(s, owner);
+    for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
+    {
+        ClientConnection* t = it.value();
+        t->sendData(s.toUtf8(), TEXT);
+    }
 }
 
 void ServerRoom::onImage(QByteArray im, ClientConnection * const)
@@ -91,18 +96,14 @@ void ServerRoom::onImage(QByteArray im, ClientConnection * const)
     }
 }
 
-
-
-void ServerRoom::saveText()
+void ServerRoom::onFileNotification(QString fileName, QHostAddress sourceAddress, ClientConnection * const )
 {
-
-}
-
-void ServerRoom::sendText(QString s, ClientConnection * owner)
-{
+    QByteArray data;
+    QDataStream out(data);
+    out << fileName << sourceAddress;
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
-        t->sendData(s.toUtf8(), TEXT);
+        t->sendData(data, FILENOTIF);
     }
 }

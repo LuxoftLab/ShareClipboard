@@ -23,9 +23,7 @@ public slots:
     bool verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
     void onText(QString, ClientConnection * const);
     void onImage(QByteArray, ClientConnection * const);
-private:
-    void saveText();
-    void sendText(QString, ClientConnection *);
+    void onFileNotification(QString, QHostAddress, ClientConnection * const);
 };
 
 #endif // SERVER_ROOM_H

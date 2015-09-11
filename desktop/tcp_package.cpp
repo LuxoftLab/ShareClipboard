@@ -12,7 +12,7 @@ TcpPackage *TcpPackageFactory::getPackage(pckg_t type)
        case IMAGE:
             return new ImagePackage();
        case FILENOTIF:
-            return new DataPackage();
+            return new FileNotificationPackage();
        case PASS:
             return new PassPackage();
        default: throw type;
@@ -202,3 +202,42 @@ void FailPackage::write(QTcpSocket * socket)
     }
 }
 
+
+
+FileNotificationPackage::FileNotificationPackage()
+{
+}
+
+FileNotificationPackage::FileNotificationPackage(QHostAddress source, QByteArray & data)
+{
+    this->data = data;
+    this->sourceAddress = source;
+}
+
+void FileNotificationPackage::read(QDataStream & in)
+{
+    in >> size;
+    text = new char[size];
+    in.readRawData(text, size);
+    in >> sourceAddress;
+
+    emit gotFileNotification(QString::fromUtf8(text), QHostAddress(sourceAddress));
+}
+
+void FileNotificationPackage::write(QTcpSocket * socket)
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+
+    out << qint32(0) << (qint32)data.size();
+    out.writeRawData(data.constData(), data.size());
+    out << sourceAddress.toIPv4Address();
+    out.device()->seek(0);
+    out << (qint32)(dat.size()+sizeof(qint32) - sizeof(qint32));
+    out.device()->seek(4+4+4+4+data.size()+1);
+
+    if(socket->write(dat) < dat.size())
+    {
+        qDebug() << "No data written";
+    }
+}

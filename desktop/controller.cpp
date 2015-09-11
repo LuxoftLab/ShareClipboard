@@ -95,6 +95,11 @@ void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
     connect(this, SIGNAL(roomDeleted(QString)), roomsDialog, SLOT(deleteRoom(QString)));
 }
 
+void Controller::addFileNotificationToQueue(QString, QHostAddress)
+{
+
+}
+
 void Controller::initClipboardToGuiConnection()
 {
     connect(&clipboardService, SIGNAL(hasDataToText(QString, qint32)), mainWindow, SLOT(dataPushedToClipboard(QString, qint32)));
@@ -153,6 +158,8 @@ void Controller::joinRoom(qint32 addr, QString pass)
             &clipboardService, SLOT(pushFromHosts(QByteArray,QString)));
     connect(clientRoom, SIGNAL(newFloatingServer(QHostAddress)),
             this, SLOT(createFloatingServerRoom(QHostAddress)));
+    connect(clientRoom, SIGNAL(gotFileNotification(QString,QHostAddress)),
+            this, SLOT(addFileNotificationToQueue(QString,QHostAddress)));
     clientRoom->setLogin(host.toString());
     clientRoom->setPwd(pass);
 }

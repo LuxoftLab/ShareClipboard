@@ -100,6 +100,8 @@ void ClientConnection::dispatch(QDataStream& infile)
             this, SLOT(emitImage(QByteArray)));
     connect(hand, SIGNAL(gotPass(QString,floating_server_priorities)),
             this, SLOT(makePass(QString,floating_server_priorities)));
+    connect(hand, SIGNAL(gotFileNotification(QString,QHostAddress)),
+            this, SLOT(emitFileNotification(QString,QHostAddress)));
 
     hand->read(infile);
 }
@@ -112,4 +114,9 @@ void ClientConnection::emitText(QString text)
 void ClientConnection::emitImage(QByteArray ba)
 {
     emit onImage(ba, this);
+}
+
+void ClientConnection::emitFileNotification(QString fileName, QHostAddress sourceAddress)
+{
+    emit onFileNotification(fileName, sourceAddress, this);
 }

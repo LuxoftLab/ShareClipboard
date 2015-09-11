@@ -42,6 +42,7 @@ signals:
     void gotImage(QByteArray);
     void gotPass(QString, floating_server_priorities);
     void gotData(QByteArray, QString);
+    void gotFileNotification(QString, QHostAddress);
     void addMember(QString, floating_server_priorities, QHostAddress);
     void deleteMember(QHostAddress);
 };
@@ -60,6 +61,19 @@ class DataPackage : public TcpPackage
 public:
     DataPackage(QByteArray&, pckg_t);
     DataPackage();
+    void read(QDataStream &);
+    void write(QTcpSocket *);
+};
+
+class FileNotificationPackage : public TcpPackage
+{
+    QByteArray data;
+    QHostAddress sourceAddress;
+
+public:
+    FileNotificationPackage();
+    FileNotificationPackage(QHostAddress, QByteArray&);
+
     void read(QDataStream &);
     void write(QTcpSocket *);
 };

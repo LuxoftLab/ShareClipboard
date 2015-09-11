@@ -37,6 +37,7 @@ signals:
     void gotText(QString);
     void gotImage(QByteArray);
     void gotData(QByteArray, QString);
+    void gotFileNotification(QString, QHostAddress);
     void setNotUpdated();
     void serverFell();
 private:

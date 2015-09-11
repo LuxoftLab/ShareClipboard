@@ -20,6 +20,7 @@ signals:
     void verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
     void onText(QString, ClientConnection * const);
     void onImage(QByteArray, ClientConnection * const);
+    void onFileNotification(QString, QHostAddress, ClientConnection * const);
     void deleteMember(QHostAddress);
 public:
     ClientConnection(QTcpSocket * socket);
@@ -35,6 +36,7 @@ public slots:
     //void onData();
     void emitText(QString);
     void emitImage(QByteArray);
+    void emitFileNotification(QString, QHostAddress);
     void makePass(QString, floating_server_priorities);
     void emitDeleteMember();
 private:
