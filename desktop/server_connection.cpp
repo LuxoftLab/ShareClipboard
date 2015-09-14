@@ -54,3 +54,8 @@ void ServerConnection::sendData(QByteArray data, pckg_t type)
 {
     DataPackage(data, type).write(socket);
 }
+
+void ServerConnection::sendFileNotification(QByteArray & data)
+{
+    FileNotificationPackage(socket->peerAddress(), data).write(socket);
+}

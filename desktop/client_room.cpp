@@ -73,18 +73,21 @@ void ClientRoom::sendData(QByteArray data, QString type)
     pckg_t p_type;
     if(type == "text/plain"){
         p_type = TEXT;
+        connection->sendData(data, p_type);
     }
     else if(type == "image/png"){
         p_type = IMAGE;
+        connection->sendData(data, p_type);
     }
     else if (type == "text/uri-list"){
         p_type = FILENOTIF;
+        connection->sendFileNotification(data);
     }
     else{
         qDebug() << "no such mime type available";
         return;
     }
-    connection->sendData(data, p_type);
+
 }
 
 void ClientRoom::recoverServer()

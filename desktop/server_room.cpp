@@ -98,12 +98,9 @@ void ServerRoom::onImage(QByteArray im, ClientConnection * const)
 
 void ServerRoom::onFileNotification(QString fileName, QHostAddress sourceAddress, ClientConnection * const )
 {
-    QByteArray data;
-    QDataStream out(data);
-    out << fileName << sourceAddress;
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
-        t->sendData(data, FILENOTIF);
+        t->sendFileNotification(fileName, sourceAddress);
     }
 }

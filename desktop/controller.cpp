@@ -121,7 +121,7 @@ void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
 
 void Controller::fileNotification(QString fileName, QHostAddress address)
 {
-    icon->showMessage("New file copied to clipboard", fileName+" from "+address.toString()+" click here to download");
+    icon->showMessage(fileName, address.toString());
 }
 
 void Controller::initClipboardToGuiConnection()

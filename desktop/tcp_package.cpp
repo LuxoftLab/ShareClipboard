@@ -207,7 +207,7 @@ FileNotificationPackage::FileNotificationPackage()
 {
 }
 
-FileNotificationPackage::FileNotificationPackage(QHostAddress source, QByteArray & data)
+FileNotificationPackage::FileNotificationPackage(QHostAddress source, QByteArray data)
 {
     this->data = data;
     this->sourceAddress = source;
@@ -218,9 +218,16 @@ void FileNotificationPackage::read(QDataStream & in)
     in >> size;
     text = new char[size];
     in.readRawData(text, size);
+    qint32 sourceAddress;
     in >> sourceAddress;
 
-    emit gotFileNotification(QString::fromUtf8(text), QHostAddress(sourceAddress));
+    QString fileName = QString::fromUtf8(text, size);
+    QHostAddress adr(sourceAddress);
+
+    qDebug() << fileName << adr;
+
+    emit gotFileNotification(QString::fromUtf8(text),
+                             QHostAddress(sourceAddress));
 }
 
 void FileNotificationPackage::write(QTcpSocket * socket)
@@ -228,7 +235,7 @@ void FileNotificationPackage::write(QTcpSocket * socket)
     QByteArray dat;
     QDataStream out(&dat, QIODevice::WriteOnly);
 
-    out << qint32(0) << (qint32)data.size();
+    out << qint32(0) << FILENOTIF << (qint32)data.size();
     out.writeRawData(data.constData(), data.size());
     out << sourceAddress.toIPv4Address();
     out.device()->seek(0);

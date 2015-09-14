@@ -73,7 +73,7 @@ class FileNotificationPackage : public TcpPackage
 
 public:
     FileNotificationPackage();
-    FileNotificationPackage(QHostAddress, QByteArray&);
+    FileNotificationPackage(QHostAddress, QByteArray);
 
     void read(QDataStream &);
     void write(QTcpSocket *);
