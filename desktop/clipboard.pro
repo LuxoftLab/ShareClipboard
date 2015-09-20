@@ -32,8 +32,7 @@ SOURCES += main.cpp \
     gui/settingsdialog.cpp \
     tcp_package.cpp \
     gui/clipboardtrayicon.cpp \
-    gui/about.cpp \
-    filepackages.cpp
+    gui/about.cpp
 
 HEADERS  += \
     client_connection.h \
@@ -57,8 +56,7 @@ HEADERS  += \
     clipboard_service.h \
     gui/settingsdialog.h \
     gui/clipboardtrayicon.h \
-    gui/about.h \
-    filepackages.h
+    gui/about.h
 
 RESOURCES += \
     gui/images.qrc
