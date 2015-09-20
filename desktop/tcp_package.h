@@ -4,6 +4,7 @@
 #include <QImage>
 #include <QTcpSocket>
 #include <assert.h>
+#include <QDate>
 #include <exception>
 
 #include "constants.h"
@@ -16,13 +17,18 @@ enum pckg_t
     TEXT,
     IMAGE,
     FILENOTIF,
-    SHAREDFILE,
+    FILEREQ,
+    FILERESP,
     PASS,
     MEMBER,
     INVALID_PASS,
     REMOVE,
     TCP_IDLE
 };
+
+const int PCKG_SZ_FIELD_SZ = sizeof(qint32);
+const int PCKG_TYPE_FIELD_SZ = sizeof(pckg_t);
+const int BYTE_ARR_SZ_FIELD_SZ = sizeof(qint32);
 
 class TcpPackage : public QObject
 {
@@ -38,6 +44,7 @@ protected:
 public:
     virtual void write(QTcpSocket *) = 0;
     virtual void read(QDataStream &) = 0;
+    virtual ~TcpPackage();
 signals:
     void gotText(QString);
     void gotImage(QByteArray);
@@ -75,6 +82,28 @@ public:
     FileNotificationPackage();
     FileNotificationPackage(QHostAddress, QByteArray);
 
+    void read(QDataStream &);
+    void write(QTcpSocket *);
+};
+
+class FileReqPackage : public TcpPackage
+{
+    QString fileName;
+public:
+    FileReqPackage(QString);
+    FileReqPackage();
+    void read(QDataStream &);
+    void write(QTcpSocket *);
+};
+
+class FileRespPackage : public TcpPackage
+{
+    QString fileName;
+    QDate timeStamp;
+    QByteArray data;
+public:
+    FileRespPackage(QString, QDate, QByteArray&);
+    FileRespPackage();
     void read(QDataStream &);
     void write(QTcpSocket *);
 };

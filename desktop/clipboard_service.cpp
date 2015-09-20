@@ -21,8 +21,8 @@ void ClipboardService::onClipboardChanged()
         data.dataID = (qint32)qrand();
 
         if (clipboardData.size() == clipboardOpacity) {
-            qDebug() << "vector overflow";
-            emit deleteDataFromStorage(clipboardData.takeLast().dataID);
+            //qDebug() << "vector overflow";
+            //emit deleteDataFromStorage(clipboardData.takeLast().dataID);
         }
 
         if (mimeData->hasUrls()) {

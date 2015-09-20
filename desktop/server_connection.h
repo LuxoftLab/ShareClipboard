@@ -26,6 +26,7 @@ public:
     void sendImage(QByteArray);
     void sendData(QByteArray, pckg_t);
     void sendFileNotification(QByteArray&);
+    void sendFile(QByteArray &);
 
 signals:
     void addMember(QString login, floating_server_priorities, QHostAddress addr);

@@ -33,6 +33,7 @@ public:
     void sendImage(QByteArray);
     void sendData(QByteArray arr, pckg_t type);
     void sendFileNotification(QString, QHostAddress);
+    void getFile(QString);
 public slots:
     //void onData();
     void emitText(QString);

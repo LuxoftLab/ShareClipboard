@@ -1,5 +1,10 @@
 #include "server_room.h"
 
+void ServerRoom::saveFileMetaData(QString path, ClientConnection * const source)
+{
+    fileMetaData[path] = source;
+}
+
 ServerRoom::ServerRoom(QString name, QString pass) : Room(name, pass)
 {
     server = new TCPServer();
@@ -96,11 +101,23 @@ void ServerRoom::onImage(QByteArray im, ClientConnection * const)
     }
 }
 
-void ServerRoom::onFileNotification(QString fileName, QHostAddress sourceAddress, ClientConnection * const )
+void ServerRoom::onFileNotification(QString fileName, QHostAddress sourceAddress, ClientConnection * const source)
 {
+    this->saveFileMetaData(fileName, source);
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
         t->sendFileNotification(fileName, sourceAddress);
     }
+}
+
+void ServerRoom::getFile(QString fileName)
+{
+    ClientConnection * source = getFileOwner(fileName);
+    source->getFile(fileName);
+}
+
+ClientConnection * ServerRoom::getFileOwner(QString fileName)
+{
+    return fileMetaData[fileName];
 }

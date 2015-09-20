@@ -1,4 +1,4 @@
-#include "tcp_package.h"
+    #include "tcp_package.h"
 
 TcpPackage *TcpPackageFactory::getPackage(pckg_t type)
 {
@@ -224,9 +224,9 @@ void FileNotificationPackage::read(QDataStream & in)
     QString fileName = QString::fromUtf8(text, size);
     QHostAddress adr(sourceAddress);
 
-    qDebug() << fileName << adr;
+    qDebug() << fileName << adr << size;
 
-    emit gotFileNotification(QString::fromUtf8(text),
+    emit gotFileNotification(QString::fromUtf8(text, size),
                              QHostAddress(sourceAddress));
 }
 
@@ -239,11 +239,46 @@ void FileNotificationPackage::write(QTcpSocket * socket)
     out.writeRawData(data.constData(), data.size());
     out << sourceAddress.toIPv4Address();
     out.device()->seek(0);
-    out << (qint32)(dat.size()+sizeof(qint32) - sizeof(qint32));
-    out.device()->seek(4+4+4+4+data.size()+1);
+    out << (qint32)(dat.size()-sizeof(qint32));
+    out.device()->seek(PCKG_SZ_FIELD_SZ+
+                       PCKG_TYPE_FIELD_SZ+
+                       BYTE_ARR_SZ_FIELD_SZ+
+                       data.size()+1);
 
     if(socket->write(dat) < dat.size())
     {
         qDebug() << "No data written";
     }
+}
+
+
+//FileReqPackage::FileReqPackage()
+//{
+
+//}
+
+
+//FileRespPackage::FileRespPackage()
+//{
+
+//}
+
+
+//FileRespPackage::FileRespPackage(QString fileName, QDate timestamp, QByteArray & data)
+//{
+//    this->data = data;
+//    this->timeStamp = timestamp;
+//    this->fileName = fileName;
+//}
+
+
+//FileReqPackage::FileReqPackage(QString value)
+//{
+//    //this->fileName =
+//}
+
+
+TcpPackage::~TcpPackage()
+{
+
 }

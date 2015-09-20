@@ -20,6 +20,7 @@ void ClientRoom::setPwd(const QString &value)
 {
     pwd = value;
 }
+
 floating_server_priorities ClientRoom::device_type()
 {
     return PC;

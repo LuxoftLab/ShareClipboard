@@ -14,6 +14,9 @@ class ServerRoom : public Room
     TCPServer * server;
     QMap<qint32, ClientConnection*> notVerified;
     QMap<qint32, ClientConnection*> verified;
+    QMap<QString, ClientConnection*> fileMetaData;
+
+    void saveFileMetaData(QString, ClientConnection * const);
 public:
     ServerRoom(QString name, QString pass);
     ~ServerRoom();
@@ -24,6 +27,8 @@ public slots:
     void onText(QString, ClientConnection * const);
     void onImage(QByteArray, ClientConnection * const);
     void onFileNotification(QString, QHostAddress, ClientConnection * const);
+    void getFile(QString);
+    ClientConnection * getFileOwner(QString);
 };
 
 #endif // SERVER_ROOM_H

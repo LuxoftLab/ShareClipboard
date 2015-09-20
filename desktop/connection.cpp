@@ -39,6 +39,7 @@ void Connection::downloadMore(QByteArray& whole, QTcpSocket * inSocket)
         whole.append(file);
         assert(file.size() > 0);
     }
+
     if(whole.size() >= currenFiletSize)
     {
         transferFinished = true;

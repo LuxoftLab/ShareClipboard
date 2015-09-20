@@ -66,6 +66,11 @@ void ClientConnection::sendFileNotification(QString str, QHostAddress source)
     FileNotificationPackage(source, str.toUtf8()).write(socket);
 }
 
+void ClientConnection::getFile(QString)
+{
+
+}
+
 void ClientConnection::makePass(QString pass, floating_server_priorities priority)
 {
     emit(verifyPass(pass, priority, this));
