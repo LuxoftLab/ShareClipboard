@@ -1,4 +1,4 @@
-    #include "tcp_package.h"
+#include "tcp_package.h"
 
 TcpPackage *TcpPackageFactory::getPackage(pckg_t type)
 {
@@ -202,9 +202,23 @@ void FailPackage::write(QTcpSocket * socket)
 }
 
 
+TcpPackage::~TcpPackage()
+{
+    delete text;
+    delete login;
+    delete image;
+    delete password;
+}
+
+TcpPackage::TcpPackage()
+{
+
+}
+
 
 FileNotificationPackage::FileNotificationPackage()
 {
+
 }
 
 FileNotificationPackage::FileNotificationPackage(QHostAddress source, QByteArray data)
@@ -228,6 +242,7 @@ void FileNotificationPackage::read(QDataStream & in)
 
     emit gotFileNotification(QString::fromUtf8(text, size),
                              QHostAddress(sourceAddress));
+    delete text;
 }
 
 void FileNotificationPackage::write(QTcpSocket * socket)
@@ -251,34 +266,70 @@ void FileNotificationPackage::write(QTcpSocket * socket)
     }
 }
 
+FileReqPackage::FileReqPackage(QString name, QDateTime * time)
+                : fileName(name)
+{
+    timeStamp = time;
+}
 
-//FileReqPackage::FileReqPackage()
-//{
+FileReqPackage::FileReqPackage()
+{
 
-//}
+}
+
+FileReqPackage::~FileReqPackage()
+{
+    delete timeStamp;
+}
+
+void FileReqPackage::read(QDataStream & in)
+{
+    qint64 rawTimeStamp;
+
+    in >> rawTimeStamp;
+    timeStamp = new QDateTime();
+    timeStamp->setMSecsSinceEpoch(rawTimeStamp);
+    in >> size;
+    text = new char[size];
+    in >> text;
+}
+
+void FileReqPackage::write(QTcpSocket * socket)
+{
+    QByteArray dat;
+    QDataStream out(&dat, QIODevice::WriteOnly);
+
+    out << qint32(0) << FILEREQ << timeStamp->toMSecsSinceEpoch()
+    << (qint32)fileName.toUtf8().size();
+    out.writeRawData(fileName.toUtf8().constData(), fileName.toUtf8().size());
+
+    out.device()->seek(0);
+    out << (qint32)(fileName.toUtf8().size());
+
+//    out.device()->seek(PCKG_SZ_FIELD_SZ+
+//                       PCKG_TYPE_FIELD_SZ+
+//                       BYTE_ARR_SZ_FIELD_SZ+
+//                       data.size()+1);
+
+    if(socket->write(dat) < dat.size())
+    {
+        qDebug() << "No data written";
+    }
+}
 
 
-//FileRespPackage::FileRespPackage()
-//{
+FileRespPackage::FileRespPackage(QString fname, QDateTime timeSt, QByteArray & dat)
+                : fileName(fname), timeStamp(timeSt), data(dat)
+{
 
-//}
+}
 
+void FileRespPackage::read(QDataStream &)
+{
 
-//FileRespPackage::FileRespPackage(QString fileName, QDate timestamp, QByteArray & data)
-//{
-//    this->data = data;
-//    this->timeStamp = timestamp;
-//    this->fileName = fileName;
-//}
+}
 
-
-//FileReqPackage::FileReqPackage(QString value)
-//{
-//    //this->fileName =
-//}
-
-
-TcpPackage::~TcpPackage()
+void FileRespPackage::write(QTcpSocket *)
 {
 
 }

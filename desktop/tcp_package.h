@@ -4,8 +4,7 @@
 #include <QImage>
 #include <QTcpSocket>
 #include <assert.h>
-#include <QDate>
-#include <exception>
+#include <QDateTime>
 
 #include "constants.h"
 
@@ -14,6 +13,7 @@
 
 enum pckg_t
 {
+    TCP_IDLE,
     TEXT,
     IMAGE,
     FILENOTIF,
@@ -22,8 +22,7 @@ enum pckg_t
     PASS,
     MEMBER,
     INVALID_PASS,
-    REMOVE,
-    TCP_IDLE
+    REMOVE
 };
 
 const int PCKG_SZ_FIELD_SZ = sizeof(qint32);
@@ -45,6 +44,7 @@ public:
     virtual void write(QTcpSocket *) = 0;
     virtual void read(QDataStream &) = 0;
     virtual ~TcpPackage();
+    TcpPackage();
 signals:
     void gotText(QString);
     void gotImage(QByteArray);
@@ -69,41 +69,6 @@ class DataPackage : public TcpPackage
 public:
     DataPackage(QByteArray&, pckg_t);
     DataPackage();
-    void read(QDataStream &);
-    void write(QTcpSocket *);
-};
-
-class FileNotificationPackage : public TcpPackage
-{
-    QByteArray data;
-    QHostAddress sourceAddress;
-
-public:
-    FileNotificationPackage();
-    FileNotificationPackage(QHostAddress, QByteArray);
-
-    void read(QDataStream &);
-    void write(QTcpSocket *);
-};
-
-class FileReqPackage : public TcpPackage
-{
-    QString fileName;
-public:
-    FileReqPackage(QString);
-    FileReqPackage();
-    void read(QDataStream &);
-    void write(QTcpSocket *);
-};
-
-class FileRespPackage : public TcpPackage
-{
-    QString fileName;
-    QDate timeStamp;
-    QByteArray data;
-public:
-    FileRespPackage(QString, QDate, QByteArray&);
-    FileRespPackage();
     void read(QDataStream &);
     void write(QTcpSocket *);
 };
@@ -153,6 +118,43 @@ class TcpPackageFactory
 {
 public:
     TcpPackage * getPackage(pckg_t type);
+};
+
+
+class FileNotificationPackage : public TcpPackage
+{
+    QByteArray data;
+    QHostAddress sourceAddress;
+
+public:
+    FileNotificationPackage();
+    FileNotificationPackage(QHostAddress, QByteArray);
+
+    void read(QDataStream &);
+    void write(QTcpSocket *);
+};
+
+class FileReqPackage : public TcpPackage
+{
+    QString fileName;
+    QDateTime * timeStamp;
+public:
+    FileReqPackage(QString, QDateTime*);
+    FileReqPackage();
+    ~FileReqPackage();
+    void read(QDataStream &);
+    void write(QTcpSocket *);
+};
+
+class FileRespPackage : public TcpPackage
+{
+    QString fileName;
+    QDateTime timeStamp;
+    QByteArray& data;
+public:
+    FileRespPackage(QString, QDateTime, QByteArray&);
+    void read(QDataStream &);
+    void write(QTcpSocket *);
 };
 
 #endif // TCP_PACKAGE_H
