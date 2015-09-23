@@ -36,7 +36,10 @@ void ClientRoom::connectToHost(QString login, QString pass)
 {
     this->pass = pass;
     try{
-    connection = new ServerConnection(host);
+        connection = new ServerConnection(host);
+        connect(connection, SIGNAL(finished()),
+                connection, SLOT(deleteLater()));
+        connection->run();
     }
     catch(QAbstractSocket::SocketError)
     {

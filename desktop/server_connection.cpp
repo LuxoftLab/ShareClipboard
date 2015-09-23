@@ -2,14 +2,7 @@
 
 ServerConnection::ServerConnection(QHostAddress host) : Connection(NULL)
 {
-    socket = new QTcpSocket(this);
-    //transferFinished = true;
-    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
-    connect(socket, SIGNAL(disconnected()), this, SIGNAL(serverFell()));
-
-    socket->connectToHost(host, PORT_NUMBER);
-    if(!socket->waitForConnected(3000))
-        qDebug() << socket->error();
+    this->host = host;
 }
 
 void ServerConnection::sendPassLoginPriority(QString password,
@@ -63,4 +56,16 @@ void ServerConnection::sendFileNotification(QByteArray & data, QDateTime stamp)
 void ServerConnection::sendFileRequest(QString name, QDateTime stamp)
 {
     FileReqPackage(name, &stamp).write(socket);
+}
+
+void ServerConnection::run()
+{
+    socket = new QTcpSocket(this);
+    //transferFinished = true;
+    connect(socket, SIGNAL(readyRead()), this, SLOT(onData()));
+    connect(socket, SIGNAL(disconnected()), this, SIGNAL(serverFell()));
+
+    socket->connectToHost(host, PORT_NUMBER);
+    if(!socket->waitForConnected(3000))
+        qDebug() << socket->error();
 }

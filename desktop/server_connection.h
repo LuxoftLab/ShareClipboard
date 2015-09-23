@@ -29,6 +29,7 @@ public:
     void sendFile(QByteArray &);
     void sendFileRequest(QString, QDateTime);
 
+    void run() Q_DECL_OVERRIDE;
 signals:
     void addMember(QString login, floating_server_priorities, QHostAddress addr);
     void deleteMember(QHostAddress addr);
@@ -42,6 +43,7 @@ signals:
     void serverFell();
 private:
     void dispatch(QDataStream & in);
+    QHostAddress host;
 };
 
 #endif // SERVER_CONNECTION_H
