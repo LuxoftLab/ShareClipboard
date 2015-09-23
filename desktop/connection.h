@@ -5,10 +5,11 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 #include <QDataStream>
+#include <QThread>
 
 #include "tcp_package.h"
 
-class Connection : public QObject
+class Connection : public QThread
 {
     /** @brief Represents abstract container for QTcpSocket
      *          Abstract class generalizes common behaviour
