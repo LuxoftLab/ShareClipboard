@@ -32,8 +32,8 @@ void ServerRoom::addMember(QTcpSocket * socket)
             this, SLOT(onText(QString, ClientConnection * const)));
     connect(t, SIGNAL(onImage(QByteArray, ClientConnection * const)),
             this, SLOT(onImage(QByteArray, ClientConnection * const)));
-    connect(t, SIGNAL(onFileNotification(QString,QHostAddress,ClientConnection*const)),
-            this, SLOT(onFileNotification(QString,QHostAddress,ClientConnection*const)));
+    connect(t, SIGNAL(onFileNotification(QString,QHostAddress,QDateTime,ClientConnection*const)),
+            this, SLOT(onFileNotification(QString,QHostAddress,QDateTime,ClientConnection*const)));
     connect(t, SIGNAL(deleteMember(QHostAddress)),
                       this, SLOT(deleteMember(QHostAddress)));
     notVerified.insert(socket->peerAddress().toIPv4Address(), t);
@@ -101,13 +101,13 @@ void ServerRoom::onImage(QByteArray im, ClientConnection * const)
     }
 }
 
-void ServerRoom::onFileNotification(QString fileName, QHostAddress sourceAddress, ClientConnection * const source)
+void ServerRoom::onFileNotification(QString fileName, QHostAddress sourceAddress, QDateTime stamp, ClientConnection * const source)
 {
     this->saveFileMetaData(fileName, source);
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
-        t->sendFileNotification(fileName, sourceAddress);
+        t->sendFileNotification(fileName, sourceAddress, stamp);
     }
 }
 

@@ -20,7 +20,8 @@ signals:
     void verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
     void onText(QString, ClientConnection * const);
     void onImage(QByteArray, ClientConnection * const);
-    void onFileNotification(QString, QHostAddress, ClientConnection * const);
+    void onFileNotification(QString, QHostAddress, QDateTime, ClientConnection * const);
+    void onFileRequest(QString, QDateTime, ClientConnection * const);
     void deleteMember(QHostAddress);
 public:
     ClientConnection(QTcpSocket * socket);
@@ -32,13 +33,14 @@ public:
     void sendText(QString);
     void sendImage(QByteArray);
     void sendData(QByteArray arr, pckg_t type);
-    void sendFileNotification(QString, QHostAddress);
+    void sendFileNotification(QString, QHostAddress, QDateTime);
     void getFile(QString);
 public slots:
     //void onData();
     void emitText(QString);
     void emitImage(QByteArray);
-    void emitFileNotification(QString, QHostAddress);
+    void emitFileNotification(QString, QHostAddress, QDateTime);
+    void emitFileRequest(QString, QDateTime);
     void makePass(QString, floating_server_priorities);
     void emitDeleteMember();
 private:

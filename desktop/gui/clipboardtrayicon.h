@@ -6,6 +6,7 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
+#include <QMenu>
 
 #include "roomslistdialog.h"
 #include "passworddialog.h"
@@ -35,6 +36,10 @@ class ClipboardTrayIcon : public QMainWindow
     QAction * aboutAction;
     QAction * quitAction;
     QAction * deleteServerAction = NULL;
+    QAction * fileAction;
+    QList<QAction*> files;
+
+    QMenu * fileMenu = NULL;
 
     QString sharingOnString;
     QString sharingOffString;
@@ -52,6 +57,7 @@ signals:
     void about();
     void quit();
     void toggleSharingSignal();
+    void messageClicked();
 
     void serverRoomCreated(QString, QString);
     void roomListOpened(RoomsListDialog *);
@@ -67,6 +73,8 @@ public slots:
     void becomeServer(QString);
     void stopBeignServer();
     void showMessage(QString, QString);
+    void showFileSubMenu();
+    void addFile(QString, QString);
 };
 
 #endif // CLIPBOARDTRAYICON_H

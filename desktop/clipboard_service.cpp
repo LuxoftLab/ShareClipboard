@@ -30,6 +30,12 @@ void ClipboardService::onClipboardChanged()
             data.type = "text/uri-list";
             data.data = mimeData->data(data.type);
             text = mimeData->urls().first().toString();
+//            QFileInfo info(text);
+//            QDateTime timeStamp = info.lastModified();
+//            QDataStream in(data.data);
+//            in.device()->seek(data.data.size());
+//            in << timeStamp.toMSecsSinceEpoch();
+
         }
         else if (mimeData->hasImage()) {
             text = "copied image #" + QString::number(qrand());

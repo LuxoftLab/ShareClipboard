@@ -51,7 +51,7 @@ public slots:
     void createFloatingServerRoom(QHostAddress);
 
     void onRoomsListOpen(RoomsListDialog *roomsDialog);
-    void fileNotification(QString, QHostAddress);
+    void fileNotification(QString, QHostAddress, QDateTime);
 
 private:
     void initClipboardToGuiConnection();

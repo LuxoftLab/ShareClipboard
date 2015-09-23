@@ -18,6 +18,10 @@ void ClipboardTrayIcon::createMenu()
     connect(historyAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
     trayIconMenu->addAction(historyAction);
 
+    fileAction = new QAction(tr("&Files"), this);
+    connect(fileAction, SIGNAL(triggered()), this, SLOT(showFileSubMenu()));
+    trayIconMenu->addAction(fileAction);
+
     trayIconMenu->addSeparator();
 
 //    maximizeAction = new QAction(tr("Ma&ximize"), this);
@@ -44,6 +48,10 @@ void ClipboardTrayIcon::createMenu()
 
 
     icon = new QSystemTrayIcon(this);
+
+    connect(icon, SIGNAL(messageClicked()),
+            this, SIGNAL(messageClicked()));
+
     icon->setIcon(QIcon(":images/colorful.svg"));
     icon->setContextMenu(trayIconMenu);
     icon->showMessage("SharedClipboard", "is running");
@@ -164,4 +172,18 @@ void ClipboardTrayIcon::stopBeignServer()
 void ClipboardTrayIcon::showMessage(QString title, QString body)
 {
     icon->showMessage(title, body);
+}
+
+void ClipboardTrayIcon::showFileSubMenu()
+{
+    fileMenu = new QMenu(this);
+    fileAction->setMenu(fileMenu);
+    fileAction->menu()->popup(QPoint(0, this->width()));
+}
+
+void ClipboardTrayIcon::addFile(QString name, QString address)
+{
+    const QString actionName = name + " : " + address;
+    QAction * fileAct = new QAction(actionName, this);
+    fileAction->menu()->addAction(fileAct);
 }

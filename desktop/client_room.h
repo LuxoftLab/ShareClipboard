@@ -3,9 +3,12 @@
 
 #include <QHostAddress>
 #include <QMap>
+#include <QList>
 #include <QQueue>
 #include <QImage>
 #include <QBuffer>
+#include <QDateTime>
+#include <QFileInfo>
 
 #include "room.h"
 #include "server_connection.h"
@@ -17,6 +20,11 @@ struct Member {
     Member(QString login, QHostAddress addr, floating_server_priorities prior);
 };
 
+struct SharedFile{
+    QString name;
+    QDateTime timeStamp;
+};
+
 class ClientRoom : public Room
 {
     Q_OBJECT
@@ -24,8 +32,8 @@ class ClientRoom : public Room
     QHostAddress host;
     QHostAddress ownAdress;
     QMap<qint32, Member*> members;
-    QMap<qint32, QString> files;
-    QQueue<Member*> floating_server_candidates; //todo a priority queue
+    QQueue<SharedFile> files;
+    QQueue<Member*> floating_server_candidates; //todo a priority queue ?
     QString login;
     QString pwd;
 
@@ -34,6 +42,8 @@ public:
     ClientRoom(QString name, QHostAddress host);
     ~ClientRoom();
     void connectToHost(QString login, QString pass);
+    void sendFileRequest(QString name, QDateTime timeStamp);
+
     QString getLogin() const;
     void setLogin(const QString &value);
 
@@ -46,12 +56,13 @@ public slots:
     void sendData(QByteArray data, QString type);
     void recoverServer();
     void fileNotification(QString name);
+    void requestFile();
 
 signals:
     void gotData(QByteArray, QString);
     void gotText(QString);
     void gotImage(QByteArray);
-    void gotFileNotification(QString, QHostAddress);
+    void gotFileNotification(QString, QHostAddress,QDateTime);
     void newFloatingServer(QHostAddress);
 };
 

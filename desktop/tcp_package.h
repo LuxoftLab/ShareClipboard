@@ -50,9 +50,10 @@ signals:
     void gotImage(QByteArray);
     void gotPass(QString, floating_server_priorities);
     void gotData(QByteArray, QString);
-    void gotFileNotification(QString, QHostAddress);
+    void gotFileNotification(QString, QHostAddress, QDateTime);
     void addMember(QString, floating_server_priorities, QHostAddress);
     void deleteMember(QHostAddress);
+    void gotfileRequest(QString, QDateTime);
 };
 
 class FailPackage : public TcpPackage
@@ -125,10 +126,11 @@ class FileNotificationPackage : public TcpPackage
 {
     QByteArray data;
     QHostAddress sourceAddress;
+    QDateTime timeStamp;
 
 public:
     FileNotificationPackage();
-    FileNotificationPackage(QHostAddress, QByteArray);
+    FileNotificationPackage(QHostAddress, QByteArray, QDateTime);
 
     void read(QDataStream &);
     void write(QTcpSocket *);

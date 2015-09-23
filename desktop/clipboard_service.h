@@ -11,6 +11,8 @@
 #include <QDebug>
 #include <QMimeData>
 #include <QUrl>
+#include <QDateTime>
+#include <QFileInfo>
 
 struct ClipboardData {
     qint32 dataID;

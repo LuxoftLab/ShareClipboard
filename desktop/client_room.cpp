@@ -49,8 +49,8 @@ void ClientRoom::connectToHost(QString login, QString pass)
             this, SLOT(deleteMember(QHostAddress)));
     connect(connection, SIGNAL(gotData(QByteArray,QString)),
             this, SIGNAL(gotData(QByteArray,QString)));
-    connect(connection, SIGNAL(gotFileNotification(QString,QHostAddress)),
-            this, SIGNAL(gotFileNotification(QString,QHostAddress)));
+    connect(connection, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)),
+            this, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)));
     connect(connection, SIGNAL(serverFell()), this, SLOT(recoverServer()));
 
     connection->sendPassLoginPriority(pass, login, device_type());
@@ -82,7 +82,14 @@ void ClientRoom::sendData(QByteArray data, QString type)
     }
     else if (type == "text/uri-list"){
         p_type = FILENOTIF;
-        connection->sendFileNotification(data);
+        QString text = QString::fromUtf8(data);
+        text.remove(0, 7);
+        text.remove(text.length()-2, 2);
+        QFileInfo info(text);
+        QDateTime timeStamp = info.lastModified();
+
+        qDebug() << text << info.lastModified().date() << timeStamp.date();
+        connection->sendFileNotification(data, timeStamp);
     }
     else{
         qDebug() << "no such mime type available";
@@ -102,6 +109,17 @@ void ClientRoom::recoverServer()
 void ClientRoom::fileNotification(QString name)
 {
 
+}
+
+void ClientRoom::requestFile()
+{
+    SharedFile requested = files.head();
+    this->sendFileRequest(requested.name, requested.timeStamp);
+}
+
+void ClientRoom::sendFileRequest(QString name, QDateTime timeStamp)
+{
+    connection->sendFileRequest(name, timeStamp);
 }
 
 ClientRoom::~ClientRoom()

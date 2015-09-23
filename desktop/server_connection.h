@@ -25,8 +25,9 @@ public:
     void sendImage(QImage);
     void sendImage(QByteArray);
     void sendData(QByteArray, pckg_t);
-    void sendFileNotification(QByteArray&);
+    void sendFileNotification(QByteArray&, QDateTime);
     void sendFile(QByteArray &);
+    void sendFileRequest(QString, QDateTime);
 
 signals:
     void addMember(QString login, floating_server_priorities, QHostAddress addr);
@@ -36,7 +37,7 @@ signals:
     void gotText(QString);
     void gotImage(QByteArray);
     void gotData(QByteArray, QString);
-    void gotFileNotification(QString, QHostAddress);
+    void gotFileNotification(QString, QHostAddress,QDateTime);
     void setNotUpdated();
     void serverFell();
 private:

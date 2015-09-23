@@ -3,19 +3,21 @@
 TcpPackage *TcpPackageFactory::getPackage(pckg_t type)
 {
     switch(type){
-        case MEMBER:
-            return new MemberPackage();
-       case TEXT:
-            return new DataPackage();
-       case REMOVE:
-            return new RemoveMemberPackage();
-       case IMAGE:
-            return new ImagePackage();
-       case FILENOTIF:
-            return new FileNotificationPackage();
-       case PASS:
-            return new PassPackage();
-       default: throw type;
+    case MEMBER:
+        return new MemberPackage();
+    case TEXT:
+        return new DataPackage();
+    case REMOVE:
+        return new RemoveMemberPackage();
+    case IMAGE:
+        return new ImagePackage();
+    case FILENOTIF:
+        return new FileNotificationPackage();
+    case FILEREQ:
+        return new FileReqPackage();
+    case PASS:
+        return new PassPackage();
+   default: throw type;
     }
 }
 
@@ -204,10 +206,7 @@ void FailPackage::write(QTcpSocket * socket)
 
 TcpPackage::~TcpPackage()
 {
-    delete text;
-    delete login;
-    delete image;
-    delete password;
+
 }
 
 TcpPackage::TcpPackage()
@@ -221,10 +220,11 @@ FileNotificationPackage::FileNotificationPackage()
 
 }
 
-FileNotificationPackage::FileNotificationPackage(QHostAddress source, QByteArray data)
+FileNotificationPackage::FileNotificationPackage(QHostAddress source, QByteArray data, QDateTime stamp)
 {
     this->data = data;
     this->sourceAddress = source;
+    this->timeStamp = stamp;
 }
 
 void FileNotificationPackage::read(QDataStream & in)
@@ -232,17 +232,19 @@ void FileNotificationPackage::read(QDataStream & in)
     in >> size;
     text = new char[size];
     in.readRawData(text, size);
+    qint64 stamp;
+    in >> stamp;
     qint32 sourceAddress;
     in >> sourceAddress;
 
     QString fileName = QString::fromUtf8(text, size);
     QHostAddress adr(sourceAddress);
 
-    qDebug() << fileName << adr << size;
+    qDebug() << fileName << adr << size << (QDateTime().fromMSecsSinceEpoch(stamp));
 
     emit gotFileNotification(QString::fromUtf8(text, size),
-                             QHostAddress(sourceAddress));
-    delete text;
+                             QHostAddress(sourceAddress),
+                             QDateTime().fromMSecsSinceEpoch(stamp));
 }
 
 void FileNotificationPackage::write(QTcpSocket * socket)
@@ -252,13 +254,10 @@ void FileNotificationPackage::write(QTcpSocket * socket)
 
     out << qint32(0) << FILENOTIF << (qint32)data.size();
     out.writeRawData(data.constData(), data.size());
+    out << timeStamp.toMSecsSinceEpoch();
     out << sourceAddress.toIPv4Address();
     out.device()->seek(0);
     out << (qint32)(dat.size()-sizeof(qint32));
-    out.device()->seek(PCKG_SZ_FIELD_SZ+
-                       PCKG_TYPE_FIELD_SZ+
-                       BYTE_ARR_SZ_FIELD_SZ+
-                       data.size()+1);
 
     if(socket->write(dat) < dat.size())
     {
@@ -292,6 +291,8 @@ void FileReqPackage::read(QDataStream & in)
     in >> size;
     text = new char[size];
     in >> text;
+
+    emit gotfileRequest(QString::fromUtf8(text, size), *timeStamp);
 }
 
 void FileReqPackage::write(QTcpSocket * socket)

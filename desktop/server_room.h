@@ -26,7 +26,7 @@ public slots:
     bool verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
     void onText(QString, ClientConnection * const);
     void onImage(QByteArray, ClientConnection * const);
-    void onFileNotification(QString, QHostAddress, ClientConnection * const);
+    void onFileNotification(QString, QHostAddress, QDateTime, ClientConnection * const);
     void getFile(QString);
     ClientConnection * getFileOwner(QString);
 };
