@@ -26,20 +26,12 @@ void ClipboardService::onClipboardChanged()
         }
 
         if (mimeData->hasUrls()) {
-            qDebug() << "has url: " << mimeData->text();
             data.type = "text/uri-list";
             data.data = mimeData->data(data.type);
             text = mimeData->urls().first().toString();
-//            QFileInfo info(text);
-//            QDateTime timeStamp = info.lastModified();
-//            QDataStream in(data.data);
-//            in.device()->seek(data.data.size());
-//            in << timeStamp.toMSecsSinceEpoch();
-
         }
         else if (mimeData->hasImage()) {
             text = "copied image #" + QString::number(qrand());
-            qDebug() << "has image: " << text;
             data.type = "image/png";
             QImage image = qvariant_cast<QImage>(mimeData->imageData());
 
@@ -50,7 +42,6 @@ void ClipboardService::onClipboardChanged()
             qDebug() << "data:" << rawdata;
         }
         else if (mimeData->hasText()) {
-            qDebug() << "has text: " << mimeData->text();
             data.type = "text/plain";
             data.data = mimeData->text().toUtf8();
             text = mimeData->text();
