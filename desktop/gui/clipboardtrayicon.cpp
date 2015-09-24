@@ -81,6 +81,7 @@ ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow()
 {
     roomDialog = new RoomsListDialog();
     mainwindow = new MainWindow();
+    mainwindow->show();
     sharingOnString = tr("Enable Sharing");
     sharingOffString = tr("Disable Sharing");
     createMenu();
