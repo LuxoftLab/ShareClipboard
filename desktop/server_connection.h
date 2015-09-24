@@ -27,7 +27,7 @@ public:
     void sendData(QByteArray, pckg_t);
     void sendFileNotification(QByteArray&, QDateTime);
     void sendFile(QByteArray &);
-    void sendFileRequest(QString, QDateTime);
+    void sendFilerequestFile(QString, QDateTime);
 
     void run() Q_DECL_OVERRIDE;
 signals:

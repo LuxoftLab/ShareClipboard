@@ -185,6 +185,9 @@ void Controller::joinRoom(qint32 addr, QString pass)
             this, SLOT(createFloatingServerRoom(QHostAddress)));
     connect(clientRoom, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)),
             this, SLOT(fileNotification(QString,QHostAddress,QDateTime)));
+    connect(clientRoom, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)),
+            clientRoom, SLOT(addFile(QString,QHostAddress,QDateTime)));
+
     connect(icon, SIGNAL(messageClicked()),
             clientRoom, SLOT(requestFile()));
 

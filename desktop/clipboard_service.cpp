@@ -36,6 +36,7 @@ void ClipboardService::onClipboardChanged()
             QImage image = qvariant_cast<QImage>(mimeData->imageData());
 
             data.data = *imageToQByteArray(image);
+            emit hasDataToText(minimizeText(text), data.dataID);
 
             qDebug() << "size: " << data.data.size();
             const char* rawdata = data.data.constData();
@@ -45,9 +46,9 @@ void ClipboardService::onClipboardChanged()
             data.type = "text/plain";
             data.data = mimeData->text().toUtf8();
             text = mimeData->text();
+            emit hasDataToText(minimizeText(text), data.dataID);
         }
         clipboardData.prepend(data);
-        emit hasDataToText(minimizeText(text), data.dataID);
         emit hasData(data.data, data.type);
     }
 }
@@ -69,7 +70,7 @@ void ClipboardService::pushFromHosts(QByteArray data, QString type)
         mimeData->setData(type, data);
         clipboard->setMimeData(mimeData);
 
-        emit clipboardRefreshed(type, data);
+        //emit clipboardRefreshed(type, data);
 
         qDebug() << "on data from outer host";
     }

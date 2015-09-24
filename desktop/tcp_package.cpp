@@ -292,7 +292,7 @@ void FileReqPackage::read(QDataStream & in)
     text = new char[size];
     in >> text;
 
-    emit gotfileRequest(QString::fromUtf8(text, size), *timeStamp);
+    emit gotfilerequestFile(QString::fromUtf8(text, size), *timeStamp);
 }
 
 void FileReqPackage::write(QTcpSocket * socket)

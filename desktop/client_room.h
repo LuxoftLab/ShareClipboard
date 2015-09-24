@@ -22,8 +22,12 @@ struct Member {
 
 struct SharedFile{
     QString name;
+    QHostAddress sourceAddress;
     QDateTime timeStamp;
+    SharedFile(QString, QHostAddress, QDateTime);
 };
+
+
 
 class ClientRoom : public Room
 {
@@ -32,7 +36,7 @@ class ClientRoom : public Room
     QHostAddress host;
     QHostAddress ownAdress;
     QMap<qint32, Member*> members;
-    QQueue<SharedFile> files;
+    QQueue<const SharedFile *> files;
     QQueue<Member*> floating_server_candidates; //todo a priority queue ?
     QString login;
     QString pwd;
@@ -42,7 +46,7 @@ public:
     ClientRoom(QString name, QHostAddress host);
     ~ClientRoom();
     void connectToHost(QString login, QString pass);
-    void sendFileRequest(QString name, QDateTime timeStamp);
+    void sendFilerequestFile(QString name, QDateTime timeStamp);
 
     QString getLogin() const;
     void setLogin(const QString &value);
@@ -56,7 +60,8 @@ public slots:
     void sendData(QByteArray data, QString type);
     void recoverServer();
     void fileNotification(QString name);
-    void requestFile();
+    void requestFileFile();
+    void addFile(QString,QHostAddress,QDateTime);
 
 signals:
     void gotData(QByteArray, QString);

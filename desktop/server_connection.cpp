@@ -53,7 +53,7 @@ void ServerConnection::sendFileNotification(QByteArray & data, QDateTime stamp)
     FileNotificationPackage(socket->peerAddress(), data, stamp).write(socket);
 }
 
-void ServerConnection::sendFileRequest(QString name, QDateTime stamp)
+void ServerConnection::sendFilerequestFile(QString name, QDateTime stamp)
 {
     FileReqPackage(name, &stamp).write(socket);
 }

@@ -53,7 +53,7 @@ signals:
     void gotFileNotification(QString, QHostAddress, QDateTime);
     void addMember(QString, floating_server_priorities, QHostAddress);
     void deleteMember(QHostAddress);
-    void gotfileRequest(QString, QDateTime);
+    void gotfilerequestFile(QString, QDateTime);
 };
 
 class FailPackage : public TcpPackage

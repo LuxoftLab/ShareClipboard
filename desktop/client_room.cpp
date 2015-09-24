@@ -116,8 +116,14 @@ void ClientRoom::fileNotification(QString name)
 
 void ClientRoom::requestFile()
 {
-    SharedFile requested = files.head();
-    this->sendFileRequest(requested.name, requested.timeStamp);
+    const SharedFile * const requested = files.head();
+    this->sendFileRequest(requested->name, requested->timeStamp);
+}
+
+void ClientRoom::addFile(QString n, QHostAddress s, QDateTime st)
+{
+    const SharedFile * const file = new SharedFile(n, s, st);
+    this->files.push_back(file);
 }
 
 void ClientRoom::sendFileRequest(QString name, QDateTime timeStamp)
@@ -127,8 +133,10 @@ void ClientRoom::sendFileRequest(QString name, QDateTime timeStamp)
 
 ClientRoom::~ClientRoom()
 {
-    for(QMap<qint32, Member*>::iterator it = members.begin(); it != members.end(); ++it)
+    for(auto it = members.begin(); it != members.end(); ++it)
         delete it.value();
+    for(auto it = files.begin(); it != files.end();  ++it)
+        delete *it;
     delete connection;
 }
 
@@ -137,4 +145,10 @@ Member::Member(QString login, QHostAddress addr, floating_server_priorities prio
     this->login = login;
     this->addr = addr;
     this->priority = prior;
+}
+
+
+SharedFile::SharedFile(QString n, QHostAddress s, QDateTime st):
+    name(n), sourceAddress(s), timeStamp(st)
+{
 }

@@ -27,7 +27,7 @@ public:
 signals:
     void roomReceived(QString name, QHostAddress host);
     void roomDeleted(QHostAddress host);
-    void roomRequested(QHostAddress sender_address);
+    void roomrequestFileed(QHostAddress sender_address);
 private slots:
     void clearReceivedId();
 private:
