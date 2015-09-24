@@ -21,7 +21,8 @@ public:
     ServerRoom(QString name, QString pass);
     ~ServerRoom();
 public slots:
-    void addMember(QTcpSocket * socket);
+    //void addMember(QTcpSocket * socket);
+    void addMember(qintptr socketDescriptor);
     void deleteMember(QHostAddress addr);
     bool verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
     void onText(QString, ClientConnection * const);

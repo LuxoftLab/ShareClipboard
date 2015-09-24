@@ -6,6 +6,11 @@ Connection::Connection(QTcpSocket * socket)
     this->socket = socket;
 }
 
+Connection::Connection()
+{
+
+}
+
 QHostAddress Connection::getIpv4()
 {
     return socket->peerAddress();
@@ -14,6 +19,11 @@ QHostAddress Connection::getIpv4()
 QHostAddress Connection::localAddress()
 {
     return socket->localAddress();
+}
+
+const QTcpSocket *Connection::getSocket() const
+{
+    return this->socket;
 }
 
 void Connection::onData()

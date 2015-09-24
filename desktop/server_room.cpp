@@ -8,8 +8,10 @@ void ServerRoom::saveFileMetaData(QString path, ClientConnection * const source)
 ServerRoom::ServerRoom(QString name, QString pass) : Room(name, pass)
 {
     server = new TCPServer();
-    connect(server, SIGNAL(addMember(QTcpSocket*)),
-            this, SLOT(addMember(QTcpSocket*)));
+//    connect(server, SIGNAL(addMember(QTcpSocket*)),
+//            this, SLOT(addMember(QTcpSocket*)));
+    connect(server, SIGNAL(addMember(qintptr)),
+            this, SLOT(addMember(qintptr)));
     connect(server, SIGNAL(deleteMember(QHostAddress)),
             this, SLOT(deleteMember(QHostAddress)));
 }
@@ -23,9 +25,10 @@ ServerRoom::~ServerRoom()
     delete server;
 }
 
-void ServerRoom::addMember(QTcpSocket * socket)
+void ServerRoom::addMember(qintptr socket)
 {
     ClientConnection *t = new ClientConnection(socket);
+    t->run();
     connect(t, SIGNAL(verifyPass(QString, floating_server_priorities, ClientConnection* const)),
             this, SLOT(verifyPass(QString, floating_server_priorities, ClientConnection* const)));
     connect(t, SIGNAL(onText(QString, ClientConnection * const)),
@@ -36,7 +39,7 @@ void ServerRoom::addMember(QTcpSocket * socket)
             this, SLOT(onFileNotification(QString,QHostAddress,QDateTime,ClientConnection*const)));
     connect(t, SIGNAL(deleteMember(QHostAddress)),
                       this, SLOT(deleteMember(QHostAddress)));
-    notVerified.insert(socket->peerAddress().toIPv4Address(), t);
+    notVerified.insert(t->getSocket()->peerAddress().toIPv4Address(), t);
 }
 
 void ServerRoom::deleteMember(QHostAddress addr)
@@ -65,7 +68,7 @@ bool ServerRoom::verifyPass(QString pass, floating_server_priorities priority, C
 {
     if(this->pass != pass)
     {
-        qDebug() << pass << this->pass;
+        qDebug() << "Wrong pass" << pass << this->pass;
         conn->sendFail();
         return false;
     }

@@ -11,6 +11,19 @@ ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
             this, SLOT(onData()));
 }
 
+ClientConnection::ClientConnection(qintptr socketd)
+{
+    this->socketDescriptor = socketd;
+//    this->socket = new QTcpSocket(this);
+
+//    connect(socket, SIGNAL(disconnected()),
+//            this, SLOT(emitDeleteMember()));
+//    connect(socket, SIGNAL(readyRead()),
+//            this, SLOT(onData()));
+//    connect(this, &ClientConnection::finished,
+//            this, &ClientConnection::deleteLater);
+}
+
 void ClientConnection::sendFail()
 {
     FailPackage().write(socket);
@@ -69,6 +82,18 @@ void ClientConnection::sendFileNotification(QString str, QHostAddress source, QD
 void ClientConnection::getFile(QString)
 {
 
+}
+
+void ClientConnection::run()
+{
+    socket = new QTcpSocket();
+    this->socket->setSocketDescriptor(socketDescriptor);
+     connect(socket, SIGNAL(disconnected()),
+             this, SLOT(emitDeleteMember()));
+     connect(socket, SIGNAL(readyRead()),
+             this, SLOT(onData()));
+     connect(this, &ClientConnection::finished,
+             this, &ClientConnection::deleteLater);
 }
 
 void ClientConnection::makePass(QString pass, floating_server_priorities priority)

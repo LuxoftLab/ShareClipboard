@@ -15,6 +15,7 @@ class ClientConnection : public Connection
 {
     Q_OBJECT
     QString login;
+    qint32 socketDescriptor;
 
 signals:
     void verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
@@ -25,6 +26,7 @@ signals:
     void deleteMember(QHostAddress);
 public:
     ClientConnection(QTcpSocket * socket);
+    ClientConnection(qintptr socket);
     void sendFail();
     void sendMember(QString login, floating_server_priorities, QHostAddress addr);
     void removeMember(QHostAddress addr);
@@ -35,6 +37,8 @@ public:
     void sendData(QByteArray arr, pckg_t type);
     void sendFileNotification(QString, QHostAddress, QDateTime);
     void getFile(QString);
+
+    void run() Q_DECL_OVERRIDE;
 public slots:
     //void onData();
     void emitText(QString);

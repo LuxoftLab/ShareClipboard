@@ -8,7 +8,7 @@
 
 #include "constants.h"
 
-class TCPServer : public QObject
+class TCPServer : public QTcpServer
 {
     Q_OBJECT
 
@@ -16,11 +16,14 @@ public:
     TCPServer();
     ~TCPServer();
 signals:
-    void addMember(QTcpSocket * socket);
+    //void addMember(QTcpSocket * socket);
+    void addMember(qintptr);
     void deleteMember(QHostAddress);
+protected:
+    void incomingConnection(qintptr) Q_DECL_OVERRIDE;
 private:
-    QTcpServer* server;
-    QTcpSocket* newConnection;
+    //QTcpServer* server;
+    QTcpSocket* newConnection = NULL;
 private slots:
     void newMember();
 };

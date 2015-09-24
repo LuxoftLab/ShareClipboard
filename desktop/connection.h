@@ -29,7 +29,7 @@ protected:
      */
     virtual void dispatch(QDataStream & in) = 0;
 
-    QTcpSocket* socket;
+    QTcpSocket *socket;
     TcpPackage * hand;
     bool transferFinished;
     qint32 currenFiletSize;
@@ -37,8 +37,11 @@ protected:
     QByteArray file;
 public:
     Connection(QTcpSocket * socket);
+    Connection();
     QHostAddress getIpv4();
     QHostAddress localAddress();
+
+    const QTcpSocket *getSocket() const;
 public slots:
     void onData();
 };
