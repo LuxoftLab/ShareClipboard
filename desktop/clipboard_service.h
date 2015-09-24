@@ -29,6 +29,7 @@ signals:
     void hasDataToText(QString, qint32);
     void hasData(QByteArray, QString);
     void deleteDataFromStorage(qint32);
+    void clipboardRefreshed(QString type, QByteArray & data);
 public slots:
     void onClipboardChanged();
     void onSettingsChoosed(int value, bool isInKB);

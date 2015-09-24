@@ -41,6 +41,7 @@ signals:
     void roomDeleted(QString name);
     void serverIsUp(QString name);
     void serverIsDown();
+    void hasFileToText(QString, qint32);
 public slots:
     void createServerRoom(QString name, QString pass);
     void joinRoom(qint32 addr, QString pass);

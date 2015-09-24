@@ -20,7 +20,7 @@ class ClipboardTrayIcon : public QMainWindow
     Q_OBJECT
 
     QSystemTrayIcon * icon = NULL;
-    MainWindow * mainwindow = NULL;
+    MainWindow * mainwindow;
     RoomsListDialog * roomDialog = NULL;
     CreateRoomDialog * createRoomDialog = NULL;
     About * aboutWindow = NULL;
@@ -75,6 +75,9 @@ public slots:
     void showMessage(QString, QString);
     void showFileSubMenu();
     void addFile(QString, QString);
+
+    void dataPushedToClipboard(QString text, qint32 id);
+    void deleteItemFromList(qint32 id);
 };
 
 #endif // CLIPBOARDTRAYICON_H

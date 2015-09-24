@@ -69,6 +69,8 @@ void ClipboardService::pushFromHosts(QByteArray data, QString type)
         mimeData->setData(type, data);
         clipboard->setMimeData(mimeData);
 
+        emit clipboardRefreshed(type, data);
+
         qDebug() << "on data from outer host";
     }
 }

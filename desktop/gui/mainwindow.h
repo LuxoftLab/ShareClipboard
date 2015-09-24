@@ -22,6 +22,7 @@ public:
     ~MainWindow();
     void fillDevicesList(QList<QString> list);
     //void connectRoomListDialog();
+    void insertItem(QString, int id);
 signals:
     void downloadFile();
     void changeName(QString name);
@@ -67,7 +68,7 @@ private:
     CreateRoomDialog * createRoomDialog = NULL;
 
     void createTrayIcon();
-    bool askForFileDownload(QString fileName);
+   // bool askForFileDownload(QString fileName);
     bool isServer;
 };
 

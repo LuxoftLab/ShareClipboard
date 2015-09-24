@@ -31,16 +31,16 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-bool MainWindow::askForFileDownload(QString fileName)
-{
-    QMessageBox msgBox;
+//bool MainWindow::askForFileDownload(QString fileName)
+//{
+//    QMessageBox msgBox;
 
-    msgBox.setInformativeText(tr("&Do you want to download file ") +  fileName + "?");
-    msgBox.setText(tr("&Download file?"));
-    msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
-    msgBox.setDefaultButton(QMessageBox::Save);
-    return msgBox.exec() == QMessageBox::Save;
-}
+//    msgBox.setInformativeText(tr("&Do you want to download file ") +  fileName + "?");
+//    msgBox.setText(tr("&Download file?"));
+//    msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
+//    msgBox.setDefaultButton(QMessageBox::Save);
+//    return msgBox.exec() == QMessageBox::Save;
+//}
 
 void MainWindow::chooseRoomClicked()
 {
@@ -157,6 +157,12 @@ void MainWindow::fillDevicesList(QList<QString> list) {
     for(i = list.begin(); i != list.end(); ++i) {
         //ui->listWidget->addItem(*i);
     }
+}
+
+void MainWindow::insertItem(QString text, int id)
+{
+    //ui->clipboardText->insertItem(0, "hello");
+    ui->clipboardText->addItem(text);
 }
 
 void MainWindow::connectRoomListDialog()

@@ -1,5 +1,7 @@
 #include "clipboardtrayicon.h"
 
+//MainWindow * ClipboardTrayIcon::mainwindow = new MainWindow();
+
 void ClipboardTrayIcon::createMenu()
 {
     trayIconMenu = new QMenu();
@@ -57,6 +59,18 @@ void ClipboardTrayIcon::createMenu()
     icon->showMessage("SharedClipboard", "is running");
 }
 
+void ClipboardTrayIcon::dataPushedToClipboard(QString text, qint32 id) {
+    //dataIdsVector.prepend(id);
+    this->mainwindow->insertItem(text, 0);
+}
+
+void ClipboardTrayIcon::deleteItemFromList(qint32 id)
+{
+    //delete ui->clipboardText->takeItem(dataIdsVector.indexOf(id));
+    //dataIdsVector.removeLast();
+}
+
+
 void ClipboardTrayIcon::connectMainWindow(MainWindow * mainWindow)
 {
     connect(mainWindow, SIGNAL(createRoom()), this, SLOT(createRoom()));
@@ -66,6 +80,7 @@ void ClipboardTrayIcon::connectMainWindow(MainWindow * mainWindow)
 ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow()
 {
     roomDialog = new RoomsListDialog();
+    mainwindow = new MainWindow();
     sharingOnString = tr("Enable Sharing");
     sharingOffString = tr("Disable Sharing");
     createMenu();
@@ -89,6 +104,7 @@ ClipboardTrayIcon::~ClipboardTrayIcon()
     delete createRoomAction;
     delete connectAction;
     delete trayIconMenu;
+    delete mainwindow;
 }
 
 void ClipboardTrayIcon::show()
