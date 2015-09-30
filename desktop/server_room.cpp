@@ -39,6 +39,10 @@ void ServerRoom::addMember(qintptr socket)
             this, SLOT(onFileNotification(QString,QHostAddress,QDateTime,ClientConnection*const)));
     connect(t, SIGNAL(deleteMember(QHostAddress)),
                       this, SLOT(deleteMember(QHostAddress)));
+    connect(t, SIGNAL(onFileRequest(QString,QDateTime,ClientConnection*const)),
+            this, SLOT(onFileRequest(QString,QDateTime,ClientConnection*const)));
+    connect(t, SIGNAL(onFileRespond(QString,QDateTime,QByteArray,ClientConnection*const)),
+            this, SLOT(onFileResponse(QString,QDateTime,QByteArray,ClientConnection*const)));
     notVerified.insert(t->getSocket()->peerAddress().toIPv4Address(), t);
 }
 
@@ -75,7 +79,7 @@ bool ServerRoom::verifyPass(QString pass, floating_server_priorities priority, C
     qDebug() << "verified IP:" << conn->localAddress();
     qint32 ip = conn->getIpv4().toIPv4Address();
     notVerified.remove(ip);
-     verified.insert(ip, conn);
+    verified.insert(ip, conn);
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
@@ -114,6 +118,26 @@ void ServerRoom::onFileNotification(QString fileName, QHostAddress sourceAddress
     }
 }
 
+void ServerRoom::onFileRequest(QString fname, QDateTime timeStamp, ClientConnection * const source)
+{
+//    FileWaitor * next = new FileWaitor();
+//    fileWaitors.push_front();
+    source->requestFile(fname, timeStamp);
+}
+
+void ServerRoom::onFileResponse(QString fname, QDateTime stamp, QByteArray fileData, ClientConnection * const source)
+{
+    //qDebug() << fileData.size();
+//    for(auto it = fileWaitors.begin(); it != fileWaitors.end(); ++it){
+//        if(it->file.name == fname &&
+//           it->file.timeStamp == stamp &&
+//           !it->sent)
+//            it->destination->sendData(fileData, FILERESP);
+//    }
+    assert(verified.begin().value() != NULL);
+    verified.begin().value()->respondFile(fname, stamp, fileData);
+}
+
 void ServerRoom::getFile(QString fileName)
 {
     ClientConnection * source = getFileOwner(fileName);
@@ -124,3 +148,9 @@ ClientConnection * ServerRoom::getFileOwner(QString fileName)
 {
     return fileMetaData[fileName];
 }
+
+
+//FileWaitor::FileWaitor(SharedFile file, ClientConnection *)
+//{
+
+//}

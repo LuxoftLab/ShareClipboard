@@ -35,6 +35,7 @@ signals:
     void connectRoom();
     void shareClipboard();
     void unshareClipboard();
+    void requestFile(int index);
 protected:
     void closeEvent(QCloseEvent * event);
 public slots:
@@ -59,6 +60,8 @@ private slots:
     void on_changeRoomPushButton_clicked();
 
     void on_shareccheckBox_toggled(bool checked);
+
+    void on_clipboardText_doubleClicked(const QModelIndex &index);
 
 private:
     Ui::MainWindow * ui;

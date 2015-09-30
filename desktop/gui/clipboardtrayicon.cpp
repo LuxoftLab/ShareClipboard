@@ -1,7 +1,5 @@
 #include "clipboardtrayicon.h"
 
-//MainWindow * ClipboardTrayIcon::mainwindow = new MainWindow();
-
 void ClipboardTrayIcon::createMenu()
 {
     trayIconMenu = new QMenu();
@@ -75,12 +73,15 @@ void ClipboardTrayIcon::connectMainWindow(MainWindow * mainWindow)
 {
     connect(mainWindow, SIGNAL(createRoom()), this, SLOT(createRoom()));
     connect(mainWindow, SIGNAL(connectRoom()), this, SLOT(connectRoom()));
+    connect(mainWindow, SIGNAL(requestFile(int)),
+            this, SIGNAL(requestFile(int)));
 }
 
 ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow()
 {
     roomDialog = new RoomsListDialog();
     mainwindow = new MainWindow();
+    connectMainWindow(mainwindow);
     mainwindow->show();
     sharingOnString = tr("Enable Sharing");
     sharingOffString = tr("Disable Sharing");
@@ -139,8 +140,8 @@ void ClipboardTrayIcon::createRoom()
 
 void ClipboardTrayIcon::showMaximized()
 {
-    mainwindow = new MainWindow(this);
-    connectMainWindow(mainwindow);
+//    mainwindow = new MainWindow(this);
+//    this->connectMainWindow(mainwindow);
     mainwindow->show();
 }
 

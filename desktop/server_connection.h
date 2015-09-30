@@ -27,7 +27,8 @@ public:
     void sendData(QByteArray, pckg_t);
     void sendFileNotification(QByteArray&, QDateTime);
     void sendFile(QByteArray &);
-    void sendFilerequestFile(QString, QDateTime);
+    void sendFileRequest(QString, QDateTime);
+    void respondFile(QString, QDateTime, QByteArray&);
 
     void run() Q_DECL_OVERRIDE;
 signals:
@@ -39,6 +40,8 @@ signals:
     void gotImage(QByteArray);
     void gotData(QByteArray, QString);
     void gotFileNotification(QString, QHostAddress,QDateTime);
+    void gotFileRequest(QString, QDateTime);
+    void gotFileResponse(QString, QDateTime, QByteArray);
     void setNotUpdated();
     void serverFell();
 private:

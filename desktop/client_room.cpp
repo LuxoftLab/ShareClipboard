@@ -55,6 +55,10 @@ void ClientRoom::connectToHost(QString login, QString pass)
     connect(connection, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)),
             this, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)));
     connect(connection, SIGNAL(serverFell()), this, SLOT(recoverServer()));
+    connect(connection, SIGNAL(gotFileRequest(QString,QDateTime)),
+            this, SLOT(respondWithFile(QString,QDateTime)));
+    connect(connection, SIGNAL(gotFileResponse(QString,QDateTime,QByteArray)),
+            this, SLOT(saveSharedFile(QString,QDateTime,QByteArray)));
 
     connection->sendPassLoginPriority(pass, login, device_type());
 }
@@ -114,16 +118,45 @@ void ClientRoom::fileNotification(QString name)
 
 }
 
-void ClientRoom::requestFile()
+void ClientRoom::sendrequestFile(int index)
 {
-    const SharedFile * const requested = files.head();
+    const SharedFile * const requested = files.at(index);
     this->sendFileRequest(requested->name, requested->timeStamp);
 }
 
-void ClientRoom::addFile(QString n, QHostAddress s, QDateTime st)
+void ClientRoom::addFile(QString n, QDateTime st)
 {
-    const SharedFile * const file = new SharedFile(n, s, st);
+    const SharedFile * const file = new SharedFile(n, st);
     this->files.push_back(file);
+}
+
+void ClientRoom::respondWithFile(QString fName, QDateTime stamp)
+{
+    qDebug() << fName << stamp.date() << stamp.time();
+    fName.remove(0, 7);
+    fName.remove(fName.length()-2, 2);
+    QFileInfo info(fName);
+    if(info.lastModified() != stamp)
+        return;
+
+    QFile file(fName);
+    if(!file.exists())
+        return;
+
+    file.open(QIODevice::ReadOnly);
+    QByteArray data = file.readAll();
+    file.close();
+    connection->respondFile(fName, stamp, data);
+}
+
+void ClientRoom::saveSharedFile(QString fname, QDateTime, QByteArray data)
+{
+    QString name = fname.split('/').last();
+    QString prefix = QFileDialog::getOpenFileName(0, tr("Save file from SharedClipboard as"), "/tmp/"+name);
+    QFile file(prefix);
+    file.open(QIODevice::WriteOnly);
+    file.write(data);
+    file.close();
 }
 
 void ClientRoom::sendFileRequest(QString name, QDateTime timeStamp)
@@ -148,7 +181,7 @@ Member::Member(QString login, QHostAddress addr, floating_server_priorities prio
 }
 
 
-SharedFile::SharedFile(QString n, QHostAddress s, QDateTime st):
-    name(n), sourceAddress(s), timeStamp(st)
+SharedFile::SharedFile(QString n, QDateTime st):
+    name(n), timeStamp(st)
 {
 }

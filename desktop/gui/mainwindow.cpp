@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->changeNamePushButton, SIGNAL(clicked()), this, SLOT(changeNameClicked()));
     connect(ui->changeRoomPushButton, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
-    connect(ui->clipboardText, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(clipboardDataListItemDBClicked(QListWidgetItem*)));
+    //connect(ui->clipboardText, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(clipboardDataListItemDBClicked(QListWidgetItem*)));
     connect(ui->actionOpen_Settings_2, SIGNAL(triggered()), this, SLOT(onSettingsClicked()));
 }
 
@@ -222,4 +222,9 @@ void MainWindow::on_shareccheckBox_toggled(bool checked)
     if(checked)
         emit shareClipboard();
     else emit unshareClipboard();
+}
+
+void MainWindow::on_clipboardText_doubleClicked(const QModelIndex &index)
+{
+    emit requestFile(index.row());
 }

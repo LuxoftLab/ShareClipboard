@@ -84,6 +84,16 @@ void ClientConnection::getFile(QString)
 
 }
 
+void ClientConnection::requestFile(QString fname, QDateTime timeStamp)
+{
+    FileReqPackage(fname, timeStamp).write(socket);
+}
+
+void ClientConnection::respondFile(QString fname, QDateTime stamp, QByteArray data)
+{
+    FileRespPackage(fname, stamp, data).write(socket);
+}
+
 void ClientConnection::run()
 {
     socket = new QTcpSocket();
@@ -136,6 +146,10 @@ void ClientConnection::dispatch(QDataStream& infile)
             this, SLOT(makePass(QString,floating_server_priorities)));
     connect(hand, SIGNAL(gotFileNotification(QString,QHostAddress, QDateTime)),
             this, SLOT(emitFileNotification(QString,QHostAddress, QDateTime)));
+    connect(hand, SIGNAL(gotFileReq(QString,QDateTime)),
+            this, SLOT(emitFileRequest(QString,QDateTime)));
+    connect(hand, SIGNAL(gotFileResp(QString,QDateTime,QByteArray)),
+            this, SLOT(emitFileResponse(QString,QDateTime,QByteArray)));
 
     hand->read(infile);
 }
@@ -158,4 +172,9 @@ void ClientConnection::emitFileNotification(QString fileName, QHostAddress sourc
 void ClientConnection::emitFileRequest(QString name, QDateTime stamp)
 {
     emit onFileRequest(name, stamp, this);
+}
+
+void ClientConnection::emitFileResponse(QString str, QDateTime stamp, QByteArray data)
+{
+    emit onFileRespond(str, stamp, data, this);
 }

@@ -7,6 +7,15 @@
 #include "room.h"
 #include "tcp_server.h"
 #include "client_connection.h"
+#include "constants.h"
+
+struct FileWaitor
+{
+    SharedFile file;
+    bool sent = false;
+    ClientConnection * const destination;
+    //FileWaitor(SharedFile, ClientConnection *);
+};
 
 class ServerRoom : public Room
 {
@@ -15,6 +24,7 @@ class ServerRoom : public Room
     QMap<qint32, ClientConnection*> notVerified;
     QMap<qint32, ClientConnection*> verified;
     QMap<QString, ClientConnection*> fileMetaData;
+    QList<FileWaitor> fileWaitors;
 
     void saveFileMetaData(QString, ClientConnection * const);
 public:
@@ -28,6 +38,8 @@ public slots:
     void onText(QString, ClientConnection * const);
     void onImage(QByteArray, ClientConnection * const);
     void onFileNotification(QString, QHostAddress, QDateTime, ClientConnection * const);
+    void onFileRequest(QString, QDateTime, ClientConnection * const);
+    void onFileResponse(QString, QDateTime, QByteArray, ClientConnection * const);
     void getFile(QString);
     ClientConnection * getFileOwner(QString);
 };

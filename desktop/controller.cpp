@@ -187,9 +187,11 @@ void Controller::joinRoom(qint32 addr, QString pass)
             this, SLOT(fileNotification(QString,QHostAddress,QDateTime)));
     connect(clientRoom, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)),
             clientRoom, SLOT(addFile(QString,QHostAddress,QDateTime)));
+    connect(icon, SIGNAL(requestFile(int)),
+            clientRoom, SLOT(sendrequestFile(int)));
 
-    connect(icon, SIGNAL(messageClicked()),
-            clientRoom, SLOT(requestFile()));
+//    connect(icon, SIGNAL(messageClicked()),
+//            clientRoom, SLOT(requestFile()));
 
     clientRoom->setLogin(host.toString());
     clientRoom->setPwd(pass);

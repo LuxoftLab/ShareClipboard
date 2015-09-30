@@ -53,7 +53,8 @@ signals:
     void gotFileNotification(QString, QHostAddress, QDateTime);
     void addMember(QString, floating_server_priorities, QHostAddress);
     void deleteMember(QHostAddress);
-    void gotfilerequestFile(QString, QDateTime);
+    void gotFileReq(QString, QDateTime);
+    void gotFileResp(QString, QDateTime, QByteArray);
 };
 
 class FailPackage : public TcpPackage
@@ -139,9 +140,9 @@ public:
 class FileReqPackage : public TcpPackage
 {
     QString fileName;
-    QDateTime * timeStamp;
+    QDateTime timeStamp;
 public:
-    FileReqPackage(QString, QDateTime*);
+    FileReqPackage(QString, QDateTime);
     FileReqPackage();
     ~FileReqPackage();
     void read(QDataStream &);
@@ -152,9 +153,10 @@ class FileRespPackage : public TcpPackage
 {
     QString fileName;
     QDateTime timeStamp;
-    QByteArray& data;
+    QByteArray data;
 public:
     FileRespPackage(QString, QDateTime, QByteArray&);
+    FileRespPackage();
     void read(QDataStream &);
     void write(QTcpSocket *);
 };

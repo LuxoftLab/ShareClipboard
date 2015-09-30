@@ -28,6 +28,7 @@ void ServerConnection::dispatch(QDataStream &in)
 {
     qint32 packt;
     in >> packt;
+    pckg_t p = (pckg_t)packt;
     hand = TcpPackageFactory().getPackage((pckg_t)packt);
     connect(hand, SIGNAL(gotText(QString)), this, SIGNAL(gotText(QString)));
     connect(hand, SIGNAL(gotImage(QByteArray)),
@@ -36,6 +37,10 @@ void ServerConnection::dispatch(QDataStream &in)
             this, SIGNAL(gotData(QByteArray,QString)));
     connect(hand, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)),
             this, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)));
+    connect(hand, SIGNAL(gotFileReq(QString,QDateTime)),
+            this, SIGNAL(gotFileRequest(QString,QDateTime)));
+    connect(hand, SIGNAL(gotFileResp(QString,QDateTime,QByteArray)),
+            this, SIGNAL(gotFileResponse(QString,QDateTime,QByteArray)));
     connect(hand, SIGNAL(addMember(QString,floating_server_priorities,QHostAddress)),
             this, SIGNAL(addMember(QString,floating_server_priorities,QHostAddress)));
     connect(hand, SIGNAL(deleteMember(QHostAddress)),
@@ -53,9 +58,14 @@ void ServerConnection::sendFileNotification(QByteArray & data, QDateTime stamp)
     FileNotificationPackage(socket->peerAddress(), data, stamp).write(socket);
 }
 
-void ServerConnection::sendFilerequestFile(QString name, QDateTime stamp)
+void ServerConnection::sendFileRequest(QString name, QDateTime stamp)
 {
-    FileReqPackage(name, &stamp).write(socket);
+    FileReqPackage(name, stamp).write(socket);
+}
+
+void ServerConnection::respondFile(QString name, QDateTime stamp, QByteArray & data)
+{
+    FileRespPackage(name, stamp, data).write(socket);
 }
 
 void ServerConnection::run()

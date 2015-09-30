@@ -62,6 +62,7 @@ signals:
     void serverRoomCreated(QString, QString);
     void roomListOpened(RoomsListDialog *);
     void deleteServerSignal();
+    void requestFile(int);
 public slots:
     void connectRoom();
     void createRoom();

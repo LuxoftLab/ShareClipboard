@@ -23,6 +23,7 @@ signals:
     void onImage(QByteArray, ClientConnection * const);
     void onFileNotification(QString, QHostAddress, QDateTime, ClientConnection * const);
     void onFileRequest(QString, QDateTime, ClientConnection * const);
+    void onFileRespond(QString, QDateTime, QByteArray, ClientConnection * const);
     void deleteMember(QHostAddress);
 public:
     ClientConnection(QTcpSocket * socket);
@@ -38,6 +39,9 @@ public:
     void sendFileNotification(QString, QHostAddress, QDateTime);
     void getFile(QString);
 
+    void requestFile(QString, QDateTime);
+    void respondFile(QString, QDateTime, QByteArray);
+
     void run() Q_DECL_OVERRIDE;
 public slots:
     //void onData();
@@ -45,6 +49,7 @@ public slots:
     void emitImage(QByteArray);
     void emitFileNotification(QString, QHostAddress, QDateTime);
     void emitFileRequest(QString, QDateTime);
+    void emitFileResponse(QString, QDateTime, QByteArray);
     void makePass(QString, floating_server_priorities);
     void emitDeleteMember();
 private:
