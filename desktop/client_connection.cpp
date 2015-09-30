@@ -74,9 +74,9 @@ void ClientConnection::sendData(QByteArray arr, pckg_t type)
     }
 }
 
-void ClientConnection::sendFileNotification(QString str, QHostAddress source, QDateTime stamp)
+void ClientConnection::sendFileNotification(QString str, QDateTime stamp)
 {
-    FileNotificationPackage(source, str.toUtf8(), stamp).write(socket);
+    FileNotificationPackage(str.toUtf8(), stamp).write(socket);
 }
 
 void ClientConnection::getFile(QString)
@@ -144,8 +144,8 @@ void ClientConnection::dispatch(QDataStream& infile)
             this, SLOT(emitImage(QByteArray)));
     connect(hand, SIGNAL(gotPass(QString,floating_server_priorities)),
             this, SLOT(makePass(QString,floating_server_priorities)));
-    connect(hand, SIGNAL(gotFileNotification(QString,QHostAddress, QDateTime)),
-            this, SLOT(emitFileNotification(QString,QHostAddress, QDateTime)));
+    connect(hand, SIGNAL(gotFileNotification(QString, QDateTime)),
+            this, SLOT(emitFileNotification(QString, QDateTime)));
     connect(hand, SIGNAL(gotFileReq(QString,QDateTime)),
             this, SLOT(emitFileRequest(QString,QDateTime)));
     connect(hand, SIGNAL(gotFileResp(QString,QDateTime,QByteArray)),
@@ -164,9 +164,9 @@ void ClientConnection::emitImage(QByteArray ba)
     emit onImage(ba, this);
 }
 
-void ClientConnection::emitFileNotification(QString fileName, QHostAddress sourceAddress, QDateTime stamp)
+void ClientConnection::emitFileNotification(QString fileName, QDateTime stamp)
 {
-    emit onFileNotification(fileName, sourceAddress, stamp, this);
+    emit onFileNotification(fileName, stamp, this);
 }
 
 void ClientConnection::emitFileRequest(QString name, QDateTime stamp)

@@ -21,7 +21,7 @@ signals:
     void verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
     void onText(QString, ClientConnection * const);
     void onImage(QByteArray, ClientConnection * const);
-    void onFileNotification(QString, QHostAddress, QDateTime, ClientConnection * const);
+    void onFileNotification(QString, QDateTime, ClientConnection * const);
     void onFileRequest(QString, QDateTime, ClientConnection * const);
     void onFileRespond(QString, QDateTime, QByteArray, ClientConnection * const);
     void deleteMember(QHostAddress);
@@ -36,7 +36,7 @@ public:
     void sendText(QString);
     void sendImage(QByteArray);
     void sendData(QByteArray arr, pckg_t type);
-    void sendFileNotification(QString, QHostAddress, QDateTime);
+    void sendFileNotification(QString, QDateTime);
     void getFile(QString);
 
     void requestFile(QString, QDateTime);
@@ -47,7 +47,7 @@ public slots:
     //void onData();
     void emitText(QString);
     void emitImage(QByteArray);
-    void emitFileNotification(QString, QHostAddress, QDateTime);
+    void emitFileNotification(QString, QDateTime);
     void emitFileRequest(QString, QDateTime);
     void emitFileResponse(QString, QDateTime, QByteArray);
     void makePass(QString, floating_server_priorities);

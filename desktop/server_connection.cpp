@@ -35,8 +35,8 @@ void ServerConnection::dispatch(QDataStream &in)
             this, SIGNAL(gotImage(QByteArray)));
     connect(hand, SIGNAL(gotData(QByteArray,QString)),
             this, SIGNAL(gotData(QByteArray,QString)));
-    connect(hand, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)),
-            this, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)));
+    connect(hand, SIGNAL(gotFileNotification(QString,QDateTime)),
+            this, SIGNAL(gotFileNotification(QString,QDateTime)));
     connect(hand, SIGNAL(gotFileReq(QString,QDateTime)),
             this, SIGNAL(gotFileRequest(QString,QDateTime)));
     connect(hand, SIGNAL(gotFileResp(QString,QDateTime,QByteArray)),
@@ -55,7 +55,7 @@ void ServerConnection::sendData(QByteArray data, pckg_t type)
 
 void ServerConnection::sendFileNotification(QByteArray & data, QDateTime stamp)
 {
-    FileNotificationPackage(socket->peerAddress(), data, stamp).write(socket);
+    FileNotificationPackage(data, stamp).write(socket);
 }
 
 void ServerConnection::sendFileRequest(QString name, QDateTime stamp)

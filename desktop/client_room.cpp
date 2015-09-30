@@ -52,8 +52,8 @@ void ClientRoom::connectToHost(QString login, QString pass)
             this, SLOT(deleteMember(QHostAddress)));
     connect(connection, SIGNAL(gotData(QByteArray,QString)),
             this, SIGNAL(gotData(QByteArray,QString)));
-    connect(connection, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)),
-            this, SIGNAL(gotFileNotification(QString,QHostAddress,QDateTime)));
+    connect(connection, SIGNAL(gotFileNotification(QString,QDateTime)),
+            this, SIGNAL(gotFileNotification(QString,QDateTime)));
     connect(connection, SIGNAL(serverFell()), this, SLOT(recoverServer()));
     connect(connection, SIGNAL(gotFileRequest(QString,QDateTime)),
             this, SLOT(respondWithFile(QString,QDateTime)));

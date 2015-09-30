@@ -39,7 +39,7 @@ signals:
     void gotText(QString);
     void gotImage(QByteArray);
     void gotData(QByteArray, QString);
-    void gotFileNotification(QString, QHostAddress,QDateTime);
+    void gotFileNotification(QString,QDateTime);
     void gotFileRequest(QString, QDateTime);
     void gotFileResponse(QString, QDateTime, QByteArray);
     void setNotUpdated();

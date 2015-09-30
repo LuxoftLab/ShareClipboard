@@ -222,10 +222,10 @@ FileNotificationPackage::FileNotificationPackage()
 
 }
 
-FileNotificationPackage::FileNotificationPackage(QHostAddress source, QByteArray data, QDateTime stamp)
+FileNotificationPackage::FileNotificationPackage(QByteArray data, QDateTime stamp)
 {
     this->data = data;
-    this->sourceAddress = source;
+    //this->sourceAddress = source;
     this->timeStamp = stamp;
 }
 
@@ -236,16 +236,15 @@ void FileNotificationPackage::read(QDataStream & in)
     in.readRawData(text, size);
     qint64 stamp;
     in >> stamp;
-    qint32 sourceAddress;
-    in >> sourceAddress;
+//    qint32 sourceAddress;
+//    in >> sourceAddress;
 
     QString fileName = QString::fromUtf8(text, size);
-    QHostAddress adr(sourceAddress);
+    //QHostAddress adr(sourceAddress);
 
-    qDebug() << fileName << adr << size << (QDateTime().fromMSecsSinceEpoch(stamp));
+    qDebug() << fileName <<  size << (QDateTime().fromMSecsSinceEpoch(stamp));
 
     emit gotFileNotification(QString::fromUtf8(text, size),
-                             QHostAddress(sourceAddress),
                              QDateTime().fromMSecsSinceEpoch(stamp));
 }
 
@@ -257,7 +256,7 @@ void FileNotificationPackage::write(QTcpSocket * socket)
     out << qint32(0) << FILENOTIF << (qint32)data.size();
     out.writeRawData(data.constData(), data.size());
     out << timeStamp.toMSecsSinceEpoch();
-    out << sourceAddress.toIPv4Address();
+    //out << sourceAddress.toIPv4Address();
     out.device()->seek(0);
     out << (qint32)(dat.size()-sizeof(qint32));
 
