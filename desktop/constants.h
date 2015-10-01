@@ -22,6 +22,7 @@ struct SharedFile{
     QDateTime timeStamp;
     //SharedFile(QString, QHostAddress, QDateTime);
     SharedFile(QString, QDateTime);
+    SharedFile();
 };
 
 

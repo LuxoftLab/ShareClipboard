@@ -120,22 +120,29 @@ void ServerRoom::onFileNotification(QString fileName, QDateTime stamp, ClientCon
 
 void ServerRoom::onFileRequest(QString fname, QDateTime timeStamp, ClientConnection * const source)
 {
-//    FileWaitor * next = new FileWaitor();
-//    fileWaitors.push_front();
+    FileWaitor next = FileWaitor(SharedFile(fname, timeStamp), source);
+    fileWaitors.push_front(next);
     source->requestFile(fname, timeStamp);
 }
 
 void ServerRoom::onFileResponse(QString fname, QDateTime stamp, QByteArray fileData, ClientConnection * const source)
 {
     //qDebug() << fileData.size();
-//    for(auto it = fileWaitors.begin(); it != fileWaitors.end(); ++it){
-//        if(it->file.name == fname &&
-//           it->file.timeStamp == stamp &&
-//           !it->sent)
-//            it->destination->sendData(fileData, FILERESP);
-//    }
-    assert(verified.begin().value() != NULL);
-    verified.begin().value()->respondFile(fname, stamp, fileData);
+    for(auto it = fileWaitors.begin(); it != fileWaitors.end(); ++it){
+        //qDebug() << fname << it->file.name << stamp << it->file.timeStamp << it->sent;
+        fname.prepend("file://");
+        fname.append("\r\n");
+        qDebug() << it->file.name  << fname << (it->file.name == fname);
+        if(it->file.name == fname &&
+           it->file.timeStamp == stamp &&
+           (!it->sent)){
+
+                it->destination->respondFile(fname, stamp, fileData);
+
+                it->sent = true;
+        }
+    }
+    //verified.begin().value()->respondFile(fname, stamp, fileData);
 }
 
 void ServerRoom::getFile(QString fileName)
@@ -150,7 +157,8 @@ ClientConnection * ServerRoom::getFileOwner(QString fileName)
 }
 
 
-//FileWaitor::FileWaitor(SharedFile file, ClientConnection *)
-//{
-
-//}
+FileWaitor::FileWaitor(SharedFile f, ClientConnection * s)
+{
+    file = f;
+    destination = s;
+}

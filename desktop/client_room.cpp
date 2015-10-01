@@ -185,3 +185,6 @@ SharedFile::SharedFile(QString n, QDateTime st):
     name(n), timeStamp(st)
 {
 }
+
+SharedFile::SharedFile(){}
+

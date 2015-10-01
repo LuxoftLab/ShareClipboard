@@ -13,8 +13,8 @@ struct FileWaitor
 {
     SharedFile file;
     bool sent = false;
-    ClientConnection * const destination;
-    //FileWaitor(SharedFile, ClientConnection *);
+    ClientConnection * destination;
+    FileWaitor(SharedFile, ClientConnection *);
 };
 
 class ServerRoom : public Room
