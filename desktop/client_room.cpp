@@ -139,6 +139,9 @@ void ClientRoom::respondWithFile(QString fName, QDateTime stamp)
     if(info.lastModified() != stamp)
         return;
 
+    if(info.size() > MAX_FILE_SIZE)
+        return;
+
     QFile file(fName);
     if(!file.exists())
         return;

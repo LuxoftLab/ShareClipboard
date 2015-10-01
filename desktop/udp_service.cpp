@@ -134,7 +134,7 @@ void UDPService::listener(){
 
         case GET_ROOM:
             //if(!localhost_ip.contains(sender_adr))
-                emit roomrequestFileed(sender_adr);
+                emit roomRequested(sender_adr);
             break;
 
         case DELETE_ROOM:
