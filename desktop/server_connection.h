@@ -32,7 +32,7 @@ public:
 
     void run() Q_DECL_OVERRIDE;
 signals:
-    void addMember(QString login, floating_server_priorities, QHostAddress addr);
+    void addMember(floating_server_priorities, QHostAddress addr);
     void deleteMember(QHostAddress addr);
     void gotInvalidPass();
     void gotPass(QString);

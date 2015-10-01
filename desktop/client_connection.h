@@ -14,7 +14,7 @@
 class ClientConnection : public Connection
 {
     Q_OBJECT
-    QString login;
+
     qint32 socketDescriptor;
 
 signals:
@@ -29,9 +29,8 @@ public:
     ClientConnection(QTcpSocket * socket);
     ClientConnection(qintptr socket);
     void sendFail();
-    void sendMember(QString login, floating_server_priorities, QHostAddress addr);
+    void sendMember(floating_server_priorities, QHostAddress addr);
     void removeMember(QHostAddress addr);
-    QString getLogin();
     QHostAddress makeHostAdress(char*);
     void sendText(QString);
     void sendImage(QByteArray);

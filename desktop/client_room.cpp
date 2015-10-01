@@ -46,8 +46,8 @@ void ClientRoom::connectToHost(QString login, QString pass)
         throw;
     }
 
-    connect(connection, SIGNAL(addMember(QString, floating_server_priorities, QHostAddress)),
-            this, SLOT(addMember(QString, floating_server_priorities, QHostAddress)));
+    connect(connection, SIGNAL(addMember(floating_server_priorities, QHostAddress)),
+            this, SLOT(addMember(floating_server_priorities, QHostAddress)));
     connect(connection, SIGNAL(deleteMember(QHostAddress)),
             this, SLOT(deleteMember(QHostAddress)));
     connect(connection, SIGNAL(gotData(QByteArray,QString)),
@@ -63,8 +63,8 @@ void ClientRoom::connectToHost(QString login, QString pass)
     connection->sendPassLoginPriority(pass, login, device_type());
 }
 
-void ClientRoom::addMember(QString login, floating_server_priorities prior, QHostAddress addr) {
-    Member* newMember = new Member(login, addr, prior);
+void ClientRoom::addMember(floating_server_priorities prior, QHostAddress addr) {
+    Member* newMember = new Member(addr, prior);
     members.insert(addr.toIPv4Address(), newMember);
     if(prior == PC)
         floating_server_candidates.push_front(newMember);
@@ -176,9 +176,8 @@ ClientRoom::~ClientRoom()
     delete connection;
 }
 
-Member::Member(QString login, QHostAddress addr, floating_server_priorities prior)
+Member::Member(QHostAddress addr, floating_server_priorities prior)
 {
-    this->login = login;
     this->addr = addr;
     this->priority = prior;
 }

@@ -41,8 +41,8 @@ void ServerConnection::dispatch(QDataStream &in)
             this, SIGNAL(gotFileRequest(QString,QDateTime)));
     connect(hand, SIGNAL(gotFileResp(QString,QDateTime,QByteArray)),
             this, SIGNAL(gotFileResponse(QString,QDateTime,QByteArray)));
-    connect(hand, SIGNAL(addMember(QString,floating_server_priorities,QHostAddress)),
-            this, SIGNAL(addMember(QString,floating_server_priorities,QHostAddress)));
+    connect(hand, SIGNAL(addMember(floating_server_priorities,QHostAddress)),
+            this, SIGNAL(addMember(floating_server_priorities,QHostAddress)));
     connect(hand, SIGNAL(deleteMember(QHostAddress)),
             this, SIGNAL(deleteMember(QHostAddress)));
     hand->read(in);

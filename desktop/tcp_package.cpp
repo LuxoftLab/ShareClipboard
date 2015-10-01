@@ -101,9 +101,8 @@ MemberPackage::MemberPackage()
     prior = FLOAT_IDLE;
 }
 
-MemberPackage::MemberPackage(QString login, QHostAddress addr, floating_server_priorities priority)
+MemberPackage::MemberPackage(QHostAddress addr, floating_server_priorities priority)
 {
-    this->login = login;
     this->addr = addr;
     this->prior = priority;
 }
@@ -112,12 +111,8 @@ void MemberPackage::read(QDataStream & in)
 {
     qint32 priority;
     in >> priority;
-    in >> size;
-    char* login = new char[size];
-    in >> login;
     in >> address;
-    emit addMember(QString::fromUtf8(login),
-                   (floating_server_priorities)priority,
+    emit addMember((floating_server_priorities)priority,
                    QHostAddress(address));
 }
 
@@ -127,8 +122,6 @@ void MemberPackage::write(QTcpSocket * socket)
     QDataStream out(&dat, QIODevice::WriteOnly);
     out << qint32(0) << MEMBER
         << prior
-        << login.toUtf8().size()
-        << login.toUtf8().data()
         << addr.toIPv4Address();
     out.device()->seek(0);
     out << qint32(dat.size() - sizeof(qint32));

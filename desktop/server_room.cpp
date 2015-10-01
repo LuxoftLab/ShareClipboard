@@ -83,8 +83,8 @@ bool ServerRoom::verifyPass(QString pass, floating_server_priorities priority, C
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
-        t->sendMember(conn->getLogin(), priority, conn->getIpv4());
-        conn->sendMember(t->getLogin(), priority, t->getIpv4());
+        t->sendMember(priority, conn->getIpv4());
+        conn->sendMember(priority, t->getIpv4());
     }
 
     return true;

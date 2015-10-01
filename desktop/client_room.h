@@ -16,10 +16,9 @@
 #include "server_connection.h"
 
 struct Member {
-    QString login;
     QHostAddress addr;
     floating_server_priorities priority;
-    Member(QString login, QHostAddress addr, floating_server_priorities prior);
+    Member(QHostAddress addr, floating_server_priorities prior);
 };
 
 class ClientRoom : public Room
@@ -48,7 +47,7 @@ public:
     void setPwd(const QString &value);
 
 public slots:
-    void addMember(QString login, floating_server_priorities, QHostAddress addr);
+    void addMember(floating_server_priorities, QHostAddress addr);
     void deleteMember(QHostAddress addr);
     void sendData(QByteArray data, QString type);
     void recoverServer();

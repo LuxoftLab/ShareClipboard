@@ -51,7 +51,7 @@ signals:
     void gotPass(QString, floating_server_priorities);
     void gotData(QByteArray, QString);
     void gotFileNotification(QString, QDateTime);
-    void addMember(QString, floating_server_priorities, QHostAddress);
+    void addMember(floating_server_priorities, QHostAddress);
     void deleteMember(QHostAddress);
     void gotFileReq(QString, QDateTime);
     void gotFileResp(QString, QDateTime, QByteArray);
@@ -77,12 +77,11 @@ public:
 
 class MemberPackage : public TcpPackage
 {
-    QString login;
     QHostAddress addr;
     floating_server_priorities prior;
 public:
     MemberPackage();
-    MemberPackage(QString, QHostAddress, floating_server_priorities);
+    MemberPackage(QHostAddress, floating_server_priorities);
     void read(QDataStream &);
     void write(QTcpSocket *);
 };

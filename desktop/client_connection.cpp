@@ -3,7 +3,6 @@
 ClientConnection::ClientConnection(QTcpSocket * socket) : Connection(socket)
 {
     this->socket = socket;
-    this->login = "login";
 
     connect(socket, SIGNAL(disconnected()),
             this, SLOT(emitDeleteMember()));
@@ -29,18 +28,14 @@ void ClientConnection::sendFail()
     FailPackage().write(socket);
 }
 
-void ClientConnection::sendMember(QString login, floating_server_priorities priority, QHostAddress addr)
+void ClientConnection::sendMember(floating_server_priorities priority, QHostAddress addr)
 {
-    MemberPackage(login, addr, priority).write(socket);
+    MemberPackage(addr, priority).write(socket);
 }
 
 void ClientConnection::removeMember(QHostAddress addr)
 {
     RemoveMemberPackage(addr).write(socket);
-}
-
-QString ClientConnection::getLogin() {
-    return login;
 }
 
 //void ClientConnection::onData(){
