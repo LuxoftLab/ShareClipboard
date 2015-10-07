@@ -27,6 +27,7 @@ class ServerRoom : public Room
     QList<FileWaitor> fileWaitors;
 
     void saveFileMetaData(QString, ClientConnection * const);
+    void connectConnectionRoom(ClientConnection * t, ServerRoom * s);
 public:
     ServerRoom(QString name, QString pass);
     ~ServerRoom();
