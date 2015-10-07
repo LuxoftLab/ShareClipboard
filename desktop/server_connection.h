@@ -3,7 +3,7 @@
 
 #include "constants.h"
 #include "connection.h"
-#include "tcp_package.h"
+#include "sharedPackages/package_factory.h"
 
 #include <assert.h>
 #include <QByteArray>

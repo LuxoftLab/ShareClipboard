@@ -30,9 +30,19 @@ SOURCES += main.cpp \
     gui/changenamedialog.cpp \
     clipboard_service.cpp \
     gui/settingsdialog.cpp \
-    tcp_package.cpp \
     gui/clipboardtrayicon.cpp \
-    gui/about.cpp
+    gui/about.cpp \
+    sharedPackages/package.cpp \
+    sharedPackages/memberpackage.cpp \
+    sharedPackages/failpackage.cpp \
+    sharedPackages/datapackage.cpp \
+    sharedPackages/removemember.cpp \
+    sharedPackages/file_notification_package.cpp \
+    sharedPackages/file_request_package.cpp \
+    sharedPackages/file_response_package.cpp \
+    sharedPackages/password_package.cpp \
+    sharedPackages/image_package.cpp \
+    sharedPackages/package_factory.cpp
 
 HEADERS  += \
     client_connection.h \
@@ -52,11 +62,21 @@ HEADERS  += \
     gui/roomslistdialog.h \
     gui/createroomdialog.h \
     gui/changenamedialog.h \
-    tcp_package.h \
     clipboard_service.h \
     gui/settingsdialog.h \
     gui/clipboardtrayicon.h \
-    gui/about.h
+    gui/about.h \
+    sharedPackages/package.h \
+    sharedPackages/memberpackage.h \
+    sharedPackages/failpackage.h \
+    sharedPackages/datapackage.h \
+    sharedPackages/removemember.h \
+    sharedPackages/file_notification_package.h \
+    sharedPackages/file_request_package.h \
+    sharedPackages/file_response_package.h \
+    sharedPackages/password_package.h \
+    sharedPackages/image_package.h \
+    sharedPackages/package_factory.h
 
 RESOURCES += \
     gui/images.qrc

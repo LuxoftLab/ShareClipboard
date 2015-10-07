@@ -7,7 +7,8 @@
 #include <QDataStream>
 #include <QThread>
 
-#include "tcp_package.h"
+//#include "tcp_package.h"
+#include "sharedPackages/package.h"
 
 class Connection : public QThread
 {

@@ -3,7 +3,7 @@
 
 #include "connection.h"
 #include "constants.h"
-#include "tcp_package.h"
+#include "sharedPackages/package_factory.h"
 #include <assert.h>
 #include <QMimeData>
 #include <QApplication>
@@ -11,6 +11,7 @@
 #include <QImage>
 #include <QBuffer>
 #include <QDataStream>
+
 class ClientConnection : public Connection
 {
     Q_OBJECT
