@@ -159,10 +159,10 @@ void MainWindow::fillDevicesList(QList<QString> list) {
     }
 }
 
-void MainWindow::insertItem(QString text, int id)
+int MainWindow::insertItem(QString text)
 {
-    //ui->clipboardText->insertItem(0, "hello");
     ui->clipboardText->addItem(text);
+    return ui->clipboardText->currentIndex().column()-1;
 }
 
 void MainWindow::connectRoomListDialog()

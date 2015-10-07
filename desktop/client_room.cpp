@@ -129,6 +129,7 @@ void ClientRoom::addFile(QString n, QDateTime st)
 {
     const SharedFile * const file = new SharedFile(n, st);
     this->files.push_back(file);
+    emit notificateAboutFile(n, st, files.size()-1);
 }
 
 void ClientRoom::respondWithFile(QString fName, QDateTime stamp)

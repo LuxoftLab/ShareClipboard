@@ -66,6 +66,7 @@ signals:
     void gotText(QString);
     void gotImage(QByteArray);
     void gotFileNotification(QString,QDateTime);
+    void notificateAboutFile(QString,QDateTime,int);
     void newFloatingServer(QHostAddress);
 
 };

@@ -44,6 +44,8 @@ class ClipboardTrayIcon : public QMainWindow
     QString sharingOnString;
     QString sharingOffString;
 
+    QMap<int, int> fileToIndex; //mainWindowListId -> fileId
+
     void createMenu();
     void connectMainWindow(MainWindow*);
 public:
@@ -79,6 +81,7 @@ public slots:
 
     void dataPushedToClipboard(QString text, qint32 id);
     void deleteItemFromList(qint32 id);
+    void processRequestFile(int i);
 };
 
 #endif // CLIPBOARDTRAYICON_H

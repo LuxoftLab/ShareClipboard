@@ -119,13 +119,13 @@ void Controller::onRoomsListOpen(RoomsListDialog * roomsDialog)
             roomsDialog, SLOT(deleteRoom(QString)));
 }
 
-void Controller::fileNotification(QString fileName, QDateTime stamp)
+void Controller::fileNotification(QString fileName, QDateTime stamp, int ind)
 {
     icon->showMessage(fileName,
                       " last changed on "+
                       stamp.date().toString()+" "+
                       stamp.time().toString());
-    emit hasFileToText(fileName+stamp.date().toString()+stamp.time().toString(),0);
+    emit hasFileToText(fileName+stamp.date().toString()+stamp.time().toString(),ind);
 }
 
 void Controller::initClipboardToGuiConnection()
@@ -187,8 +187,10 @@ void Controller::joinRoom(qint32 addr, QString pass)
 
     connect(clientRoom, SIGNAL(newFloatingServer(QHostAddress)),
             this, SLOT(createFloatingServerRoom(QHostAddress)));
-    connect(clientRoom, SIGNAL(gotFileNotification(QString,QDateTime)),
-            this, SLOT(fileNotification(QString,QDateTime)));
+//    connect(clientRoom, SIGNAL(gotFileNotification(QString,QDateTime)),
+//            this, SLOT(fileNotification(QString,QDateTime)));
+    connect(clientRoom, SIGNAL(notificateAboutFile(QString,QDateTime,int)),
+            this, SLOT(fileNotification(QString,QDateTime,int)));
     connect(clientRoom, SIGNAL(gotFileNotification(QString,QDateTime)),
             clientRoom, SLOT(addFile(QString,QDateTime)));
     connect(icon, SIGNAL(requestFile(int)),

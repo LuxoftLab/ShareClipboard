@@ -22,7 +22,7 @@ public:
     ~MainWindow();
     void fillDevicesList(QList<QString> list);
     //void connectRoomListDialog();
-    void insertItem(QString, int id);
+    int insertItem(QString);
 signals:
     void downloadFile();
     void changeName(QString name);

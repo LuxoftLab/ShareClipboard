@@ -58,8 +58,7 @@ void ClipboardTrayIcon::createMenu()
 }
 
 void ClipboardTrayIcon::dataPushedToClipboard(QString text, qint32 id) {
-    //dataIdsVector.prepend(id);
-    this->mainwindow->insertItem(text, 0);
+    fileToIndex.insert(mainwindow->insertItem(text),id);
 }
 
 void ClipboardTrayIcon::deleteItemFromList(qint32 id)
@@ -68,13 +67,18 @@ void ClipboardTrayIcon::deleteItemFromList(qint32 id)
     //dataIdsVector.removeLast();
 }
 
+void ClipboardTrayIcon::processRequestFile(int i)
+{
+    emit requestFile(fileToIndex[i]);
+}
+
 
 void ClipboardTrayIcon::connectMainWindow(MainWindow * mainWindow)
 {
     connect(mainWindow, SIGNAL(createRoom()), this, SLOT(createRoom()));
     connect(mainWindow, SIGNAL(connectRoom()), this, SLOT(connectRoom()));
     connect(mainWindow, SIGNAL(requestFile(int)),
-            this, SIGNAL(requestFile(int)));
+            this, SLOT(processRequestFile(int)));
 }
 
 ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow()
