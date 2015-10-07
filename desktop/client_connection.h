@@ -14,11 +14,9 @@
 class ClientConnection : public Connection
 {
     Q_OBJECT
-
     qint32 socketDescriptor;
-
 signals:
-    void verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
+    void verifyPass(QString pass, FloatServerPriority, ClientConnection * const);
     void onText(QString, ClientConnection * const);
     void onImage(QByteArray, ClientConnection * const);
     void onFileNotification(QString, QDateTime, ClientConnection * const);
@@ -29,7 +27,7 @@ public:
     ClientConnection(QTcpSocket * socket);
     ClientConnection(qintptr socket);
     void sendFail();
-    void sendMember(floating_server_priorities, QHostAddress addr);
+    void sendMember(FloatServerPriority, QHostAddress addr);
     void removeMember(QHostAddress addr);
     QHostAddress makeHostAdress(char*);
     void sendText(QString);
@@ -49,7 +47,7 @@ public slots:
     void emitFileNotification(QString, QDateTime);
     void emitFileRequest(QString, QDateTime);
     void emitFileResponse(QString, QDateTime, QByteArray);
-    void makePass(QString, floating_server_priorities);
+    void makePass(QString, FloatServerPriority);
     void emitDeleteMember();
 private:
     void downloadMore(QByteArray& whole, QTcpSocket * inSocket);

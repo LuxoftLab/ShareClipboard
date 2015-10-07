@@ -130,12 +130,16 @@ void Controller::fileNotification(QString fileName, QDateTime stamp)
 
 void Controller::initClipboardToGuiConnection()
 {
-    connect(&clipboardService, SIGNAL(hasDataToText(QString, qint32)), icon, SLOT(dataPushedToClipboard(QString, qint32)));
+    connect(&clipboardService, SIGNAL(hasDataToText(QString, qint32)),
+            icon, SLOT(dataPushedToClipboard(QString, qint32)));
     connect(this, SIGNAL(hasFileToText(QString, qint32)),
             icon, SLOT(dataPushedToClipboard(QString, qint32)));
-    connect(&clipboardService, SIGNAL(deleteDataFromStorage(qint32)), icon, SLOT(deleteItemFromList(qint32)));
-    connect(icon, SIGNAL(pushDataChoosed(qint32)), &clipboardService, SLOT(pushDataToClipboardFromGui(qint32)));
-    connect(icon, SIGNAL(settingsChoosed(int, bool)), &clipboardService, SLOT(onSettingsChoosed(int,bool)));
+    connect(&clipboardService, SIGNAL(deleteDataFromStorage(qint32)),
+            icon, SLOT(deleteItemFromList(qint32)));
+    connect(icon, SIGNAL(pushDataChoosed(qint32)),
+            &clipboardService, SLOT(pushDataToClipboardFromGui(qint32)));
+    connect(icon, SIGNAL(settingsChoosed(int, bool)),
+            &clipboardService, SLOT(onSettingsChoosed(int,bool)));
 }
 
 void Controller::initUDPService()

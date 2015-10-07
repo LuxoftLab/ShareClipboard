@@ -48,10 +48,10 @@ public:
 signals:
     void gotText(QString);
     void gotImage(QByteArray);
-    void gotPass(QString, floating_server_priorities);
+    void gotPass(QString, FloatServerPriority);
     void gotData(QByteArray, QString);
     void gotFileNotification(QString, QDateTime);
-    void addMember(floating_server_priorities, QHostAddress);
+    void addMember(FloatServerPriority, QHostAddress);
     void deleteMember(QHostAddress);
     void gotFileReq(QString, QDateTime);
     void gotFileResp(QString, QDateTime, QByteArray);
@@ -78,10 +78,10 @@ public:
 class MemberPackage : public TcpPackage
 {
     QHostAddress addr;
-    floating_server_priorities prior;
+    FloatServerPriority prior;
 public:
     MemberPackage();
-    MemberPackage(QHostAddress, floating_server_priorities);
+    MemberPackage(QHostAddress, FloatServerPriority);
     void read(QDataStream &);
     void write(QTcpSocket *);
 };
@@ -106,10 +106,10 @@ public:
 
 class PassPackage : public TcpPackage
 {
-    floating_server_priorities priority;
+    FloatServerPriority priority;
     QString password;
 public:
-    PassPackage(QString, floating_server_priorities);
+    PassPackage(QString, FloatServerPriority);
     PassPackage();
     void read(QDataStream &);
     void write(QTcpSocket *);

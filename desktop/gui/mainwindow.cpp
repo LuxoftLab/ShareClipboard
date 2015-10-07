@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->nameLabel->setText("Имя устройства: " + QHostInfo::localHostName());
 
     connect(ui->changeNamePushButton, SIGNAL(clicked()), this, SLOT(changeNameClicked()));
-    connect(ui->changeRoomPushButton, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
+    //connect(ui->changeRoomPushButton, SIGNAL(clicked()), this, SLOT(chooseRoomClicked()));
     //connect(ui->clipboardText, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(clipboardDataListItemDBClicked(QListWidgetItem*)));
     connect(ui->actionOpen_Settings_2, SIGNAL(triggered()), this, SLOT(onSettingsClicked()));
 }

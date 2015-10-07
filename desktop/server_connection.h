@@ -20,7 +20,7 @@ class ServerConnection : public Connection
     Q_OBJECT
 public:
     ServerConnection(QHostAddress host);
-    void sendPassLoginPriority(QString password, QString login, floating_server_priorities);
+    void sendPassLoginPriority(QString password, QString login, FloatServerPriority);
     void sendText(QString text, bool);
     void sendImage(QImage);
     void sendImage(QByteArray);
@@ -32,7 +32,7 @@ public:
 
     void run() Q_DECL_OVERRIDE;
 signals:
-    void addMember(floating_server_priorities, QHostAddress addr);
+    void addMember(FloatServerPriority, QHostAddress addr);
     void deleteMember(QHostAddress addr);
     void gotInvalidPass();
     void gotPass(QString);

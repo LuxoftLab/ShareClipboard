@@ -17,14 +17,17 @@
 
 struct Member {
     QHostAddress addr;
-    floating_server_priorities priority;
-    Member(QHostAddress addr, floating_server_priorities prior);
+    FloatServerPriority priority;
+    Member(QHostAddress addr, FloatServerPriority prior);
 };
+
+//Q_DECLARE_METATYPE(std::unique_ptr<ServerConnection>)
 
 class ClientRoom : public Room
 {
     Q_OBJECT
     ServerConnection * connection;
+    //std::unique_ptr<ServerConnection> connection;
     QHostAddress host;
     QHostAddress ownAdress;
     QMap<qint32, Member*> members;
@@ -33,7 +36,7 @@ class ClientRoom : public Room
     QString login;
     QString pwd;
 
-    floating_server_priorities device_type();
+    FloatServerPriority device_type();
 public:
     ClientRoom(QString name, QHostAddress host);
     ~ClientRoom();
@@ -47,7 +50,7 @@ public:
     void setPwd(const QString &value);
 
 public slots:
-    void addMember(floating_server_priorities, QHostAddress addr);
+    void addMember(FloatServerPriority, QHostAddress addr);
     void deleteMember(QHostAddress addr);
     void sendData(QByteArray data, QString type);
     void recoverServer();

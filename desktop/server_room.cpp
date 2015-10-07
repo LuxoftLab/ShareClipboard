@@ -1,15 +1,8 @@
 #include "server_room.h"
 
-void ServerRoom::saveFileMetaData(QString path, ClientConnection * const source)
-{
-    fileMetaData[path] = source;
-}
-
 ServerRoom::ServerRoom(QString name, QString pass) : Room(name, pass)
 {
     server = new TCPServer();
-//    connect(server, SIGNAL(addMember(QTcpSocket*)),
-//            this, SLOT(addMember(QTcpSocket*)));
     connect(server, SIGNAL(addMember(qintptr)),
             this, SLOT(addMember(qintptr)));
     connect(server, SIGNAL(deleteMember(QHostAddress)),
@@ -18,9 +11,11 @@ ServerRoom::ServerRoom(QString name, QString pass) : Room(name, pass)
 
 ServerRoom::~ServerRoom()
 {
-    for(QMap<qint32, ClientConnection*>::iterator it = verified.begin(); it != verified.end(); ++it)
+    for(auto it = fileMetaData.begin(); it != fileMetaData.end(); ++it)
         delete it.value();
-    for(QMap<qint32, ClientConnection*>::iterator it = notVerified.begin(); it != notVerified.end(); ++it)
+    for(auto it = verified.begin(); it != verified.end(); ++it)
+        delete it.value();
+    for(auto it = notVerified.begin(); it != notVerified.end(); ++it)
         delete it.value();
     delete server;
 }
@@ -29,20 +24,7 @@ void ServerRoom::addMember(qintptr socket)
 {
     ClientConnection *t = new ClientConnection(socket);
     t->run();
-    connect(t, SIGNAL(verifyPass(QString, floating_server_priorities, ClientConnection* const)),
-            this, SLOT(verifyPass(QString, floating_server_priorities, ClientConnection* const)));
-    connect(t, SIGNAL(onText(QString, ClientConnection * const)),
-            this, SLOT(onText(QString, ClientConnection * const)));
-    connect(t, SIGNAL(onImage(QByteArray, ClientConnection * const)),
-            this, SLOT(onImage(QByteArray, ClientConnection * const)));
-    connect(t, SIGNAL(onFileNotification(QString,QDateTime,ClientConnection*const)),
-            this, SLOT(onFileNotification(QString,QDateTime,ClientConnection*const)));
-    connect(t, SIGNAL(deleteMember(QHostAddress)),
-                      this, SLOT(deleteMember(QHostAddress)));
-    connect(t, SIGNAL(onFileRequest(QString,QDateTime,ClientConnection*const)),
-            this, SLOT(onFileRequest(QString,QDateTime,ClientConnection*const)));
-    connect(t, SIGNAL(onFileRespond(QString,QDateTime,QByteArray,ClientConnection*const)),
-            this, SLOT(onFileResponse(QString,QDateTime,QByteArray,ClientConnection*const)));
+    connectConnectionRoom(t, this);
     notVerified.insert(t->getSocket()->peerAddress().toIPv4Address(), t);
 }
 
@@ -68,7 +50,7 @@ void ServerRoom::deleteMember(QHostAddress addr)
     }
 }
 
-bool ServerRoom::verifyPass(QString pass, floating_server_priorities priority, ClientConnection * conn)
+bool ServerRoom::verifyPass(QString pass, FloatServerPriority priority, ClientConnection * conn)
 {
     if(this->pass != pass)
     {
@@ -127,7 +109,6 @@ void ServerRoom::onFileRequest(QString fname, QDateTime timeStamp, ClientConnect
 
 void ServerRoom::onFileResponse(QString fname, QDateTime stamp, QByteArray fileData, ClientConnection * const source)
 {
-    //qDebug() << fileData.size();
     for(auto it = fileWaitors.begin(); it != fileWaitors.end(); ++it){
         //qDebug() << fname << it->file.name << stamp << it->file.timeStamp << it->sent;
         fname.prepend("file://");
@@ -136,13 +117,10 @@ void ServerRoom::onFileResponse(QString fname, QDateTime stamp, QByteArray fileD
         if(it->file.name == fname &&
            it->file.timeStamp == stamp &&
            (!it->sent)){
-
                 it->destination->respondFile(fname, stamp, fileData);
-
                 it->sent = true;
         }
     }
-    //verified.begin().value()->respondFile(fname, stamp, fileData);
 }
 
 void ServerRoom::getFile(QString fileName)
@@ -161,4 +139,27 @@ FileWaitor::FileWaitor(SharedFile f, ClientConnection * s)
 {
     file = f;
     destination = s;
+}
+
+void ServerRoom::saveFileMetaData(QString path, ClientConnection * const source)
+{
+    fileMetaData[path] = source;
+}
+
+void ServerRoom::connectConnectionRoom(ClientConnection * t, ServerRoom * s)
+{
+    connect(t, SIGNAL(verifyPass(QString, FloatServerPriority, ClientConnection* const)),
+            s, SLOT(verifyPass(QString, FloatServerPriority, ClientConnection* const)));
+    connect(t, SIGNAL(onText(QString, ClientConnection * const)),
+            s, SLOT(onText(QString, ClientConnection * const)));
+    connect(t, SIGNAL(onImage(QByteArray, ClientConnection * const)),
+            s, SLOT(onImage(QByteArray, ClientConnection * const)));
+    connect(t, SIGNAL(onFileNotification(QString,QDateTime,ClientConnection*const)),
+            s, SLOT(onFileNotification(QString,QDateTime,ClientConnection*const)));
+    connect(t, SIGNAL(deleteMember(QHostAddress)),
+            s, SLOT(deleteMember(QHostAddress)));
+    connect(t, SIGNAL(onFileRequest(QString,QDateTime,ClientConnection*const)),
+            s, SLOT(onFileRequest(QString,QDateTime,ClientConnection*const)));
+    connect(t, SIGNAL(onFileRespond(QString,QDateTime,QByteArray,ClientConnection*const)),
+            s, SLOT(onFileResponse(QString,QDateTime,QByteArray,ClientConnection*const)));
 }

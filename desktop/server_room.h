@@ -31,15 +31,16 @@ public:
     ServerRoom(QString name, QString pass);
     ~ServerRoom();
 public slots:
-    //void addMember(QTcpSocket * socket);
     void addMember(qintptr socketDescriptor);
     void deleteMember(QHostAddress addr);
-    bool verifyPass(QString pass, floating_server_priorities, ClientConnection * const);
+    bool verifyPass(QString pass, FloatServerPriority, ClientConnection * const);
+
     void onText(QString, ClientConnection * const);
     void onImage(QByteArray, ClientConnection * const);
     void onFileNotification(QString, QDateTime, ClientConnection * const);
     void onFileRequest(QString, QDateTime, ClientConnection * const);
     void onFileResponse(QString, QDateTime, QByteArray, ClientConnection * const);
+
     void getFile(QString);
     ClientConnection * getFileOwner(QString);
 };

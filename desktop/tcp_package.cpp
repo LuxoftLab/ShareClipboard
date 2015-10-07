@@ -61,7 +61,7 @@ void DataPackage::write(QTcpSocket * socket)
     }
 }
 
-PassPackage::PassPackage(QString pass, floating_server_priorities prior)
+PassPackage::PassPackage(QString pass, FloatServerPriority prior)
 {
     this->password = pass;
     this->priority = prior;
@@ -80,7 +80,7 @@ void PassPackage::read(QDataStream & in)
     in >> pwdsz;
     char* pwd = new char[pwdsz];
     in >> pwd;
-    emit gotPass(QString::fromUtf8(pwd, pwdsz), (floating_server_priorities)priority);
+    emit gotPass(QString::fromUtf8(pwd, pwdsz), (FloatServerPriority)priority);
 }
 
 void PassPackage::write(QTcpSocket * socket)
@@ -101,7 +101,7 @@ MemberPackage::MemberPackage()
     prior = FLOAT_IDLE;
 }
 
-MemberPackage::MemberPackage(QHostAddress addr, floating_server_priorities priority)
+MemberPackage::MemberPackage(QHostAddress addr, FloatServerPriority priority)
 {
     this->addr = addr;
     this->prior = priority;
@@ -112,7 +112,7 @@ void MemberPackage::read(QDataStream & in)
     qint32 priority;
     in >> priority;
     in >> address;
-    emit addMember((floating_server_priorities)priority,
+    emit addMember((FloatServerPriority)priority,
                    QHostAddress(address));
 }
 

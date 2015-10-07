@@ -21,7 +21,7 @@ void ClientRoom::setPwd(const QString &value)
     pwd = value;
 }
 
-floating_server_priorities ClientRoom::device_type()
+FloatServerPriority ClientRoom::device_type()
 {
     return PC;
 }
@@ -37,6 +37,7 @@ void ClientRoom::connectToHost(QString login, QString pass)
     this->pass = pass;
     try{
         connection = new ServerConnection(host);
+        //std::unique_ptr<ServerConnection> connection(new ServerConnection(host));
         connect(connection, SIGNAL(finished()),
                 connection, SLOT(deleteLater()));
         connection->run();
@@ -46,8 +47,8 @@ void ClientRoom::connectToHost(QString login, QString pass)
         throw;
     }
 
-    connect(connection, SIGNAL(addMember(floating_server_priorities, QHostAddress)),
-            this, SLOT(addMember(floating_server_priorities, QHostAddress)));
+    connect(connection, SIGNAL(addMember(FloatServerPriority, QHostAddress)),
+            this, SLOT(addMember(FloatServerPriority, QHostAddress)));
     connect(connection, SIGNAL(deleteMember(QHostAddress)),
             this, SLOT(deleteMember(QHostAddress)));
     connect(connection, SIGNAL(gotData(QByteArray,QString)),
@@ -63,7 +64,7 @@ void ClientRoom::connectToHost(QString login, QString pass)
     connection->sendPassLoginPriority(pass, login, device_type());
 }
 
-void ClientRoom::addMember(floating_server_priorities prior, QHostAddress addr) {
+void ClientRoom::addMember(FloatServerPriority prior, QHostAddress addr) {
     Member* newMember = new Member(addr, prior);
     members.insert(addr.toIPv4Address(), newMember);
     if(prior == PC)
@@ -173,10 +174,10 @@ ClientRoom::~ClientRoom()
         delete it.value();
     for(auto it = files.begin(); it != files.end();  ++it)
         delete *it;
-    delete connection;
+    //delete connection;
 }
 
-Member::Member(QHostAddress addr, floating_server_priorities prior)
+Member::Member(QHostAddress addr, FloatServerPriority prior)
 {
     this->addr = addr;
     this->priority = prior;

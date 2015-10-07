@@ -4,13 +4,14 @@
 #include <QString>
 #include <QHostAddress>
 #include <QDateTime>
+#include <memory>
 
 #define PORT_NUMBER 1080
 #define REPEAT 10
 #define UDP_PORT 12345
 #define MAX_FILE_SIZE 500 * 1024
 
-enum floating_server_priorities
+enum FloatServerPriority
 {
     PC,
     MOBILE,

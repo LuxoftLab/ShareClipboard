@@ -28,7 +28,7 @@ void ClientConnection::sendFail()
     FailPackage().write(socket);
 }
 
-void ClientConnection::sendMember(floating_server_priorities priority, QHostAddress addr)
+void ClientConnection::sendMember(FloatServerPriority priority, QHostAddress addr)
 {
     MemberPackage(addr, priority).write(socket);
 }
@@ -101,7 +101,7 @@ void ClientConnection::run()
              this, &ClientConnection::deleteLater);
 }
 
-void ClientConnection::makePass(QString pass, floating_server_priorities priority)
+void ClientConnection::makePass(QString pass, FloatServerPriority priority)
 {
     emit(verifyPass(pass, priority, this));
 }
@@ -137,8 +137,8 @@ void ClientConnection::dispatch(QDataStream& infile)
             this, SLOT(emitText(QString)));
     connect(hand, SIGNAL(gotImage(QByteArray)),
             this, SLOT(emitImage(QByteArray)));
-    connect(hand, SIGNAL(gotPass(QString,floating_server_priorities)),
-            this, SLOT(makePass(QString,floating_server_priorities)));
+    connect(hand, SIGNAL(gotPass(QString,FloatServerPriority)),
+            this, SLOT(makePass(QString,FloatServerPriority)));
     connect(hand, SIGNAL(gotFileNotification(QString, QDateTime)),
             this, SLOT(emitFileNotification(QString, QDateTime)));
     connect(hand, SIGNAL(gotFileReq(QString,QDateTime)),
