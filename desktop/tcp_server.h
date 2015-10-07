@@ -16,16 +16,12 @@ public:
     TCPServer();
     ~TCPServer();
 signals:
-    //void addMember(QTcpSocket * socket);
     void addMember(qintptr);
     void deleteMember(QHostAddress);
 protected:
     void incomingConnection(qintptr) Q_DECL_OVERRIDE;
 private:
-    //QTcpServer* server;
     QTcpSocket* newConnection = NULL;
-private slots:
-    void newMember();
 };
 
 #endif // TCP_SERVER_H
