@@ -73,7 +73,7 @@ void Controller::createServerRoom(QString name, QString pass)
     udpService->notifyAboutRoom(name);
     emit serverIsUp(name);
 
-    //addRoom(name, QHostAddress("127.0.0.1"));
+    addRoom(name, QHostAddress("127.0.0.1"));
 }
 
 void Controller::deleteServerRoom()
