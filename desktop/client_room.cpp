@@ -109,9 +109,19 @@ void ClientRoom::sendData(QByteArray data, QString type)
 void ClientRoom::recoverServer()
 {
     qDebug() << "recovering server";
-    qDebug() << floating_server_candidates.first()->addr << connection->localAddress();
-    if(floating_server_candidates.size() > 1 && floating_server_candidates.first()->addr == connection->localAddress())
+//    qDebug() << floating_server_candidates.first()->addr << connection->localAddress();
+
+//    for(auto it = floating_server_candidates.begin(); it < floating_server_candidates.end(); ++it)
+//        qDebug() << "in list:" << (*it)->addr.toIPv4Address() << " ";
+//    qDebug() << "local" << connection->localAddress().toIPv4Address();
+
+    if(floating_server_candidates.size() > 1 &&
+            floating_server_candidates.first()->addr.toIPv4Address() == connection->localAddress().toIPv4Address())
         emit newFloatingServer(host);
+      else
+      {
+          ;
+      }
 }
 
 void ClientRoom::fileNotification(QString name)
