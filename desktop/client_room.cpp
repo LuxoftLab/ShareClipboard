@@ -115,13 +115,16 @@ void ClientRoom::recoverServer()
 //        qDebug() << "in list:" << (*it)->addr.toIPv4Address() << " ";
 //    qDebug() << "local" << connection->localAddress().toIPv4Address();
 
-    if(floating_server_candidates.size() > 1 &&
-            floating_server_candidates.first()->addr.toIPv4Address() == connection->localAddress().toIPv4Address())
+    //if there's at least one host here
+    //and it's me
+    //I should become a server!!!
+    if(floating_server_candidates.size() > 0 &&
+       floating_server_candidates.first()->addr.toIPv4Address() == connection->localAddress().toIPv4Address())
         emit newFloatingServer(host);
-      else
-      {
-          ;
-      }
+//    for(auto it = floating_server_candidates.begin(); it < floating_server_candidates.end(); ++it)
+//        qDebug() << "in list:" << (*it)->addr.toIPv4Address() << " ";
+//    qDebug() << "local" << connection->localAddress().toIPv4Address();
+//    qDebug() << floating_server_candidates.size();
 }
 
 void ClientRoom::fileNotification(QString name)
