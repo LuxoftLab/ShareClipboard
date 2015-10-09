@@ -142,7 +142,10 @@ void ClientRoom::respondWithFile(QString fName, QDateTime stamp)
         return;
 
     if(info.size() > MAX_FILE_SIZE)
+    {
+        qDebug()    << info.size();
         return;
+    }
 
     QFile file(fName);
     if(!file.exists())
@@ -151,6 +154,7 @@ void ClientRoom::respondWithFile(QString fName, QDateTime stamp)
     file.open(QIODevice::ReadOnly);
     QByteArray data = file.readAll();
     file.close();
+    qDebug() << data.size();
     connection->respondFile(fName, stamp, data);
 }
 
@@ -175,7 +179,6 @@ ClientRoom::~ClientRoom()
         delete it.value();
     for(auto it = files.begin(); it != files.end();  ++it)
         delete *it;
-    //delete connection;
 }
 
 Member::Member(QHostAddress addr, FloatServerPriority prior)
@@ -191,4 +194,16 @@ SharedFile::SharedFile(QString n, QDateTime st):
 }
 
 SharedFile::SharedFile(){}
+
+bool SharedFile::operator==(const SharedFile & other)
+{
+    return this->name == other.name && this->timeStamp == other.timeStamp;
+}
+
+bool SharedFile::operator<(const SharedFile & other) const
+{
+    return (timeStamp == other.timeStamp ?
+                timeStamp < other.timeStamp :
+                name < other.name);
+}
 

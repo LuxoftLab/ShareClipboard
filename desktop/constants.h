@@ -20,11 +20,11 @@ enum FloatServerPriority
 
 struct SharedFile{
     QString name;
-    //QHostAddress sourceAddress;
     QDateTime timeStamp;
-    //SharedFile(QString, QHostAddress, QDateTime);
     SharedFile(QString, QDateTime);
     SharedFile();
+    bool operator==(const SharedFile &);
+    bool operator<(const SharedFile &) const;
 };
 
 

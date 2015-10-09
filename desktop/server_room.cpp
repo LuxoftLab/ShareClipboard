@@ -92,7 +92,7 @@ void ServerRoom::onImage(QByteArray im, ClientConnection * const)
 
 void ServerRoom::onFileNotification(QString fileName, QDateTime stamp, ClientConnection * const source)
 {
-    this->saveFileMetaData(fileName, source);
+    this->saveFileMetaData(fileName, stamp, source);
     for(QMap<qint32, ClientConnection*>::Iterator it = verified.begin(); it != verified.end(); it++)
     {
         ClientConnection* t = it.value();
@@ -102,21 +102,25 @@ void ServerRoom::onFileNotification(QString fileName, QDateTime stamp, ClientCon
 
 void ServerRoom::onFileRequest(QString fname, QDateTime timeStamp, ClientConnection * const source)
 {
+    qDebug() << fname;
     FileWaitor next = FileWaitor(SharedFile(fname, timeStamp), source);
     fileWaitors.push_front(next);
-    source->requestFile(fname, timeStamp);
+    //source->requestFile(fname, timeStamp);
+
+    //find the owner of the searched file and request file if found one
+    if(fileMetaData.contains(next.file))
+        fileMetaData[next.file]->requestFile(fname, timeStamp);
 }
 
 void ServerRoom::onFileResponse(QString fname, QDateTime stamp, QByteArray fileData, ClientConnection * const source)
 {
     for(auto it = fileWaitors.begin(); it != fileWaitors.end(); ++it){
-        //qDebug() << fname << it->file.name << stamp << it->file.timeStamp << it->sent;
         fname.prepend("file://");
         fname.append("\r\n");
-        qDebug() << it->file.name  << fname << (it->file.name == fname);
         if(it->file.name == fname &&
            it->file.timeStamp == stamp &&
            (!it->sent)){
+                qDebug() << fileData.size();
                 it->destination->respondFile(fname, stamp, fileData);
                 it->sent = true;
         }
@@ -125,13 +129,13 @@ void ServerRoom::onFileResponse(QString fname, QDateTime stamp, QByteArray fileD
 
 void ServerRoom::getFile(QString fileName)
 {
-    ClientConnection * source = getFileOwner(fileName);
-    source->getFile(fileName);
+//    ClientConnection * source = getFileOwner(fileName);
+//    source->getFile(fileName);
 }
 
-ClientConnection * ServerRoom::getFileOwner(QString fileName)
+ClientConnection * ServerRoom::getFileOwner(QString fileName, QDateTime stamp)
 {
-    return fileMetaData[fileName];
+    return fileMetaData[SharedFile(fileName, stamp)];
 }
 
 
@@ -141,9 +145,9 @@ FileWaitor::FileWaitor(SharedFile f, ClientConnection * s)
     destination = s;
 }
 
-void ServerRoom::saveFileMetaData(QString path, ClientConnection * const source)
+void ServerRoom::saveFileMetaData(QString path, QDateTime stamp, ClientConnection * const source)
 {
-    fileMetaData[path] = source;
+    fileMetaData[SharedFile(path, stamp)] = source;
 }
 
 void ServerRoom::connectConnectionRoom(ClientConnection * t, ServerRoom * s)

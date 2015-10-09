@@ -58,7 +58,9 @@ void ClipboardTrayIcon::createMenu()
 }
 
 void ClipboardTrayIcon::dataPushedToClipboard(QString text, qint32 id) {
-    fileToIndex.insert(mainwindow->insertItem(text),id);
+    int windowId = mainwindow->insertItem(text);
+    fileToIndex.insert(windowId,id);
+    qDebug() << windowId << id;
 }
 
 void ClipboardTrayIcon::deleteItemFromList(qint32 id)
