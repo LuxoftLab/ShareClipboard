@@ -176,6 +176,16 @@ void ClipboardTrayIcon::toggleSharing()
     emit toggleSharingSignal();
 }
 
+void ClipboardTrayIcon::roomCreated(QString roomName)
+{
+    icon->showMessage(tr("Created room"), roomName);
+}
+
+void ClipboardTrayIcon::roomJoined(QString roomName, QString serverIP)
+{
+    icon->showMessage(tr("You joined room \"")+roomName+"\"", tr("on the host ")+serverIP);
+}
+
 void ClipboardTrayIcon::becomeServer(QString)
 {
     icon->setIcon(QIcon(serverIconPath));

@@ -74,6 +74,8 @@ public slots:
     void showAbout();
     void showSettings();
     void toggleSharing();
+    void roomCreated(QString);
+    void roomJoined(QString, QString);
 
     void becomeServer(QString);
     void stopBeignServer();
