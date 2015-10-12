@@ -14,12 +14,13 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
     qint32 defaultMaxSize = MAX_FILE_SIZE;
+    qint32 maxhistorysize = MAX_HISTORY_SIZE;
     QString defaultFilePath = "/tmp/";
 public:
     explicit SettingsDialog(QWidget *parent = 0);
     ~SettingsDialog();
 signals:
-    void settingsAccepted(qint32, QString);
+    void settingsAccepted(qint32, QString, qint32);
 
 private slots:
     void on_buttonBox_accepted();

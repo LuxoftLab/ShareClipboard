@@ -28,8 +28,10 @@ class Controller : public QObject
     ClipboardService clipboardService;
     ClipboardTrayIcon * icon;
     bool server;
+
     qint32 maxFileSize = MAX_FILE_SIZE;
     QString defaultFilePath = "/tmp/";
+    qint32 maxHistorySize = MAX_HISTORY_SIZE;
 
     void connectIconController(ClipboardTrayIcon * icon);
 public:
@@ -57,7 +59,7 @@ public slots:
 
     void onRoomsListOpen(RoomsListDialog *roomsDialog);
     void fileNotification(QString, QDateTime, int);
-    void applySettings(qint32, QString);
+    void applySettings(qint32, QString, qint32);
     void tooBigFile(QString);
 private:
     void initClipboardToGuiConnection();

@@ -20,8 +20,9 @@ void SettingsDialog::on_buttonBox_accepted()
 {
     defaultMaxSize = ui->maxfilesizespinBox->value() * 1024 * 1024;
     defaultFilePath = ui->filePath->text();
+    maxhistorysize = ui->itemspinbox->value();
 
-    emit settingsAccepted(ui->maxfilesizespinBox->value(), ui->filePath->text());
+    emit settingsAccepted(ui->maxfilesizespinBox->value(), ui->filePath->text(), maxhistorysize);
     this->close();
 }
 

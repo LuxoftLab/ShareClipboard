@@ -16,8 +16,8 @@ void Controller::connectIconController(ClipboardTrayIcon *icon)
             icon, SLOT(stopBeignServer()));
     connect(icon, SIGNAL(toggleSharingSignal()),
             &(this->clipboardService), SLOT(turnSharing()));
-    connect(icon, SIGNAL(settingsAccepted(qint32,QString)),
-            this, SLOT(applySettings(qint32,QString)));
+    connect(icon, SIGNAL(settingsAccepted(qint32,QString, qint32)),
+            this, SLOT(applySettings(qint32,QString, qint32)));
 }
 
 Controller::Controller(ClipboardTrayIcon * icon) : QObject(0)
@@ -137,13 +137,15 @@ void Controller::fileNotification(QString fileName, QDateTime stamp, int ind)
     emit hasFileToText(fileName+stamp.date().toString()+stamp.time().toString(),ind);
 }
 
-void Controller::applySettings(qint32 size, QString path)
+void Controller::applySettings(qint32 filesize, QString path, qint32 maxhistorysize)
 {
     defaultFilePath = path;
-    maxFileSize = size;
+    maxFileSize = filesize;
+    maxHistorySize = maxhistorysize;
 
-    clientRoom->setMaxFileSize(size);
+    clientRoom->setMaxFileSize(filesize);
     clientRoom->setDefaultPath(path);
+    icon->setMaxHistorySize(maxhistorysize);
 }
 
 void Controller::tooBigFile(QString filename)

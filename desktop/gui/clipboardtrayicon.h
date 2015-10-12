@@ -47,6 +47,8 @@ class ClipboardTrayIcon : public QMainWindow
 
     QMap<int, int> fileToIndex; //mainWindowListId -> fileId
 
+    qint32 maxHistorySize = MAX_HISTORY_SIZE;
+
     void createMenu();
     void connectMainWindow(MainWindow*);
 public:
@@ -54,6 +56,8 @@ public:
     ~ClipboardTrayIcon();
 
     void show();
+    void setMaxHistorySize(const qint32 &value);
+
 signals:
     void stopSharing();
     void settings();
@@ -66,7 +70,7 @@ signals:
     void roomListOpened(RoomsListDialog *);
     void deleteServerSignal();
     void requestFile(int);
-    void settingsAccepted(qint32, QString);
+    void settingsAccepted(qint32, QString, qint32);
 public slots:
     void connectRoom();
     void createRoom();

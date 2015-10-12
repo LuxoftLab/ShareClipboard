@@ -10,6 +10,7 @@
 #define REPEAT 10
 #define UDP_PORT 12345
 #define MAX_FILE_SIZE 50 //in MB
+#define MAX_HISTORY_SIZE 20
 
 enum FloatServerPriority
 {

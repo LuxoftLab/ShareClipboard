@@ -96,6 +96,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::dataPushedToClipboard(QString text, qint32 id) {
     dataIdsVector.prepend(id);
+    qint32 temp = ui->clipboardText->size().height();
+    if(ui->clipboardText->size().height() < maxlistlen)
     ui->clipboardText->insertItem(0, text);
 }
 
@@ -161,8 +163,20 @@ void MainWindow::fillDevicesList(QList<QString> list) {
 
 int MainWindow::insertItem(QString text)
 {
+    qint32 currentListSize = ui->clipboardText->count();
+    if( currentListSize > maxlistlen){
+        for(int i = 0; i < (currentListSize - maxlistlen); ++i){
+            QListWidgetItem * temp = ui->clipboardText->takeItem(i);
+            ui->clipboardText->removeItemWidget(temp);
+        }
+    }
     ui->clipboardText->addItem(text);
     return ui->clipboardText->count()-1;
+}
+
+void MainWindow::changeListLength(qint32 size)
+{
+    this->maxlistlen = size;
 }
 
 void MainWindow::connectRoomListDialog()

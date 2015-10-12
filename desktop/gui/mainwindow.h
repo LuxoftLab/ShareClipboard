@@ -6,8 +6,10 @@
 #include <QCloseEvent>
 #include <QPixmap>
 #include <QVector>
+#include <QMimeData>
 
 #include "gui/roomslistdialog.h"
+#include "constants.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,6 +25,7 @@ public:
     void fillDevicesList(QList<QString> list);
     //void connectRoomListDialog();
     int insertItem(QString);
+    void changeListLength(qint32 size);
 signals:
     void downloadFile();
     void changeName(QString name);
@@ -73,6 +76,7 @@ private:
     void createTrayIcon();
    // bool askForFileDownload(QString fileName);
     bool isServer;
+    qint32 maxlistlen = MAX_HISTORY_SIZE;
 };
 
 #endif // MAINWINDOW_H

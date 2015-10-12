@@ -54,6 +54,12 @@ void ClipboardTrayIcon::createMenu()
     icon->showMessage("SharedClipboard", "is running");
 }
 
+void ClipboardTrayIcon::setMaxHistorySize(const qint32 &value)
+{
+    maxHistorySize = value;
+    mainwindow->changeListLength(value);
+}
+
 void ClipboardTrayIcon::dataPushedToClipboard(QString text, qint32 id) {
     int windowId = mainwindow->insertItem(text);
     fileToIndex.insert(windowId,id);
@@ -160,8 +166,8 @@ void ClipboardTrayIcon::showSettings()
 {
     if(settingsDialog == NULL){
         settingsDialog = new SettingsDialog();
-        connect(settingsDialog, SIGNAL(settingsAccepted(qint32,QString)),
-                this, SIGNAL(settingsAccepted(qint32,QString)));
+        connect(settingsDialog, SIGNAL(settingsAccepted(qint32,QString, qint32)),
+                this, SIGNAL(settingsAccepted(qint32,QString, qint32)));
     }
     settingsDialog->show();
 }
