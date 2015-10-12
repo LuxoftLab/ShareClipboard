@@ -19,6 +19,9 @@ Find the latest stable source in [master]
 Find the latest experimental source in [test]
 Feel free to contact me about any questions
 
+!!! IMPORTANT NOTE !!!
+If you use SC on Windows, please, specify the default dir to save temp files. The directory is /tmp/ per default!
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or

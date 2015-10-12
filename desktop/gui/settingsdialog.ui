@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>324</width>
-    <height>164</height>
+    <width>345</width>
+    <height>176</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,67 +17,36 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Clipboard saving settings</string>
+      <string>File saving settings</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QRadioButton" name="radioButton">
+         <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Save </string>
+           <string>File save path</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="suffix">
-           <string> KB</string>
-          </property>
-          <property name="prefix">
-           <string/>
-          </property>
-          <property name="maximum">
-           <number>1048576</number>
-          </property>
-          <property name="value">
-           <number>1024</number>
-          </property>
-         </widget>
+         <widget class="QLineEdit" name="filePath"/>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QRadioButton" name="radioButton_3">
+         <widget class="QLabel" name="label">
           <property name="text">
-           <string>Save</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
+           <string>Save no more than </string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox_2">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="suffix">
-           <string> item(s)</string>
-          </property>
-          <property name="prefix">
-           <string/>
-          </property>
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="value">
-           <number>10</number>
+         <widget class="QSpinBox" name="maxfilesizespinBox">
+          <property name="specialValueText">
+           <string>500 MB</string>
           </property>
          </widget>
         </item>

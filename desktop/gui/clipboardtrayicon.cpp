@@ -158,7 +158,11 @@ void ClipboardTrayIcon::showAbout()
 
 void ClipboardTrayIcon::showSettings()
 {
-    settingsDialog = new SettingsDialog();
+    if(settingsDialog == NULL){
+        settingsDialog = new SettingsDialog();
+        connect(settingsDialog, SIGNAL(settingsAccepted(qint32,QString)),
+                this, SIGNAL(settingsAccepted(qint32,QString)));
+    }
     settingsDialog->show();
 }
 

@@ -19,7 +19,7 @@
 class Controller : public QObject
 {
     Q_OBJECT
-private:
+
     UDPService* udpService = NULL;
     ServerRoom* serverRoom = NULL;
     ClientRoom* clientRoom = NULL;
@@ -28,6 +28,10 @@ private:
     ClipboardService clipboardService;
     ClipboardTrayIcon * icon;
     bool server;
+    qint32 maxFileSize = MAX_FILE_SIZE;
+    QString defaultFilePath = "/tmp/";
+
+    void connectIconController(ClipboardTrayIcon * icon);
 public:
     Controller(ClipboardTrayIcon * mainWindow);
     //Controller(MainWindow *);
@@ -53,7 +57,8 @@ public slots:
 
     void onRoomsListOpen(RoomsListDialog *roomsDialog);
     void fileNotification(QString, QDateTime, int);
-
+    void applySettings(qint32, QString);
+    void tooBigFile(QString);
 private:
     void initClipboardToGuiConnection();
     void initUDPService();

@@ -2,9 +2,8 @@
 #include "gui/mainwindow.h"
 #include <QDebug>
 
-Controller::Controller(ClipboardTrayIcon * icon) : QObject(0)
+void Controller::connectIconController(ClipboardTrayIcon *icon)
 {
-    this->icon = icon;
     connect(icon, SIGNAL(roomListOpened(RoomsListDialog*)),
             this, SLOT(onRoomsListOpen(RoomsListDialog*)));
     connect(icon, SIGNAL(serverRoomCreated(QString,QString)),
@@ -17,6 +16,14 @@ Controller::Controller(ClipboardTrayIcon * icon) : QObject(0)
             icon, SLOT(stopBeignServer()));
     connect(icon, SIGNAL(toggleSharingSignal()),
             &(this->clipboardService), SLOT(turnSharing()));
+    connect(icon, SIGNAL(settingsAccepted(qint32,QString)),
+            this, SLOT(applySettings(qint32,QString)));
+}
+
+Controller::Controller(ClipboardTrayIcon * icon) : QObject(0)
+{
+    this->icon = icon;
+    connectIconController(icon);
     icon->show();
 
     initClipboardToGuiConnection();
@@ -130,6 +137,20 @@ void Controller::fileNotification(QString fileName, QDateTime stamp, int ind)
     emit hasFileToText(fileName+stamp.date().toString()+stamp.time().toString(),ind);
 }
 
+void Controller::applySettings(qint32 size, QString path)
+{
+    defaultFilePath = path;
+    maxFileSize = size;
+
+    clientRoom->setMaxFileSize(size);
+    clientRoom->setDefaultPath(path);
+}
+
+void Controller::tooBigFile(QString filename)
+{
+    icon->showMessage("Error while file transfer", filename+" is too big. Change your settings");
+}
+
 void Controller::initClipboardToGuiConnection()
 {
     connect(&clipboardService, SIGNAL(hasDataToText(QString, qint32)),
@@ -196,6 +217,8 @@ void Controller::joinRoom(qint32 addr, QString pass)
             clientRoom, SLOT(addFile(QString,QDateTime)));
     connect(icon, SIGNAL(requestFile(int)),
             clientRoom, SLOT(sendrequestFile(int)));
+    connect(clientRoom, SIGNAL(tooBigFile(QString)),
+            this, SLOT(tooBigFile(QString)));
 
 //    connect(icon, SIGNAL(messageClicked()),
 //            clientRoom, SLOT(requestFile()));

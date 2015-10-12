@@ -7,6 +7,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
+    ui->maxfilesizespinBox->setValue(defaultMaxSize/(1024*1024)); // in MB
+    ui->filePath->setText(defaultFilePath);
 }
 
 SettingsDialog::~SettingsDialog()
@@ -16,25 +18,11 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::on_buttonBox_accepted()
 {
-//    qDebug() << "accept";
-//    if(ui->radioButton->isChecked()) {
-//        emit settingsAccepted(true, ui->spinBox->value());
-//    } else {
-//        emit settingsAccepted(false, ui->spinBox_2->value());
-//    }
+    defaultMaxSize = ui->maxfilesizespinBox->value() * 1024 * 1024;
+    defaultFilePath = ui->filePath->text();
+
+    emit settingsAccepted(ui->maxfilesizespinBox->value(), ui->filePath->text());
     this->close();
-}
-
-void SettingsDialog::on_radioButton_3_clicked()
-{
-    ui->spinBox_2->setEnabled(true);
-    ui->spinBox->setDisabled(true);
-}
-
-void SettingsDialog::on_radioButton_clicked()
-{
-    ui->spinBox->setEnabled(true);
-    ui->spinBox_2->setDisabled(true);
 }
 
 void SettingsDialog::on_buttonBox_rejected()

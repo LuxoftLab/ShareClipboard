@@ -21,6 +21,17 @@ void ClientRoom::setPwd(const QString &value)
     pwd = value;
 }
 
+
+void ClientRoom::setMaxFileSize(const qint32 &value)
+{
+    maxFileSize = value * 1024 * 1024;
+}
+
+
+void ClientRoom::setDefaultPath(const QString &value)
+{
+    defaultPath = value;
+}
 FloatServerPriority ClientRoom::device_type()
 {
     return PC;
@@ -30,6 +41,8 @@ ClientRoom::ClientRoom(QString name, QHostAddress host) : Room(name, "")
 {
     this->host = host;
     connection = NULL;
+    maxFileSize = MAX_FILE_SIZE;
+    defaultPath = "/tmp/";
 }
 
 void ClientRoom::connectToHost(QString login, QString pass)
@@ -154,9 +167,10 @@ void ClientRoom::respondWithFile(QString fName, QDateTime stamp)
     if(info.lastModified() != stamp)
         return;
 
-    if(info.size() > MAX_FILE_SIZE)
+    if(info.size() > maxFileSize)
     {
-        qDebug()    << info.size();
+        emit tooBigFile(fName);
+        qDebug() << info.size();
         return;
     }
 
@@ -174,7 +188,7 @@ void ClientRoom::respondWithFile(QString fName, QDateTime stamp)
 void ClientRoom::saveSharedFile(QString fname, QDateTime, QByteArray data)
 {
     QString name = fname.split('/').last();
-    QString prefix = QFileDialog::getOpenFileName(0, tr("Save file from SharedClipboard as"), "/tmp/"+name);
+    QString prefix = QFileDialog::getOpenFileName(0, tr("Save file from SharedClipboard as"), defaultPath+name);
     QFile file(prefix);
     file.open(QIODevice::WriteOnly);
     file.write(data);

@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QAbstractButton>
+#include "constants.h"
 
 namespace Ui {
 class SettingsDialog;
@@ -12,18 +13,18 @@ class SettingsDialog : public QDialog
 {
     Q_OBJECT
 
+    qint32 defaultMaxSize = MAX_FILE_SIZE;
+    QString defaultFilePath = "/tmp/";
 public:
     explicit SettingsDialog(QWidget *parent = 0);
     ~SettingsDialog();
 signals:
-    void settingsAccepted(int, bool);
+    void settingsAccepted(qint32, QString);
 
 private slots:
     void on_buttonBox_accepted();
-    void on_radioButton_3_clicked();
-    void on_radioButton_clicked();
-
     void on_buttonBox_rejected();
+
 
 private:
     Ui::SettingsDialog *ui;

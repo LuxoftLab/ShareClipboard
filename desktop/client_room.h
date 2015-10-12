@@ -36,6 +36,9 @@ class ClientRoom : public Room
     QString login;
     QString pwd;
 
+    qint32 maxFileSize; // in MB
+    QString defaultPath;
+
     FloatServerPriority device_type();
 public:
     ClientRoom(QString name, QHostAddress host);
@@ -48,6 +51,9 @@ public:
 
     QString getPwd() const;
     void setPwd(const QString &value);
+    void setMaxFileSize(const qint32 &value);
+
+    void setDefaultPath(const QString &value);
 
 public slots:
     void addMember(FloatServerPriority, QHostAddress addr);
@@ -68,7 +74,7 @@ signals:
     void gotFileNotification(QString,QDateTime);
     void notificateAboutFile(QString,QDateTime,int);
     void newFloatingServer(QHostAddress);
-
+    void tooBigFile(QString);
 };
 
 #endif // CLIENT_ROOM_H
