@@ -43,6 +43,8 @@ class ClipboardTrayIcon : public QMainWindow
 
     QString sharingOnString;
     QString sharingOffString;
+    QString clientIconPath;
+    QString serverIconPath;
 
     QMap<int, int> fileToIndex; //mainWindowListId -> fileId
 

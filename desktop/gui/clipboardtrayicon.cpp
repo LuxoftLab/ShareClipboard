@@ -52,7 +52,7 @@ void ClipboardTrayIcon::createMenu()
     connect(icon, SIGNAL(messageClicked()),
             this, SIGNAL(messageClicked()));
 
-    icon->setIcon(QIcon(":images/colorful.svg"));
+    icon->setIcon(QIcon(clientIconPath));
     icon->setContextMenu(trayIconMenu);
     icon->showMessage("SharedClipboard", "is running");
 }
@@ -85,6 +85,8 @@ void ClipboardTrayIcon::connectMainWindow(MainWindow * mainWindow)
 
 ClipboardTrayIcon::ClipboardTrayIcon() : QMainWindow()
 {
+    clientIconPath = ":/images/client_icon.svg";
+    serverIconPath = ":/images/server_icon.svg";
     roomDialog = new RoomsListDialog();
     mainwindow = new MainWindow();
     connectMainWindow(mainwindow);
@@ -176,7 +178,7 @@ void ClipboardTrayIcon::toggleSharing()
 
 void ClipboardTrayIcon::becomeServer(QString)
 {
-    icon->setIcon(QIcon(":/images/server.svg"));
+    icon->setIcon(QIcon(serverIconPath));
 
     trayIconMenu->removeAction(createRoomAction);
     deleteServerAction = new QAction(tr("D&elete server"), this);
@@ -187,7 +189,7 @@ void ClipboardTrayIcon::becomeServer(QString)
 
 void ClipboardTrayIcon::stopBeignServer()
 {
-    icon->setIcon(QIcon(":/images/colorful.svg"));
+    icon->setIcon(QIcon(clientIconPath));
 
     trayIconMenu->removeAction(deleteServerAction);
     trayIconMenu->insertAction(connectAction, createRoomAction);
