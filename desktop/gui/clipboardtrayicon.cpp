@@ -26,6 +26,7 @@ void ClipboardTrayIcon::createMenu()
 
     stopSharingAction = new QAction(sharingOffString, this);
     connect(stopSharingAction, SIGNAL(triggered()), this, SLOT(toggleSharing()));
+    stopSharingAction->setCheckable(true);
     trayIconMenu->addAction(stopSharingAction);
 
     trayIconMenu->addSeparator();
