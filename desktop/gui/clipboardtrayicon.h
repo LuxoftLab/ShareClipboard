@@ -36,7 +36,6 @@ class ClipboardTrayIcon : public QMainWindow
     QAction * aboutAction;
     QAction * quitAction;
     QAction * deleteServerAction = NULL;
-    QAction * fileAction;
     QList<QAction*> files;
 
     QMenu * fileMenu = NULL;
@@ -80,8 +79,6 @@ public slots:
     void becomeServer(QString);
     void stopBeignServer();
     void showMessage(QString, QString);
-    void showFileSubMenu();
-    void addFile(QString, QString);
 
     void dataPushedToClipboard(QString text, qint32 id);
     void deleteItemFromList(qint32 id);
