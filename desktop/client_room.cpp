@@ -41,7 +41,7 @@ ClientRoom::ClientRoom(QString name, QHostAddress host) : Room(name, "")
 {
     this->host = host;
     connection = NULL;
-    maxFileSize = MAX_FILE_SIZE;
+    maxFileSize = MAX_FILE_SIZE * 1024 * 1024; // in MB
     defaultPath = "/tmp/";
 }
 
