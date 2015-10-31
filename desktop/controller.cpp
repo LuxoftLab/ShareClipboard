@@ -81,8 +81,15 @@ void Controller::createServerRoom(QString name, QString pass)
     emit serverIsUp(name);
     icon->roomCreated(name);
 
+<<<<<<< HEAD
     addRoom(name, QHostAddress("127.0.0.1"));
     joinRoom(QHostAddress("127.0.0.1").toIPv4Address(), pass);
+=======
+    //addRoom(name, serverRoom->getAddr());
+
+    QString login = "login";
+    //joinRoom(serverRoom->getAddr().toIPv4Address(), pass);
+>>>>>>> origin/interfaces
 }
 
 void Controller::deleteServerRoom()

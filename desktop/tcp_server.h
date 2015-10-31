@@ -14,7 +14,11 @@ class TCPServer : public QTcpServer
 
 public:
     TCPServer();
+<<<<<<< HEAD
     ~TCPServer();
+=======
+    //QHostAddress getLocalAddress();
+>>>>>>> origin/interfaces
 signals:
     void addMember(qintptr);
     void deleteMember(QHostAddress);

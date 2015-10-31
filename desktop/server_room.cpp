@@ -71,6 +71,7 @@ bool ServerRoom::verifyPass(QString pass, FloatServerPriority priority, ClientCo
 
     return true;
 }
+<<<<<<< HEAD
 
 void ServerRoom::onText(QString s, ClientConnection * owner)
 {
@@ -101,6 +102,10 @@ void ServerRoom::onFileNotification(QString fileName, QDateTime stamp, ClientCon
 }
 
 void ServerRoom::onFileRequest(QString fname, QDateTime timeStamp, ClientConnection * const source)
+=======
+/*
+QHostAddress ServerRoom::getAddr()
+>>>>>>> origin/interfaces
 {
     qDebug() << fname;
     FileWaitor next = FileWaitor(SharedFile(fname, timeStamp), source);
@@ -126,12 +131,16 @@ void ServerRoom::onFileResponse(QString fname, QDateTime stamp, QByteArray fileD
         }
     }
 }
+<<<<<<< HEAD
 
 void ServerRoom::getFile(QString fileName)
 {
 //    ClientConnection * source = getFileOwner(fileName);
 //    source->getFile(fileName);
 }
+=======
+*/
+>>>>>>> origin/interfaces
 
 ClientConnection * ServerRoom::getFileOwner(QString fileName, QDateTime stamp)
 {

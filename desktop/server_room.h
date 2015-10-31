@@ -31,6 +31,10 @@ class ServerRoom : public Room
 public:
     ServerRoom(QString name, QString pass);
     ~ServerRoom();
+<<<<<<< HEAD
+=======
+    //QHostAddress getAddr();
+>>>>>>> origin/interfaces
 public slots:
     void addMember(qintptr socketDescriptor);
     void deleteMember(QHostAddress addr);
