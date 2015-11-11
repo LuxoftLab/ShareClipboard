@@ -14,5 +14,12 @@ struct SharedFile
     QDateTime lastChange;
 };
 
+#include <QTcpSocket>
+struct RoomMember
+{
+    QString login;
+    QTcpSocket * socket;
+};
+
 #endif // PORTS_H
 

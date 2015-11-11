@@ -22,7 +22,6 @@ class TcpService : public QObject
     QTcpSocket * ownSocket = NULL;
     QTcpServer * ownServer = NULL;
     QSharedPointer<Encoder> encoder;
-    QList<QTcpSocket *> roomMembers;
 
 public:
     explicit TcpService(QObject *parent = 0);

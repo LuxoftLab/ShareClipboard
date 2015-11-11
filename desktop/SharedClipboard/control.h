@@ -8,7 +8,8 @@
 
 #include "udpservice.h"
 #include "tcpservice.h"
-#include "shared_clipboard_exception.h"
+#include "shared_clipboard_exception.h" //###
+
 
 
 class Control : public QObject
@@ -18,13 +19,11 @@ class Control : public QObject
     QSharedPointer<UdpService> udpService;
     QSharedPointer<TcpService> tcpService;
 
-    QHostAddress roomHead;
+    QList<RoomMember> roomMembers;
+
     QString login;
 public:
-    explicit Control(QString login, QObject *parent = 0) throw(WrongPasswordError);
-
-    void createRoom();
-    void joinRoom();
+    explicit Control(QString & login, QObject *parent = 0);
 
 signals:
 

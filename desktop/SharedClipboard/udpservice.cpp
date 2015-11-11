@@ -5,9 +5,17 @@ UdpService::UdpService(QObject *parent) : QObject(parent)
 
 }
 
-QHostAddress UdpService::requestRoom()
+void UdpService::iAmAlive()
 {
-    // temporary
-    return QHostAddress("127.0.0.1");
+
 }
 
+void UdpService::read()
+{
+
+}
+
+void UdpService::run()
+{
+    this->read();
+}

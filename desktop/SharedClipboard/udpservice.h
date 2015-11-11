@@ -3,17 +3,18 @@
 
 #include <QObject>
 #include <QUdpSocket>
+#include <QHash>
 
-class UdpService : public QObject
+class UdpService : public QThread
 {
     Q_OBJECT
 public:
     explicit UdpService(QObject *parent = 0);
-    QHostAddress requestRoom();
-    QList<QHostAddress> requestMembers();
-    ////////////////////////////////////////
-    void respondRoom();
-    void respondMembers();
+    void iAmAlive(); // login, room, ip-address
+    void read();
+
+    void run();
+
 signals:
 
 public slots:

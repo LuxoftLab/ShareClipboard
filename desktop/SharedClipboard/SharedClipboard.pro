@@ -8,9 +8,11 @@ SOURCES += main.cpp \
     tcpservice.cpp \
     control.cpp \
     clipboardservice.cpp \
-    fileservice.cpp
+    fileservice.cpp \
+    common.cpp \
+    sessionmanager.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += GUI/qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -27,6 +29,7 @@ HEADERS += \
     shared_clipboard_exception.h \
     clipboardservice.h \
     fileservice.h \
-    common.h
+    common.h \
+    sessionmanager.h
 
-CONFIG += c++11
+CONFIG += c++14

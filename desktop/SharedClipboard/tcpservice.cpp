@@ -37,9 +37,9 @@ void TcpService::authenticate(QString login)
 
 void TcpService::sendData(TcpPackage type, QByteArray & data)
 {
-    for(auto memberit = roomMembers.begin(); memberit != roomMembers.end(); ++memberit){
-        write(type, data, *memberit);
-    }
+//    for(auto memberit = roomMembers.begin(); memberit != roomMembers.end(); ++memberit){
+//        write(type, data, *memberit);
+//    }
 }
 
 void TcpService::addRoomMembers(QList<QHostAddress>)
@@ -68,13 +68,13 @@ void TcpService::write(TcpPackage type, QByteArray & data, QTcpSocket * dest)
 void TcpService::registerConnection()
 {
     QTcpSocket * nextConnection = ownServer->nextPendingConnection();
-    if(!roomMembers.contains(nextConnection)){
-        roomMembers.append(nextConnection);
-        connect(nextConnection, &QTcpSocket::readyRead,
-                this, &TcpService::read);
+//    if(!roomMembers.contains(nextConnection)){
+//        roomMembers.append(nextConnection);
+//        connect(nextConnection, &QTcpSocket::readyRead,
+//                this, &TcpService::read);
 //        connect(nextConnection, &QTcpSocket::disconnected,
 //                [=](){ if(!roomMembers.removeOne(qobject_cast<QTcpSocket*>(QObject::sender()))) throw 4; }); //###
-    }
+//    }
 }
 
 //void TcpService::removeMember()
