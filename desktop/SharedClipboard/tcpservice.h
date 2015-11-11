@@ -9,7 +9,7 @@
 #include <QDataStream>
 #include <QList>
 #include <QSharedPointer>
-
+#include <QThread>
 
 #include "tcppackages.h"
 #include "common.h"

@@ -6,8 +6,12 @@ Control::Control(QString & value, QObject *parent) : QObject(parent)
     udpService = QSharedPointer<UdpService>(new UdpService());
     // start sniffing for other members over udp
     udpService->run();
-    tcpService = QSharedPointer<TcpService>(new TcpService());
 
+    checkAlivesTimer = new QTimer(this);
+    connect(checkAlivesTimer, &QTimer::timeout, this, &Control::checkAlives);
+    checkAlivesTimer->start(CHECK_ALIVE_TIMEOUT_MSEC);
+
+    tcpService = QSharedPointer<TcpService>(new TcpService());
     tcpService->createServer();
 }
 

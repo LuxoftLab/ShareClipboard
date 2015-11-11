@@ -1,6 +1,6 @@
 #include "udpservice.h"
 
-UdpService::UdpService(QObject *parent) : QObject(parent)
+UdpService::UdpService(QObject *parent)
 {
 
 }
@@ -18,4 +18,5 @@ void UdpService::read()
 void UdpService::run()
 {
     this->read();
+
 }

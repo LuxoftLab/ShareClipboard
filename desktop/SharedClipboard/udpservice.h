@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QUdpSocket>
 #include <QHash>
+#include <QThread>
 
 class UdpService : public QThread
 {
@@ -13,10 +14,10 @@ public:
     void iAmAlive(); // login, room, ip-address
     void read();
 
-    void run();
+    void run() override;
 
 signals:
-
+    void newMember(QString login, QHostAddress addr);
 public slots:
 private:
 
