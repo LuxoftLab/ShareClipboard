@@ -29,6 +29,7 @@ signals:
 
 public slots:
     void sendData(TcpPackage, QByteArray&);
+    void reveiveData(TcpPackage, QByteArray&);
 
     void addMember(QString,QHostAddress);
     void checkAlives();

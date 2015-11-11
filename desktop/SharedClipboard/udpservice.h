@@ -9,6 +9,8 @@
 class UdpService : public QThread
 {
     Q_OBJECT
+
+    QUdpSocket * socket;
 public:
     explicit UdpService(QObject *parent = 0);
     void iAmAlive(); // login, room, ip-address
