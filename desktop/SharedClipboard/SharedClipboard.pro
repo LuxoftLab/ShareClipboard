@@ -10,7 +10,8 @@ SOURCES += main.cpp \
     clipboardservice.cpp \
     fileservice.cpp \
     common.cpp \
-    sessionmanager.cpp
+    sessionmanager.cpp \
+    udppackage.cpp
 
 RESOURCES += GUI/qml.qrc
 
@@ -30,6 +31,7 @@ HEADERS += \
     clipboardservice.h \
     fileservice.h \
     common.h \
-    sessionmanager.h
+    sessionmanager.h \
+    udppackage.h
 
 CONFIG += c++14

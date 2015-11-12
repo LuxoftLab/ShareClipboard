@@ -3,7 +3,8 @@
 Control::Control(QString & value, QObject *parent) : QObject(parent)
 {
     login = value;
-    udpService = QSharedPointer<UdpService>(new UdpService(this));
+    udpService = QSharedPointer<UdpService>(new UdpService(login, this));
+
     // start sniffing for other members over udp
     udpService->start();
 
