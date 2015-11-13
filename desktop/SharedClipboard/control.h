@@ -5,11 +5,13 @@
 #include <QNetworkInterface>
 #include <QByteArray>
 #include <QTimer>
+#include <QList>
 
 
 #include "udpservice.h"
 #include "tcpservice.h"
 #include "shared_clipboard_exception.h" //###
+
 
 class Control : public QObject
 {
@@ -19,8 +21,10 @@ class Control : public QObject
     QSharedPointer<TcpService> tcpService;
 
     QList<RoomMember> roomMembers;
+    QList<QString> roomsNames;
 
     QString login;
+    QString ownRoomName;
     QTimer * checkAlivesTimer;
 public:
     explicit Control(QString & login, QObject *parent = 0);

@@ -16,11 +16,14 @@ UdpService::UdpService(QString login, QObject *parent)
 
 void UdpService::iAmAlive()
 {
-    //refactor into package
-    QByteArray broadcast;
-    QDataStream out(&broadcast, QIODevice::WriteOnly);
     QNetworkInterface * networkInterface = new QNetworkInterface();
     QList<QHostAddress> ownAddressList = networkInterface->allAddresses();
+
+//    AlivePackage pack = AlivePackage(login, roomName, ownAddressList);
+//    pack.write(socket);
+
+    QByteArray broadcast;
+    QDataStream out(&broadcast, QIODevice::WriteOnly);
 
     // login.size-login-roomName.size-roomName-hostAddress.count-hostAddress.asInt
     out << login.toUtf8().size();
@@ -37,12 +40,32 @@ void UdpService::iAmAlive()
 
 void UdpService::read()
 {
+    QByteArray datagram;
+    QDataStream in(&datagram, QIODevice::ReadOnly);
+    qint32 lsize;
+    qint32 rsize;
+    qint32 hostAdressesCount;
+    QList<QHostAddress> addrlist;
     while (socket->hasPendingDatagrams()) {
-            QByteArray datagram;
-            datagram.resize(socket->pendingDatagramSize());
-            socket->readDatagram(datagram.data(), datagram.size());
-            qDebug() << datagram;
+        addrlist.clear();
+        datagram.clear();
+        datagram.resize(socket->pendingDatagramSize());
+        socket->readDatagram(datagram.data(), datagram.size());
+        in >> lsize;
+        char * login = new char[lsize];
+        in.readRawData(login, lsize);
+        in >> rsize;
+        char * roomName = new char[rsize];
+        in.readRawData(roomName, rsize);
+        in >> hostAdressesCount;
+        for(int i = 0; i < hostAdressesCount; ++i){
+            qint32 tempaddr;
+            in >> tempaddr;
+            addrlist.append(QHostAddress(tempaddr));
         }
+        emit newMember(QString(login), QString(roomName), addrlist);
+    }
+
 }
 
 void UdpService::run()

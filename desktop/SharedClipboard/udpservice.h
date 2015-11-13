@@ -12,6 +12,7 @@
 
 
 #include "common.h"
+#include "udppackage.h"
 
 class UdpService : public QThread
 {
@@ -28,7 +29,7 @@ public:
     void run() override;
 
 signals:
-    void newMember(QString login, QHostAddress addr);
+    void newMember(QString login, QString room, QList<QHostAddress> addrs);
 public slots:
     void read();
 private:
