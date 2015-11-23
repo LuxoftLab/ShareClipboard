@@ -1,5 +1,10 @@
 #include "roomservice.h"
 
+
+QList<RoomMember> RoomService::getRoomMembers() const
+{
+    return roomMembers;
+}
 RoomService::RoomService(QString & value, QObject *parent) : QObject(parent)
 {
     login = value;
@@ -12,16 +17,6 @@ RoomService::RoomService(QString & value, QObject *parent) : QObject(parent)
 QList<QString> RoomService::getRooms()
 {
     return roomsNames;
-}
-
-void RoomService::sendData(TcpPackage type, QByteArray & data)
-{
-    tcpService->sendData(type, data);
-}
-
-void RoomService::reveiveData(TcpPackage, QByteArray &)
-{
-
 }
 
 void RoomService::addMember(QString l, QString r, QList<QHostAddress> addrl)
@@ -39,7 +34,9 @@ void RoomService::addMember(QString l, QString r, QList<QHostAddress> addrl)
             RoomMember present = roomMembers.at(candidate_index);
             roomMembers.removeAt(candidate_index);
             present.alive = true;
-            present.packs_count++;
+            if(present.packs_count < 200){
+                present.packs_count++;
+            }
             roomMembers.append(present);
         } else {
             roomMembers.append(RoomMember(l, addrl, true, 0));
@@ -54,7 +51,7 @@ void RoomService::checkAlives()
             member.alive = false;
         }
     }
-
+    emit refreshMembers(this->roomMembers);
 }
 
 void RoomService::setRoom(QString & value)

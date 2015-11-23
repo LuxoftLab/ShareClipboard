@@ -5,14 +5,15 @@ EncryptionService::EncryptionService(QString & value)
     key = value;
 }
 
-QByteArray EncryptionService::encode(QByteArray & data)
+void EncryptionService::encode(QByteArray & data)
 {
     qDebug() << "encoded with " << key;
-    return data;
+    emit encoded(data);
 }
 
-QByteArray EncryptionService::decode(QByteArray & data)
+void EncryptionService::decode(QByteArray & data)
 {
     qDebug() << "encoded with " << key;
-    return data;
+    emit decoded(data);
+    //return data;
 }

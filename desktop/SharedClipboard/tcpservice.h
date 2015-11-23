@@ -19,37 +19,27 @@ class TcpService : public QObject
 {
     Q_OBJECT
 
-    QTcpSocket * ownSocket = NULL;
     QTcpServer * ownServer = NULL;
-    QSharedPointer<EncryptionService> encoder;
+    QList<RoomMember> roomMembers;
+    QList<QTcpSocket*> roomSockets; // came over udp, to send to
+    QList<QTcpSocket*> connectedSockets; // connected to my server, to receive from
+    QList<QTcpSocket*> fileSockets; // to send files
 
 public:
     explicit TcpService(QObject *parent = 0);
 
     void createServer();
 
-    void connectSocket(QHostAddress dest);
-    void authenticate(QString);
+    void connectSocket(QTcpSocket*, QHostAddress dest);
     void addRoomMembers(QList<QHostAddress>);
-    ////////////////////////////////////////
 
-    void sendAuthAnswer();
-
-    ////////////////////////////////////////
-    void sendData(TcpPackage, QByteArray&);
-
-signals:
+    void send(QByteArray&);
 
 public slots:
-
+    void setRoomMembers(QList<RoomMember>);
 private slots:
     void read();
     void registerConnection();
-//    void removeMember();
-
-private:
-    void write(TcpPackage type, QByteArray & data, QTcpSocket *);
-
 };
 
 #endif // TCPSERVICE_H

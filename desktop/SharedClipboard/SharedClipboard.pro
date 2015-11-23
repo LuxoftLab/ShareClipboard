@@ -11,7 +11,8 @@ SOURCES += main.cpp \
     sessionmanager.cpp \
     udppackage.cpp \
     roomservice.cpp \
-    encryptionservice.cpp
+    encryptionservice.cpp \
+    tcpthreadedsender.cpp
 
 RESOURCES += GUI/qml.qrc
 
@@ -32,6 +33,7 @@ HEADERS += \
     sessionmanager.h \
     udppackage.h \
     roomservice.h \
-    encryptionservice.h
+    encryptionservice.h \
+    tcpthreadedsender.h
 
 CONFIG += c++14

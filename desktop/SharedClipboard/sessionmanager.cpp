@@ -78,11 +78,18 @@ void SessionManager::startSession(QSharedPointer<RoomService> &roomService,
     udpService->start();
 
     tcpService = QSharedPointer<TcpService>(new TcpService());
+
+    QObject::connect(roomService.data(), &RoomService::refreshMembers,
+                     tcpService.data(), &TcpService::setRoomMembers);
     tcpService->createServer();
 
     encService = QSharedPointer<EncryptionService>(new EncryptionService(pass));
     clipboardService = QSharedPointer<ClipboardService>(new ClipboardService());
-    QObject::connect(clipboardService.data(), &ClipboardService::clipboardChanged)
+    QObject::connect(clipboardService.data(), &ClipboardService::clipboardChanged,
+                     encService.data(), &EncryptionService::encode);
+
+    QObject::connect(encService.data(), &EncryptionService::encoded,
+                     tcpService.data(), &TcpService::send);
 }
 
 

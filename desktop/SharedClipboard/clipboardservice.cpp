@@ -8,7 +8,7 @@ ClipboardService::ClipboardService(QObject *parent) : QObject(parent)
 
 ClipboardService::~ClipboardService()
 {
-    delete clipboard;
+
 }
 
 void ClipboardService::updateClipboard(TcpPackage type, QByteArray &data)
@@ -18,5 +18,6 @@ void ClipboardService::updateClipboard(TcpPackage type, QByteArray &data)
 
 void ClipboardService::getClipboardData()
 {
-
+    QByteArray * temp = new QByteArray("azaza temp bytearray", 21);
+    emit clipboardChanged(*temp);
 }

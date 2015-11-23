@@ -2,9 +2,6 @@
 
 TcpService::TcpService(QObject *parent) : QObject(parent)
 {
-    ownSocket = new QTcpSocket(this);
-    QString key = "aaaaa"; // ###
-    encoder = QSharedPointer<EncryptionService>(new EncryptionService(key));
 }
 
 void TcpService::createServer()
@@ -17,91 +14,67 @@ void TcpService::createServer()
             this, SLOT(registerConnection()));
 }
 
-void TcpService::connectSocket(QHostAddress dest)
+void TcpService::connectSocket(QTcpSocket * socket, QHostAddress dest)
 {
-    ownSocket->connectToHost(dest, TCP_PORT);
-    ownSocket->waitForConnected(WAIT_FOR_CONN_TIME_MSEC);
+    socket->connectToHost(dest, TCP_PORT);
+    socket->waitForConnected(WAIT_FOR_CONN_TIME_MSEC);
 
-    if(ownSocket->state() == QAbstractSocket::UnconnectedState)
+    if(socket->state() == QAbstractSocket::UnconnectedState)
         throw 3; //###
-
-    connect(ownSocket, &QTcpSocket::readyRead,
-            this, &TcpService::read);
 }
 
-void TcpService::authenticate(QString login)
+void TcpService::send(QByteArray & data)
 {
-    QByteArray temp = login.toUtf8(); //WTF??
-    this->write(AUTH, temp, ownSocket);
-}
-
-void TcpService::sendData(TcpPackage type, QByteArray & data)
-{
-//    for(auto memberit = roomMembers.begin(); memberit != roomMembers.end(); ++memberit){
-//        write(type, data, *memberit);
-//    }
-}
-
-void TcpService::addRoomMembers(QList<QHostAddress>)
-{
-    //connect to each qhostaddress and add sockets to list
-}
-
-void TcpService::write(TcpPackage type, QByteArray & data, QTcpSocket * dest)
-{
-    QByteArray temp;
-    QDataStream out(&temp, QIODevice::WriteOnly);
-    qint32 size_all = 0;
-
-    out << (qint32)type << (qint32)data.size();
-    size_all += sizeof(qint32) + sizeof(qint32);
-    out.writeRawData(data.constData(), data.size());
-    size_all += data.size();
-
-    if(dest->write(encoder->encode(temp)) < size_all){
-        throw 5;
-        //###
+    for(auto socket : roomSockets){
+        if(socket->write(data) < data.size()){
+            throw 22;
+        }
     }
 
 }
 
+void TcpService::setRoomMembers(QList<RoomMember> value)
+{
+    for(auto member: value){
+        if(!roomMembers.contains(member)){
+            addRoomMembers(member.addresses);
+            roomMembers.append(member);
+        }
+    }
+}
+
+// Rooms Sockets
+void TcpService::addRoomMembers(QList<QHostAddress> addressList)
+{
+    QTcpSocket * socket = new QTcpSocket(this);
+    for(auto address : addressList){
+        this->connectSocket(socket, address);
+    }
+    this->roomSockets.append(socket);
+    connect(socket, &QTcpSocket::disconnected, [=](){
+       if(!this->roomSockets.removeOne(socket)){
+           throw 23; //###
+       }
+    });
+}
+
+// Connected Sockets
 void TcpService::registerConnection()
 {
     QTcpSocket * nextConnection = ownServer->nextPendingConnection();
-//    if(!roomMembers.contains(nextConnection)){
-//        roomMembers.append(nextConnection);
-//        connect(nextConnection, &QTcpSocket::readyRead,
-//                this, &TcpService::read);
-//        connect(nextConnection, &QTcpSocket::disconnected,
-//                [=](){ if(!roomMembers.removeOne(qobject_cast<QTcpSocket*>(QObject::sender()))) throw 4; }); //###
-//    }
+    if(!connectedSockets.contains(nextConnection)){
+        connectedSockets.append(nextConnection);
+        connect(nextConnection, &QTcpSocket::readyRead,
+                this, &TcpService::read);
+        connect(nextConnection, &QTcpSocket::disconnected,
+                [=](){ if(!connectedSockets.removeOne(nextConnection)) throw 4; }); // ###
+    }
 }
-
-//void TcpService::removeMember()
-//{
-
-//}
 
 void TcpService::read()
 {
-    QByteArray temp;
-    QDataStream in(&temp, QIODevice::ReadOnly);
-
-    while(ownSocket->bytesAvailable() > 0){
-        temp.append(ownSocket->readAll());
-    }
-
-    if(temp.size() > 0){
-        temp = encoder->decode(temp);
-
-        qint32 packageType;
-        in >> packageType;
-        qint32 size;
-        in >> size;
-        char * name = new char[size];
-        in >> name;
-
-        qDebug() << (TcpPackage)packageType << size << name;
-        delete[] name;
-    }
+    QByteArray data;
+    QTcpSocket * sender = dynamic_cast<QTcpSocket*>(QObject::sender());
+    data = sender->readAll();
+    qDebug() << "done";
 }

@@ -7,7 +7,7 @@
 #define WAIT_FOR_CONN_TIME_MSEC 5000
 
 // for room service
-#define CHECK_ALIVE_TIMEOUT_MSEC 10000
+#define CHECK_ALIVE_TIMEOUT_MSEC 5000
 
 // min n packages not to remove member from alives
 #define MIN_RESP_COUNT 2
@@ -42,6 +42,14 @@ struct RoomMember
     bool operator==(RoomMember const & other)
     {
         return this->login == other.login && this->addresses == other.addresses;
+    }
+
+    RoomMember(RoomMember const & other)
+    {
+        this->addresses = other.addresses;
+        this->alive = other.alive;
+        this->login = other.login;
+        this->packs_count = other.packs_count;
     }
 };
 

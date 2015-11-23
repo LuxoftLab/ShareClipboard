@@ -3,16 +3,28 @@
 
 #include <QByteArray>
 #include <QString>
+#include <QObject>
 
 #include <QDebug>
 
-class EncryptionService
+
+#include "common.h"
+
+class EncryptionService : public QObject
 {
+    Q_OBJECT
+
     QString key;
 public:
     EncryptionService(QString&);
-    QByteArray encode(QByteArray&);
-    QByteArray decode(QByteArray&);
+    void encode(QByteArray&);
+    void decode(QByteArray&);
+
+    void encodeFile(QString &, SharedFile & sf);
+    void decodeFile();
+signals:
+    void decoded(QByteArray &);
+    void encoded(QByteArray &);
 };
 
 #endif // ENCODER_H

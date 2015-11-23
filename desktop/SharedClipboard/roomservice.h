@@ -29,12 +29,12 @@ class RoomService : public QObject
 public:
     explicit RoomService(QString & login, QObject *parent = 0);
     QList<QString> getRooms();
+    QList<RoomMember> getRoomMembers() const;
+
 signals:
+    void refreshMembers(QList<RoomMember>);
 
 public slots:
-    void sendData(TcpPackage, QByteArray&);
-    void reveiveData(TcpPackage, QByteArray&);
-
     void addMember(QString login, QString room, QList<QHostAddress> ip);
     void checkAlives();
     void setRoom(QString &);
