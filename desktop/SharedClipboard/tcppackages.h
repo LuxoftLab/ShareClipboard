@@ -1,19 +1,13 @@
 #ifndef TCPPACKAGES
 #define TCPPACKAGES
 
-enum TcpPackage
+enum class TcpPackage : char
 {
-    // Request packages
-     AUTH,
-
-    // Respond packages
-    AUTH_SUCC,
-    AUTH_FAIL,
-
-    //Data packages
     TXT,
     PNG,
-    FIL
+    FILE_NOTIF,
+    FILE_REQ,
+    FILE_RESP,
 };
 
 

@@ -4,14 +4,14 @@ QT += qml quick widgets network
 
 SOURCES += main.cpp \
     udpservice.cpp \
-    encoder.cpp \
     tcpservice.cpp \
     clipboardservice.cpp \
     fileservice.cpp \
     common.cpp \
     sessionmanager.cpp \
     udppackage.cpp \
-    roomservice.cpp
+    roomservice.cpp \
+    encryptionservice.cpp
 
 RESOURCES += GUI/qml.qrc
 
@@ -23,7 +23,6 @@ include(deployment.pri)
 
 HEADERS += \
     udpservice.h \
-    encoder.h \
     tcpservice.h \
     tcppackages.h \
     shared_clipboard_exception.h \
@@ -32,6 +31,7 @@ HEADERS += \
     common.h \
     sessionmanager.h \
     udppackage.h \
-    roomservice.h
+    roomservice.h \
+    encryptionservice.h
 
 CONFIG += c++14

@@ -14,7 +14,7 @@ public:
     explicit ClipboardService(QObject *parent = 0);
 
 signals:
-    void clipboardChanged(TcpPackage type, QByteArray & data);
+    void clipboardChanged(QByteArray & data);
 
 public slots:
     void updateClipboard(TcpPackage type, QByteArray & data);

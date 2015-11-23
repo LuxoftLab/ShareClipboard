@@ -36,6 +36,11 @@ QString SessionManager::getLogin(QFile source)
     return nullptr;
 }
 
+SessionManager * SessionManager::getInstance()
+{
+    return new SessionManager();
+}
+
 bool SessionManager::sessionActive()
 {
     if(idFileExists() && idFileOpenedForWriting())
@@ -48,6 +53,36 @@ bool SessionManager::sessionInterrupted()
     if(idFileExists() && !idFileOpenedForWriting())
         return true;
     return false;
+}
+
+void SessionManager::startSession(QSharedPointer<RoomService> &roomService,
+                                  QSharedPointer<UdpService> &udpService,
+                                  QSharedPointer<TcpService> &tcpService,
+                                  QSharedPointer<ClipboardService> &clipboardService,
+                                  QSharedPointer<FileService> &fileService,
+                                  QSharedPointer<EncryptionService> &encService)
+{
+    QString testLogin = "testlogin_adsfhallsfj;a";
+    roomService = QSharedPointer<RoomService>(new RoomService(testLogin, NULL));
+    QList<QString> room_list = roomService->getRooms();
+    QString room = "room test name";
+    QString pass = "test pass abcd";
+    roomService->setRoom(room);
+
+    udpService = QSharedPointer<UdpService>(new UdpService(testLogin, NULL));
+    udpService->setRoomName(room);
+    QObject::connect(udpService.data(), &UdpService::newMember,
+         roomService.data(), &RoomService::addMember);
+
+    // start sniffing for other members over udp
+    udpService->start();
+
+    tcpService = QSharedPointer<TcpService>(new TcpService());
+    tcpService->createServer();
+
+    encService = QSharedPointer<EncryptionService>(new EncryptionService(pass));
+    clipboardService = QSharedPointer<ClipboardService>(new ClipboardService());
+    QObject::connect(clipboardService.data(), &ClipboardService::clipboardChanged)
 }
 
 

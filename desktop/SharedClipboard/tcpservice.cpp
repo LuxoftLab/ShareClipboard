@@ -4,7 +4,7 @@ TcpService::TcpService(QObject *parent) : QObject(parent)
 {
     ownSocket = new QTcpSocket(this);
     QString key = "aaaaa"; // ###
-    encoder = QSharedPointer<Encoder>(new Encoder(key));
+    encoder = QSharedPointer<EncryptionService>(new EncryptionService(key));
 }
 
 void TcpService::createServer()

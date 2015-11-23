@@ -6,11 +6,11 @@
 
 #include <QDebug>
 
-class Encoder
+class EncryptionService
 {
     QString key;
 public:
-    Encoder(QString&);
+    EncryptionService(QString&);
     QByteArray encode(QByteArray&);
     QByteArray decode(QByteArray&);
 };

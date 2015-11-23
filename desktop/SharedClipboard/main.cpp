@@ -3,10 +3,7 @@
 #include <QSharedPointer>
 #include <QTemporaryDir>
 
-#include "roomservice.h"
 #include "sessionmanager.h"
-#include "clipboardservice.h"
-#include "fileservice.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,29 +17,21 @@ int main(int argc, char *argv[])
    QSharedPointer<TcpService> tcpService;
    QSharedPointer<ClipboardService> clipboardService;
    QSharedPointer<FileService> fileService;
+   QSharedPointer<EncryptionService> encService;
+   QSharedPointer<SessionManager> sessionManager;
 
    if(SessionManager::sessionActive()){
        return 0;
    } else if(SessionManager::sessionInterrupted()){
        return app.exec();
-   }else{ // start session
-       QString testLogin = "testlogin_adsfhallsfj;a";
-       roomService = QSharedPointer<RoomService>(new RoomService(testLogin, NULL));
-       QList<QString> room_list = roomService->getRooms();
-       QString room = "room test name";
-       roomService->setRoom(room);
-
-       udpService = QSharedPointer<UdpService>(new UdpService(testLogin, NULL));
-       udpService->setRoomName(room);
-       QObject::connect(udpService.data(), &UdpService::newMember,
-            roomService.data(), &RoomService::addMember);
-
-       // start sniffing for other members over udp
-       udpService->start();
-
-       tcpService = QSharedPointer<TcpService>(new TcpService());
-       tcpService->createServer();
-
+   }else{
+        sessionManager = QSharedPointer<SessionManager>(SessionManager::getInstance());
+        sessionManager->startSession(roomService,
+                                     udpService,
+                                     tcpService,
+                                     clipboardService,
+                                     fileService,
+                                     encService);
        return app.exec();
    }
 }

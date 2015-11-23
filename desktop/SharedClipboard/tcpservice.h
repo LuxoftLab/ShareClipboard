@@ -13,7 +13,7 @@
 
 #include "tcppackages.h"
 #include "common.h"
-#include "encoder.h"
+#include "encryptionservice.h"
 
 class TcpService : public QObject
 {
@@ -21,7 +21,7 @@ class TcpService : public QObject
 
     QTcpSocket * ownSocket = NULL;
     QTcpServer * ownServer = NULL;
-    QSharedPointer<Encoder> encoder;
+    QSharedPointer<EncryptionService> encoder;
 
 public:
     explicit TcpService(QObject *parent = 0);
