@@ -13,7 +13,7 @@
 #include "shared_clipboard_exception.h" //###
 
 
-class Control : public QObject
+class RoomService : public QObject
 {
     Q_OBJECT
 
@@ -27,16 +27,17 @@ class Control : public QObject
     QString ownRoomName;
     QTimer * checkAlivesTimer;
 public:
-    explicit Control(QString & login, QObject *parent = 0);
-
+    explicit RoomService(QString & login, QObject *parent = 0);
+    QList<QString> getRooms();
 signals:
 
 public slots:
     void sendData(TcpPackage, QByteArray&);
     void reveiveData(TcpPackage, QByteArray&);
 
-    void addMember(QString,QHostAddress);
+    void addMember(QString login, QString room, QList<QHostAddress> ip);
     void checkAlives();
+    void setRoom(QString &);
 };
 
 #endif // CONTROL_H

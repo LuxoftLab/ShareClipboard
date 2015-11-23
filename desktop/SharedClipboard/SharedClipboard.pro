@@ -6,12 +6,12 @@ SOURCES += main.cpp \
     udpservice.cpp \
     encoder.cpp \
     tcpservice.cpp \
-    control.cpp \
     clipboardservice.cpp \
     fileservice.cpp \
     common.cpp \
     sessionmanager.cpp \
-    udppackage.cpp
+    udppackage.cpp \
+    roomservice.cpp
 
 RESOURCES += GUI/qml.qrc
 
@@ -26,12 +26,12 @@ HEADERS += \
     encoder.h \
     tcpservice.h \
     tcppackages.h \
-    control.h \
     shared_clipboard_exception.h \
     clipboardservice.h \
     fileservice.h \
     common.h \
     sessionmanager.h \
-    udppackage.h
+    udppackage.h \
+    roomservice.h
 
 CONFIG += c++14

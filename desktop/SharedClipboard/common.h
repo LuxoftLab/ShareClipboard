@@ -6,11 +6,11 @@
 
 #define WAIT_FOR_CONN_TIME_MSEC 5000
 
-// for controller
-#define CHECK_ALIVE_TIMEOUT_MSEC 1000
+// for room service
+#define CHECK_ALIVE_TIMEOUT_MSEC 10000
 
 // min n packages not to remove member from alives
-#define MIN_RESP_COUNT 5
+#define MIN_RESP_COUNT 2
 
 // for udpService
 #define SEND_ALIVE_TIMEOUT_MSEC 500

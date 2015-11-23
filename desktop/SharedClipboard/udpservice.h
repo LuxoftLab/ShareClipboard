@@ -25,6 +25,7 @@ class UdpService : public QThread
 public:
     explicit UdpService(QString login, QObject *parent = 0);
     void iAmAlive(); // login, room, ip-address
+    void setRoomName(QString & value);
 
     void run() override;
 

@@ -38,6 +38,11 @@ void UdpService::iAmAlive()
     socket->writeDatagram(broadcast, broadcast.size(), QHostAddress::Broadcast, UDP_PORT);
 }
 
+void UdpService::setRoomName(QString &value)
+{
+    this->roomName = value;
+}
+
 void UdpService::read()
 {
     QByteArray datagram;
