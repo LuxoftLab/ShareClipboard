@@ -5,6 +5,7 @@
 #include <QClipboard>
 #include <QApplication>
 #include <QByteArray>
+#include <QMimeData>
 
 
 #include "tcppackages.h"

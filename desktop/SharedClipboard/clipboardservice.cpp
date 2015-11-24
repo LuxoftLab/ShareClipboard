@@ -18,6 +18,8 @@ void ClipboardService::updateClipboard(TcpPackage type, QByteArray &data)
 
 void ClipboardService::getClipboardData()
 {
-    QByteArray * temp = new QByteArray("azaza temp bytearray", 21);
+    QMimeData const * data = clipboard->mimeData();
+    QString text = data->text();
+    QByteArray * temp = new QByteArray(text.toUtf8().constData(), text.size());
     emit clipboardChanged(*temp);
 }
