@@ -1,4 +1,4 @@
-# ShareClipboard
+# SharedClipboard
 ShareClibpoard helps you to copy&paste stuff over local network.
 
 Current features:
@@ -18,6 +18,9 @@ Will be available soon
 Find the latest stable source in [master]
 Find the latest experimental source in [test]
 Feel free to contact me about any questions
+
+Dependencies
+* python-dev
 
 !!! IMPORTANT NOTE !!!
 If you use SC on Windows, please, specify the default dir to save temp files. The directory is /tmp/ per default!
