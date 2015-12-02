@@ -6,24 +6,26 @@ ClipboardService::ClipboardService(QObject *parent) : QObject(parent)
     connect(clipboard, &QClipboard::dataChanged,this, &ClipboardService::getClipboardData);
 }
 
-ClipboardService::~ClipboardService()
-{
-
-}
+ClipboardService::~ClipboardService(){}
 
 void ClipboardService::updateClipboard(TcpPackage type, QByteArray &data)
 {
-    if(type == TcpPackage::TXT){
-        clipboard->setText(QString(data));
-    } else if(type == TcpPackage::PNG){
-        clipboard->setImage(fromByteArray(data));
+    if(!sent){
+        if(type == TcpPackage::TXT){
+            clipboard->setText(QString(data));
+        } else if(type == TcpPackage::PNG){
+            clipboard->setImage(*fromByteArray(data));
+        } else {
+            throw "Unknown MINE-type";
+        }
     } else {
-        throw "Unknown MINE-type";
+        sent = false;
     }
 }
 
 void ClipboardService::getClipboardData()
 {
+    sent = true;
     QMimeData const * data = clipboard->mimeData();
     TcpPackage packageType;
     QByteArray temp;
