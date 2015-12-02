@@ -31,25 +31,24 @@ void ClipboardService::getClipboardData()
         packageType = TcpPackage::TXT;
         QString text = data->text();
         temp = QByteArray(text.toUtf8().constData(), text.size());
+        emit clipboardChanged(temp);
 
     } else if(data->hasImage()) {
         packageType = TcpPackage::PNG;
         QVariant tempImageVariant = data->imageData();
         QImage image = tempImageVariant.value<QImage>();
         temp = *(toByteArray(image));
+        emit clipboardChanged(temp);
 
     } else if(data->hasUrls()) {
         QList<QUrl> tempUrlList = data->urls();
-        temp.append(qint32(tempUrlList.size()));
-        for(auto item : tempUrlList){
-            temp.append(item.toString().toUtf8());
-        }
+        emit hasUrls(tempUrlList);
 
     } else {
         throw "Unknown MIME format";
     }
 
-    emit clipboardChanged(temp);
+
 }
 
 QByteArray *ClipboardService::toByteArray(QImage & image)

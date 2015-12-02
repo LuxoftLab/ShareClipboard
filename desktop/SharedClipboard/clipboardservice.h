@@ -25,6 +25,7 @@ public:
 
 signals:
     void clipboardChanged(QByteArray & data);
+    void hasUrls(QList<QUrl>);
 
 public slots:
     void updateClipboard(TcpPackage type, QByteArray & data);
