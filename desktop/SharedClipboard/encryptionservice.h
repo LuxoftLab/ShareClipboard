@@ -9,12 +9,25 @@
 
 
 #include "common.h"
+#include "osrng.h"
+#include "rijndael.h"
+
+//#include "cryptopp/osrng.h"
+//#include "rc6.h"
+//#include "files.h"
+
+#include "modes.h"
+#include "secblock.h"
 
 class EncryptionService : public QObject
 {
     Q_OBJECT
 
     QString key;
+    CryptoPP::AES::Encryption encryption;
+    CryptoPP::AutoSeededRandomPool rnd;
+    byte iv[CryptoPP::AES::BLOCKSIZE];
+    CryptoPP::CFB_Mode_ExternalCipher::Encryption cfbEncryption;
 public:
     EncryptionService(QString&);
     void encode(QByteArray&);

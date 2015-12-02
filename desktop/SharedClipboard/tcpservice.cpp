@@ -76,5 +76,6 @@ void TcpService::read()
     QByteArray data;
     QTcpSocket * sender = dynamic_cast<QTcpSocket*>(QObject::sender());
     data = sender->readAll();
-    qDebug() << "done";
+    TcpPackage packagetype;
+
 }

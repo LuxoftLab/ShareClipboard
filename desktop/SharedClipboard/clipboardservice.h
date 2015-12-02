@@ -6,6 +6,9 @@
 #include <QApplication>
 #include <QByteArray>
 #include <QMimeData>
+#include <QBuffer>
+#include <QImage>
+#include <QUrl>
 
 
 #include "tcppackages.h"
@@ -26,6 +29,9 @@ signals:
 public slots:
     void updateClipboard(TcpPackage type, QByteArray & data);
     void getClipboardData();
+private:
+    QByteArray * toByteArray(QImage&);
+    QImage * fromByteArray(QByteArray&);
 };
 
 #endif // CLIPBOARDSERVICE_H

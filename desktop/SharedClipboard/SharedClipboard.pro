@@ -37,3 +37,16 @@ HEADERS += \
     tcpthreadedsender.h
 
 CONFIG += c++14
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/cryptopp/release/ -lcryptopp
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/cryptopp/debug/ -lcryptopp
+else:unix: LIBS += -L$$PWD/cryptopp/ -lcryptopp
+
+INCLUDEPATH += $$PWD/cryptopp
+DEPENDPATH += $$PWD/cryptopp
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/cryptopp/release/libcryptopp.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/cryptopp/debug/libcryptopp.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/cryptopp/release/cryptopp.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/cryptopp/debug/cryptopp.lib
+else:unix: PRE_TARGETDEPS += $$PWD/cryptopp/libcryptopp.a
