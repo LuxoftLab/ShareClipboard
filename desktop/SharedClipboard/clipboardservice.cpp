@@ -16,9 +16,9 @@ void ClipboardService::updateClipboard(TcpPackage type, QByteArray &data)
     if(type == TcpPackage::TXT){
         clipboard->setText(QString(data));
     } else if(type == TcpPackage::PNG){
-        //clipboard->setImage();
+        clipboard->setImage(fromByteArray(data));
     } else {
-        throw;
+        throw "Unknown MINE-type";
     }
 }
 
