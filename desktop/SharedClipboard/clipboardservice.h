@@ -19,6 +19,7 @@ class ClipboardService : public QObject
 
     QClipboard * clipboard = NULL;
     bool sharing = true; // switches sharing on and off
+    bool sent = false; // prevents infinite recursive duplication
 public:
     explicit ClipboardService(QObject *parent = 0);
     ~ClipboardService();
