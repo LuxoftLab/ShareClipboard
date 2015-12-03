@@ -10,7 +10,6 @@ ClipboardService::~ClipboardService(){}
 
 void ClipboardService::updateClipboard(TcpPackage type, QByteArray &data)
 {
-    if(!sent){
         if(type == TcpPackage::TXT){
             clipboard->setText(QString(data));
         } else if(type == TcpPackage::PNG){
@@ -18,9 +17,6 @@ void ClipboardService::updateClipboard(TcpPackage type, QByteArray &data)
         } else {
             throw "Unknown MINE-type";
         }
-    } else {
-        sent = false;
-    }
 }
 
 void ClipboardService::getClipboardData()
@@ -33,14 +29,14 @@ void ClipboardService::getClipboardData()
         packageType = TcpPackage::TXT;
         QString text = data->text();
         temp = QByteArray(text.toUtf8().constData(), text.size());
-        emit clipboardChanged(temp);
+        emit clipboardChanged(packageType, temp);
 
     } else if(data->hasImage()) {
         packageType = TcpPackage::PNG;
         QVariant tempImageVariant = data->imageData();
         QImage image = tempImageVariant.value<QImage>();
         temp = *(toByteArray(image));
-        emit clipboardChanged(temp);
+        emit clipboardChanged(packageType, temp);
 
     } else if(data->hasUrls()) {
         QList<QUrl> tempUrlList = data->urls();

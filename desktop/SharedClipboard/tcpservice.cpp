@@ -1,5 +1,6 @@
 #include "tcpservice.h"
 
+
 TcpService::TcpService(QObject *parent) : QObject(parent)
 {
 }
@@ -23,10 +24,14 @@ void TcpService::connectSocket(QTcpSocket * socket, QHostAddress dest)
         throw 3; //###
 }
 
-void TcpService::send(QByteArray & data)
+void TcpService::send(TcpPackage type, QByteArray & data_raw)
 {
+    QByteArray sendarray;
+    QDataStream out(&sendarray, QIODevice::WriteOnly);
+    out << (qint32)type << data_raw.size();
+    out.writeRawData(data_raw.constData(), data_raw.size());
     for(auto socket : roomSockets){
-        if(socket->write(data) < data.size()){
+        if(socket->write(sendarray) < sendarray.size()){
             throw 22;
         }
     }
@@ -76,6 +81,18 @@ void TcpService::read()
     QByteArray data;
     QTcpSocket * sender = dynamic_cast<QTcpSocket*>(QObject::sender());
     data = sender->readAll();
-    TcpPackage packagetype;
 
+    QDataStream in(&data, QIODevice::ReadOnly);
+    qint32 pack_t;
+    in >> pack_t;
+    TcpPackage packagetype = (TcpPackage)pack_t;
+
+    if(packagetype == TcpPackage::TXT || packagetype == TcpPackage::PNG){
+        int sz;
+        in >> sz;
+        char * bytedata = new char[sz];
+        in.readRawData(bytedata, sz);
+        QByteArray temp = QByteArray(bytedata, sz);
+        emit gotData(packagetype, temp);
+    }
 }

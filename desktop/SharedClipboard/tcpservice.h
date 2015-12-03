@@ -25,6 +25,8 @@ class TcpService : public QObject
     QList<QTcpSocket*> connectedSockets; // connected to my server, to receive from
     QList<QTcpSocket*> fileSockets; // to send files
 
+    void gotFiles();
+
 public:
     explicit TcpService(QObject *parent = 0);
 
@@ -33,7 +35,9 @@ public:
     void connectSocket(QTcpSocket*, QHostAddress dest);
     void addRoomMembers(QList<QHostAddress>);
 
-    void send(QByteArray&);
+    void send(TcpPackage type, QByteArray&);
+signals:
+    void gotData(TcpPackage, QByteArray &);
 
 public slots:
     void setRoomMembers(QList<RoomMember>);
