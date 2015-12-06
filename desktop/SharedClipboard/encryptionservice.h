@@ -3,8 +3,7 @@
 
 #include <QByteArray>
 #include <QString>
-#include <QObject>
-
+#include <QDataStream>
 #include <QDebug>
 
 
@@ -12,32 +11,22 @@
 #include "osrng.h"
 #include "rijndael.h"
 
-//#include "cryptopp/osrng.h"
-//#include "rc6.h"
-//#include "files.h"
-
 #include "modes.h"
 #include "secblock.h"
 
-class EncryptionService : public QObject
+class EncryptionService
 {
-    Q_OBJECT
-
     QString key;
-    CryptoPP::AES::Encryption encryption;
     CryptoPP::AutoSeededRandomPool rnd;
     byte iv[CryptoPP::AES::BLOCKSIZE];
-    CryptoPP::CFB_Mode_ExternalCipher::Encryption cfbEncryption;
+    CryptoPP::SecByteBlock keyblock;
 public:
     EncryptionService(QString&);
-    void encode(QByteArray&);
-    void decode(QByteArray&);
+    QByteArray & encode(QByteArray&);
+    QByteArray & decode(QByteArray&);
 
-    void encodeFile(QString &, SharedFile & sf);
-    void decodeFile();
-signals:
-    void decoded(QByteArray &);
-    void encoded(QByteArray &);
+    QByteArray encodeFile(QString &, SharedFile & sf);
+    QByteArray decodeFile();
 };
 
 #endif // ENCODER_H
