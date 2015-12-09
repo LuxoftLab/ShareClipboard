@@ -12,9 +12,11 @@ SOURCES += main.cpp \
     udppackage.cpp \
     roomservice.cpp \
     encryptionservice.cpp \
-    tcpthreadedsender.cpp
+    tcpthreadedsender.cpp \
+    GUI/loginpassdialog.cpp \
+    GUI/roomchoose.cpp
 
-RESOURCES += GUI/qml.qrc
+RESOURCES +=
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -34,7 +36,9 @@ HEADERS += \
     udppackage.h \
     roomservice.h \
     encryptionservice.h \
-    tcpthreadedsender.h
+    tcpthreadedsender.h \
+    GUI/loginpassdialog.h \
+    GUI/roomchoose.h
 
 CONFIG += c++14
 
@@ -50,3 +54,9 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/cryptopp/de
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/cryptopp/release/cryptopp.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/cryptopp/debug/cryptopp.lib
 else:unix: PRE_TARGETDEPS += $$PWD/cryptopp/libcryptopp.a
+
+DISTFILES +=
+
+FORMS += \
+    GUI/loginpassdialog.ui \
+    GUI/roomchoose.ui

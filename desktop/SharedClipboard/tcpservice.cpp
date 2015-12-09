@@ -14,7 +14,7 @@ void TcpService::createServer()
 {
     ownServer = new QTcpServer(this);
     if(!ownServer->listen(QHostAddress::Any, TCP_PORT)){
-        throw 2; //###
+        throw "server is not listening"; //###
     }
     connect(ownServer, SIGNAL(newConnection()),
             this, SLOT(registerConnection()));

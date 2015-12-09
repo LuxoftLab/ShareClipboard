@@ -2,15 +2,15 @@
 #include <QQmlApplicationEngine>
 #include <QSharedPointer>
 #include <QTemporaryDir>
+#include <QQuickView>
+
 
 #include "sessionmanager.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-
-//    QQmlApplicationEngine engine;
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    app.setQuitOnLastWindowClosed(false);
 
    QSharedPointer<RoomService> roomService;
    QSharedPointer<UdpService> udpService;

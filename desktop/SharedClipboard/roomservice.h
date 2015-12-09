@@ -23,11 +23,10 @@ class RoomService : public QObject
     QList<RoomMember> roomMembers;
     QList<QString> roomsNames;
 
-    QString login;
     QString ownRoomName;
     QTimer * checkAlivesTimer;
 public:
-    explicit RoomService(QString & login, QObject *parent = 0);
+    explicit RoomService(QObject *parent = 0);
     QList<QString> getRooms();
     QList<RoomMember> getRoomMembers() const;
 

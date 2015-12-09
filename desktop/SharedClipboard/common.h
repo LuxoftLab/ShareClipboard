@@ -2,7 +2,7 @@
 #define PORTS_H
 
 #define UDP_PORT 8534
-#define TCP_PORT 8081
+#define TCP_PORT 8023
 
 #define WAIT_FOR_CONN_TIME_MSEC 5000
 

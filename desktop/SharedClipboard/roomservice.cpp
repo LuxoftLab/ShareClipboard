@@ -5,10 +5,8 @@ QList<RoomMember> RoomService::getRoomMembers() const
 {
     return roomMembers;
 }
-RoomService::RoomService(QString & value, QObject *parent) : QObject(parent)
+RoomService::RoomService(QObject *parent) : QObject(parent)
 {
-    login = value;
-
     checkAlivesTimer = new QTimer(this);
     connect(checkAlivesTimer, &QTimer::timeout, this, &RoomService::checkAlives);
     checkAlivesTimer->start(CHECK_ALIVE_TIMEOUT_MSEC);
